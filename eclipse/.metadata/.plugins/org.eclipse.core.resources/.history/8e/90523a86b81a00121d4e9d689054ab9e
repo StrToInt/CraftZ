@@ -1,9 +1,0 @@
-name: BiomeDisabler
-version: 1.3.2
-author: JangoBrick
-main: me.JangoBrick.BiomeDisabler.BiomeDisabler
-load: STARTUP
-commands:
-    craftz:
-        description: The main CraftZ command.
-        usage: /<command> <argument1> [argument2] [...]
