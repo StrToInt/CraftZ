@@ -45,7 +45,7 @@ public class EntityDamageListener implements Listener {
 				} else {
 					
 					boolean value_mobs_blood = plugin.getConfig().getBoolean("Config.mobs.blood-particles-when-damaged");
-					if (value_mobs_blood) {
+					if (!event.isCancelled() && event.getDamage() > 0 && value_mobs_blood) {
 						
 						int bloodCount = 0;
 						
@@ -80,9 +80,11 @@ public class EntityDamageListener implements Listener {
 							double value_bleeding_chance = 1 - plugin.getConfig()
 									.getDouble("Config.players.medical.bleeding.chance");
 							if (Math.random() >= value_bleeding_chance) {
+								
 								plugin.getPlayerManager().getData(((Player) eventEntity).getName()).bleeding = true;
 								((Player) eventEntity).sendMessage(ChatColor.DARK_RED + plugin.getLangConfig()
 										.getString("Messages.bleeding"));
+								
 							}
 							
 						}

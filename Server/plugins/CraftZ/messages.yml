@@ -1,0 +1,33 @@
+# ++==============================================++
+# || Messages for the CraftZ plugin by JangoBrick ||
+# ++==============================================++
+Messages:
+  harvested-tree: A pile of wood has been successfully added to your inventory.
+  already-have-wood: You already have wood.
+  isnt-a-tree: You must be in a forest and close to a tree to harvest wood.
+  destroyed-sign: You just destroyed a CraftZ sign.
+  successfully-created: Successfully created!
+  spawned: You're at spawnpoint %s
+  died: 'You died! Zombies killed: %z, players killed: %p, minutes survived: %m'
+  bleeding: You are bleeding! You need a bandage to mend the wounds!
+  bandaged: You bandaged your wounds.
+  bloodbag: Your health is restored.
+  poisoned: You are poisoned! You should use antibiotics soon.
+  unpoisoned: Your poisoning is healed!
+  killed:
+    zombie: 'Killed the zombie! Total zombie kills: %k'
+    player: 'Killed %p! Total player kills: %k'
+  help:
+    title: === CraftZ Help ===
+    help-command: '/craftz: Displays this help menu.'
+    removeitems-command: '/craftz removeitems: Removes all items in the world. (Alias:
+      /craftz remitems)'
+    reload-command: '/craftz reload: Reload the configuration files.'
+  cmd:
+    removed-items: Removed %i &aitems.
+    reloaded: Reloaded the config files.
+  errors:
+    mustBePlayer: You must be a player to use this command.
+    tooFewArguments: Too few arguments given.
+    sign-not-complete: The sign is not complete.
+    not-enough-permissions: You don't have the required permission to do this.

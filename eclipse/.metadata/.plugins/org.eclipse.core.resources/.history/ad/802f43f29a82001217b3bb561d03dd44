@@ -1,0 +1,38 @@
+package me.JangoBrick.CraftZ.Listeners;
+
+import me.JangoBrick.CraftZ.CraftZ;
+
+import org.bukkit.World;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.vehicle.VehicleMoveEvent;
+
+public class CraftZVehicleMoveListener implements Listener {
+	
+	public CraftZVehicleMoveListener(CraftZ plugin) {
+		
+		this.plugin = plugin;
+		plugin.getServer().getPluginManager().registerEvents(this, plugin);
+		
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onVehicleBlockCollide(VehicleMoveEvent event) {
+		
+		String value_world_name = plugin.getConfig().getString("Config.world.name");
+		World eventWorld = event.getVehicle().getWorld();
+		if (eventWorld.getName().equalsIgnoreCase(value_world_name)) {
+			
+			
+		
+		}
+	    
+	}
+	
+	
+	
+	
+	private CraftZ plugin;
+	
+}

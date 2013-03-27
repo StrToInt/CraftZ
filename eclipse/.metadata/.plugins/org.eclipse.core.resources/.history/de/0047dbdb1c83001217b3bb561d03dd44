@@ -1,0 +1,15 @@
+package me.JangoBrick.CraftZ.Util;
+
+import java.util.List;
+
+import org.bukkit.inventory.ItemStack;
+
+public class ItemRenamer {
+	
+	public static ItemStack rename(ItemStack input, String name, List<String> lore) {
+		
+		ItemStack stack = 
+		
+	}
+	
+}

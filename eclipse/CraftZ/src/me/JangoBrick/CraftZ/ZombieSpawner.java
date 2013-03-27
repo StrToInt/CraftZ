@@ -44,9 +44,7 @@ public class ZombieSpawner implements Listener {
 		if (plugin.getDataConfig().getConfigurationSection("Data.zombiespawns") != null) {
 			
 			for (String spawnEntry : plugin.getDataConfig().getConfigurationSection("Data.zombiespawns").getKeys(false)) {
-				
 				addSpawn(spawnEntry);
-				
 			}
 			
 		}
@@ -58,9 +56,7 @@ public class ZombieSpawner implements Listener {
 	
 	
 	public void addSpawn(String spawn) {
-		
 		cooldowns.put(spawn, 0);
-		
 	}
 	
 	

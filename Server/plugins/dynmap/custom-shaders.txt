@@ -1,0 +1,31 @@
+# The user is free to add new and custom shaders here, including replacements for standard ones
+# Dynmap's install will not overwrite it
+shaders:
+  # Default shader - used if shader not specified or invalid
+  - class: org.dynmap.hdmap.TexturePackHDShader
+    name: craftz
+    texturepack: 'CraftZ Textures [64x64].zip'
+
+  # Texture pack based shader for standard Minecraft textures
+  - class: org.dynmap.hdmap.TexturePackHDShader
+    name: craftztexture
+    texturepack: 'CraftZ Textures [64x64].zip'
+
+  # Standard texture cave view shader
+  - class: org.dynmap.hdmap.TexturePackHDCaveShader
+    name: craftztexture-cave
+    texturepack: 'CraftZ Textures [64x64].zip'
+    max-sky-light: 0
+    min-emitted-light: 1
+    
+  # Texture pack based shader for standard Minecraft textures, without biome-tinted grass/leaves
+  - class: org.dynmap.hdmap.TexturePackHDShader
+    name: craftztexture-nobiome
+    texturepack: 'CraftZ Textures [64x64].zip'
+    biomeshaded: false
+
+  # Texture pack based shader for standard Minecraft textures, with grid for region file borders (512x512)
+  - class: org.dynmap.hdmap.TexturePackHDShader
+    name: craftztexture-mcr-grid
+    texturepack: 'CraftZ Textures [64x64].zip'
+    grid-scale: 512

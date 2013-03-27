@@ -1,0 +1,36 @@
+package me.JangoBrick.CraftZ.Listeners;
+
+import me.JangoBrick.CraftZ.CraftZ;
+
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+
+public class PlayerChangedWorldListener implements Listener {
+	
+	public PlayerChangedWorldListener(CraftZ plugin) {
+		
+		this.plugin = plugin;
+		plugin.getServer().getPluginManager().registerEvents(this, plugin);
+		
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onWorldChanged(PlayerChangedWorldEvent event) {
+		
+		String value_world_name = plugin.getConfig().getString("Config.world.name");
+		Player eventPlayer = event.getPlayer();
+		
+		if ()
+		
+	}
+	
+	
+	
+	
+	private CraftZ plugin;
+	
+}

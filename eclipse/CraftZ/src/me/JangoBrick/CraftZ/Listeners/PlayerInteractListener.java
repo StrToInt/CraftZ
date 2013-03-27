@@ -96,19 +96,70 @@ public class PlayerInteractListener implements Listener {
 					
 					if (eventItemType == Material.PAPER) {
 						
-						eventPlayer.playSound(eventPlayer.getLocation(), Sound.BREATH, 1, 1);
-						
-						if (eventPlayer.getItemInHand().getAmount() < 2) {
-							ItemStack airItemStack = new ItemStack(Material.AIR, 0);
-							eventPlayer.setItemInHand(airItemStack);
-						} else {
-							eventPlayer.getItemInHand().setAmount(eventPlayer.getItemInHand().getAmount() - 1);
+						if (plugin.getConfig().getBoolean("Config.players.medical.bleeding.heal-with-paper")) {
+							
+							eventPlayer.playSound(eventPlayer.getLocation(), Sound.ENDERDRAGON_WINGS, 1, 1);
+							
+							if (eventPlayer.getItemInHand().getAmount() < 2) {
+								ItemStack airItemStack = new ItemStack(Material.AIR, 0);
+								eventPlayer.setItemInHand(airItemStack);
+							} else {
+								eventPlayer.getItemInHand().setAmount(eventPlayer.getItemInHand().getAmount() - 1);
+							}
+							
+							plugin.getPlayerManager().getData(eventPlayer.getName()).bleeding = false;
+							
+							eventPlayer.sendMessage(ChatColor.DARK_RED + plugin.getLangConfig()
+									.getString("Messages.bandaged"));
+							
 						}
 						
-						plugin.getPlayerManager().getData(eventPlayer.getName()).bleeding = false;
+					}
+					
+					
+					
+					if (eventItemType == Material.INK_SACK && eventItem.getDurability() == 1) {
 						
-						eventPlayer.sendMessage(ChatColor.DARK_RED + plugin.getLangConfig()
-								.getString("Messages.bandaged"));
+						if (plugin.getConfig().getBoolean("Config.players.medical.healing.heal-with-rosered")
+								&& !plugin.getConfig().getBoolean("Config.players.medical.healing.only-healing-others")) {
+							
+							eventPlayer.playSound(eventPlayer.getLocation(), Sound.BREATH, 1, 1);
+							
+							if (eventPlayer.getItemInHand().getAmount() < 2) {
+								eventPlayer.setItemInHand(new ItemStack(Material.AIR, 0));
+							} else {
+								eventPlayer.getItemInHand().setAmount(eventPlayer.getItemInHand().getAmount() - 1);
+							}
+							
+							eventPlayer.setHealth(20);
+							
+							eventPlayer.sendMessage(ChatColor.DARK_RED + plugin.getLangConfig()
+									.getString("Messages.bloodbag"));
+							
+						}
+						
+					}
+					
+					
+					
+					if (eventItemType == Material.INK_SACK && eventItem.getDurability() == 10) {
+						
+						if (plugin.getConfig().getBoolean("Config.players.medical.poisoning.heal-with-limegreen")) {
+							
+							eventPlayer.playSound(eventPlayer.getLocation(), Sound.ZOMBIE_UNFECT, 1, 1);
+							
+							if (eventPlayer.getItemInHand().getAmount() < 2) {
+								eventPlayer.setItemInHand(new ItemStack(Material.AIR, 0));
+							} else {
+								eventPlayer.getItemInHand().setAmount(eventPlayer.getItemInHand().getAmount() - 1);
+							}
+							
+							plugin.getPlayerManager().getData(eventPlayer.getName()).poisoned = false;
+							
+							eventPlayer.sendMessage(ChatColor.DARK_RED + plugin.getLangConfig()
+									.getString("Messages.unpoisoned"));
+							
+						}
 						
 					}
 					

@@ -14,6 +14,8 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 public class PlayerManager {
 	
 	private CraftZ plugin;
@@ -44,6 +46,8 @@ public class PlayerManager {
 		getConfig().set("Data.players." + p.getName() + ".zombiesKilled", players.get(p.getName()).zombiesKilled);
 		getConfig().set("Data.players." + p.getName() + ".playersKilled", players.get(p.getName()).playersKilled);
 		getConfig().set("Data.players." + p.getName() + ".minsSurvived", players.get(p.getName()).minutesSurvived);
+		getConfig().set("Data.players." + p.getName() + ".bleeding", players.get(p.getName()).bleeding);
+		getConfig().set("Data.players." + p.getName() + ".poisoned", players.get(p.getName()).poisoned);
 		
 		
 		
@@ -88,7 +92,7 @@ public class PlayerManager {
 		
 		if (defaults) {
 			
-			players.put(p.getName(), new AdditionalCraftZData(20, 0, 0, 0, false));
+			players.put(p.getName(), new AdditionalCraftZData(20, 0, 0, 0, false, false));
 			
 		} else {
 			
@@ -96,7 +100,8 @@ public class PlayerManager {
 					getConfig().getInt("Data.players." + p.getName() + ".zombiesKilled"),
 					getConfig().getInt("Data.players." + p.getName() + ".playersKilled"),
 					getConfig().getInt("Data.players." + p.getName() + ".minsSurvived"),
-					getConfig().getBoolean("Data.players." + p.getName() + ".bleeding")));
+					getConfig().getBoolean("Data.players." + p.getName() + ".bleeding"),
+					getConfig().getBoolean("Data.players." + p.getName() + ".poisoned")));
 			
 		}
 		
@@ -176,7 +181,13 @@ public class PlayerManager {
 	
 	
 	public AdditionalCraftZData getData(String p) {
+		
+		if (!players.containsKey(p)) {
+			loadPlayer(Bukkit.getPlayer(p));
+		}
+		
 		return players.get(p);
+		
 	}
 	
 	
@@ -220,12 +231,16 @@ public class PlayerManager {
 			for (String pn : players.keySet()) {
 				
 				if (players.get(pn).bleeding) {
-					
 					Bukkit.getPlayer(pn).damage(1);
-					
 				}
 				
-				//if (plugin.getServer().getPlayer(pn).getLocation().d)
+				if (players.get(pn).poisoned) {
+					Bukkit.getPlayer(pn).damage(1);
+					Bukkit.getPlayer(pn).addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS,
+							10, 1));
+					Bukkit.getPlayer(pn).addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION,
+							30, 1));
+				}
 				
 			}
 			

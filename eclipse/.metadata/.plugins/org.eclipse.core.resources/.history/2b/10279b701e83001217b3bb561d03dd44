@@ -1,0 +1,39 @@
+package me.JangoBrick.CraftZ.Util;
+
+import java.util.List;
+
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+
+public class ItemRenamer {
+	
+	public static ItemStack rename(ItemStack input, String name, List<String> lore) {
+		
+		ItemMeta meta = input.getItemMeta();
+		meta.setDisplayName(name);
+		meta.setLore(lore);
+		input.setItemMeta(meta);
+		
+		return input;
+		
+	}
+	
+	
+	
+	
+	
+	public static ItemStack renameWithList(ItemStack input, List<String> entries) {
+		
+		for (String entry : entries) {
+			
+			if (entry.contains("=")) {
+				
+				String id = entry.split("=")[0];
+				
+			}
+			
+		}
+		
+	}
+	
+}

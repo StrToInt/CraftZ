@@ -1,0 +1,46 @@
+package me.JangoBrick.CraftZ.Listeners;
+
+import me.JangoBrick.CraftZ.CraftZ;
+
+import org.bukkit.World;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerPickupItemEvent;
+
+public class PlayerPickupItemListener implements Listener {
+	
+	public PlayerPickupItemListener(CraftZ plugin) {
+		
+		this.plugin = plugin;
+		plugin.getServer().getPluginManager().registerEvents(this, plugin);
+		
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onPlayerPickupItem(PlayerPickupItemEvent event) {
+		
+		String value_world_name = plugin.getConfig().getString("Config.world.name");
+		World eventWorld = event.getPlayer().getWorld();
+		if (eventWorld.getName().equalsIgnoreCase(value_world_name)) {
+			
+//			Player eventPlayer = event.getPlayer();
+//			
+//			Inventory evtPlrInv = eventPlayer.getInventory();
+//			ItemStack[] validCtnts = itemNamer.validateInventoryContents(evtPlrInv);
+//			evtPlrInv.setContents(validCtnts);
+//			
+//			Map<Player, Inventory> savedInvs = plugin.getSavedInventories();
+//			savedInvs.put(eventPlayer, evtPlrInv);
+//			plugin.setSavedInventories(savedInvs);
+		
+		}
+		
+	}
+	
+	
+	
+	
+	private CraftZ plugin;
+	
+}

@@ -1,0 +1,337 @@
+package me.JangoBrick.CraftZ;
+
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.logging.Logger;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+
+public class CraftZ extends JavaPlugin {
+	
+	private String dbname;
+	
+	public void onEnable() {
+		
+		//Config-Teil
+		loadConfig();
+		
+		//Event-Teil laden
+		registerEvent();
+		
+		System.out.println("[CraftZ] Plugin by JangoBrick.");
+		System.out.println("[CraftZ] Plugin successfully enabled.");
+		
+		
+		
+		//Zombies schneller
+		
+		try {
+		    @SuppressWarnings("rawtypes")
+		    Class[] args = new Class[3];
+		    args[0] = Class.class;
+		    args[1] = String.class;
+		    args[2] = int.class;
+		    Method a = net.minecraft.server.EntityTypes.class.getDeclaredMethod("a", args);
+		    a.setAccessible(true);
+		    a.invoke(a, Zombie.class, "Zombie", 54);
+		} catch (Exception e) {
+		    e.printStackTrace();
+		    this.setEnabled(false);
+		}
+		
+		
+		
+		//Spawn-Funktion
+		
+		registerZombieSpawner();
+		
+		this.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
+			
+			public void run() {
+				spawnZombie();
+			}
+			
+		}, 60L, 200L);
+
+		
+		
+	}
+	
+	
+	
+	
+	public void onDisable() {
+		
+		
+		
+	}
+	
+	
+	
+	
+	public boolean onCommand(CommandSender sender, Command cmd, String cmdlabel, String[] args) {
+		
+		if (cmd.getName().equalsIgnoreCase("craftz")) {
+			
+			if (args.length == 0) {
+				
+				if (sender.hasPermission("craftz.help")) {
+					String value_craftz_helptitle = this.getConfig().getString("Config.messages.help.title");
+					sender.sendMessage(ChatColor.GRAY + value_craftz_helptitle);
+					sender.sendMessage("");
+					String value_craftz_help_main = this.getConfig().getString("Config.messages.help.helpCommand");
+					sender.sendMessage(ChatColor.GRAY + value_craftz_help_main);
+					if (sender.hasPermission("craftz.addzombiespawn")) {
+						String value_craftz_help_addzs = this.getConfig().getString("Config.messages.help.addZombieSpawnCommand");
+						sender.sendMessage(ChatColor.GRAY + value_craftz_help_addzs);
+					}
+				}
+				
+				return true;
+				
+			}
+			
+			if (args.length > 0) {					
+				
+				if (args[0].equalsIgnoreCase("setzombiespawn") || args[0].equalsIgnoreCase("setzs")) {
+					
+					if (!(sender instanceof Player)) {
+						String value_error_mustBePlayer = this.getConfig().getString("Config.messages.errors.mustBePlayer");
+						sender.sendMessage(value_error_mustBePlayer);
+						return true;
+					}
+					
+					if (sender.hasPermission("craftz.addzombiespawn")) {
+						if (args.length != 2) {
+							String value_error_tooFewArgs = this.getConfig().getString("Config.messages.errors.tooFewArguments");
+							sender.sendMessage(value_error_tooFewArgs);
+							return true;
+						}
+					
+						Location playerLocation = this.getServer().getPlayer(sender.getName()).getLocation();
+						int playerX = playerLocation.getBlockX();
+						int playerY = playerLocation.getBlockY();
+						int playerZ = playerLocation.getBlockZ();
+						
+						String path_spawnpoint_toAdd = "Spawnpoints.zombies." + args[1];
+						String path_spawnpoint_toAdd_coords = path_spawnpoint_toAdd + ".coords.";
+						
+						List<String> value_spawnpoints_zombies_names = this.getConfig().getStringList("Spawnpoints.zombies.names");
+						
+						this.getConfig().set(path_spawnpoint_toAdd_coords + "x", playerX);
+						this.getConfig().set(path_spawnpoint_toAdd_coords + "y", playerY);
+						this.getConfig().set(path_spawnpoint_toAdd_coords + "z", playerZ);
+						
+						if (value_spawnpoints_zombies_names.toArray().length == 0) {
+							String[] value_spawnpoints_zombies_names_with_new = {args[1]};
+							String path_spawnpoints_zombies_names = "Spawnpoints.zombies.names";
+							this.getConfig().set(path_spawnpoints_zombies_names, value_spawnpoints_zombies_names_with_new);
+						} else {
+							if (value_spawnpoints_zombies_names.contains(args[1])) {
+								int pos_in_spawnpoints_zombies_names = value_spawnpoints_zombies_names.lastIndexOf(args[1]);
+								value_spawnpoints_zombies_names.set(pos_in_spawnpoints_zombies_names, args[1]);
+							} else {
+								value_spawnpoints_zombies_names.add(args[1]);
+							}
+						}
+						
+						this.getConfig().options().copyDefaults(true);
+						this.saveConfig();
+					}
+					
+				}
+				
+				return true;
+					
+			}
+				
+				
+				
+		}
+			
+		
+		
+		return true;
+		
+	}
+	
+	
+	
+	
+	private void loadConfig() {
+		
+			// CONFIG
+			
+				// WORLD
+				
+					// WEATHER
+					
+					String path_weatherChanging_allow = "Config.world.weather.allowWeatherChanging";
+					this.getConfig().addDefault(path_weatherChanging_allow, true);
+			
+				// PLAYERS
+				
+					// INTERACT
+					
+					String path_shearing_allow = "Config.players.interact.shearing";
+					this.getConfig().addDefault(path_shearing_allow, false);
+					
+					String path_sleeping_allow = "Config.players.interact.sleeping";
+					this.getConfig().addDefault(path_sleeping_allow, false);
+					
+					String path_blockBreaking_allow = "Config.players.interact.block-breaking";
+					this.getConfig().addDefault(path_blockBreaking_allow, false);
+					
+					String path_blockPlacing_allow = "Config.players.interact.block-placing";
+					this.getConfig().addDefault(path_blockPlacing_allow, false);
+			
+				// MOBS
+			
+					// ZOMBIES
+					
+						// SPAWNING
+						
+							// DELAY
+							
+							String path_zombies_spawndelay = "Config.mobs.zombies.spawning.delay";
+							this.getConfig().addDefault(path_zombies_spawndelay, 40);
+							
+							// MAXZOMBIES
+							
+							String path_zombies_spawnmax = "Config.mobs.zombies.spawning.maxZombies";
+							this.getConfig().addDefault(path_zombies_spawnmax, 200);
+							
+					// ANIMALS
+					
+						// SPAWNS
+						
+						String path_animalspawns_allow = "Config.mobs.animals.spawning.allow";
+						this.getConfig().addDefault(path_animalspawns_allow, true);
+						
+							// CHANCE
+							
+							String path_animalspawns_chance_cow = "Config.mobs.animals.spawning.chance.cow";
+							this.getConfig().addDefault(path_animalspawns_chance_cow, 0.3);
+							
+							String path_animalspawns_chance_chicken = "Config.mobs.animals.spawning.chance.chicken";
+							this.getConfig().addDefault(path_animalspawns_chance_chicken, 0.3);
+							
+							String path_animalspawns_chance_pig = "Config.mobs.animals.spawning.chance.pig";
+							this.getConfig().addDefault(path_animalspawns_chance_pig, 0.3);
+							
+							String path_animalspawns_chance_sheep = "Config.mobs.animals.spawning.chance.sheep";
+							this.getConfig().addDefault(path_animalspawns_chance_sheep, 0.3);
+						
+		
+		
+			// MESSAGES			
+			
+				// HELP
+				
+				String path_craftz_helptitle = "Config.messages.help.title";
+				this.getConfig().addDefault(path_craftz_helptitle, "=== CraftZ Help ===");
+				
+				String path_craftz_help_main = "Config.messages.help.helpCommand";
+				this.getConfig().addDefault(path_craftz_help_main, "/craftz: Displays this help menu.");
+				
+				// ERRORS
+				
+				String path_error_mustBePlayer = "Config.messages.errors.mustBePlayer";
+				this.getConfig().addDefault(path_error_mustBePlayer, "You must be a player to use this command.");
+				
+				String path_error_tooFewArgs = "Config.messages.errors.tooFewArguments";
+				this.getConfig().addDefault(path_error_tooFewArgs, "Too few arguments given.");
+				
+		// SPAWNPOINTS
+		
+			// ZOMBIES
+			
+				// NAMES
+				
+				String[] value_spawnpoints_zombies_names = {};
+				String path_spawnpoints_zombies_names = "Spawnpoints.zombies.names";
+				this.getConfig().addDefault(path_spawnpoints_zombies_names, value_spawnpoints_zombies_names);
+				
+		
+		
+		
+		this.getConfig().options().copyDefaults(true);
+		this.saveConfig();
+		
+	}
+	
+	
+	
+	
+	@SuppressWarnings("unused")
+	private String getWithColors(String text) {
+		
+		text = text.replaceAll("&a", ChatColor.GREEN + "");
+		text = text.replaceAll("&b", ChatColor.AQUA + "");
+		text = text.replaceAll("&c", ChatColor.RED + "");
+		text = text.replaceAll("&d", ChatColor.LIGHT_PURPLE + "");
+		text = text.replaceAll("&e", ChatColor.YELLOW + "");
+		text = text.replaceAll("&f", ChatColor.WHITE + "");
+		
+		text = text.replaceAll("&0", ChatColor.BLACK + "");
+		text = text.replaceAll("&1", ChatColor.DARK_BLUE + "");
+		text = text.replaceAll("&2", ChatColor.DARK_GREEN + "");
+		text = text.replaceAll("&3", ChatColor.DARK_AQUA + "");
+		text = text.replaceAll("&4", ChatColor.DARK_RED + "");
+		text = text.replaceAll("&5", ChatColor.DARK_PURPLE + "");
+		text = text.replaceAll("&6", ChatColor.GOLD + "");
+		text = text.replaceAll("&7", ChatColor.GRAY + "");
+		text = text.replaceAll("&8", ChatColor.DARK_GRAY + "");
+		text = text.replaceAll("&9", ChatColor.BLUE + "");
+		
+		text = text.replaceAll("&r", ChatColor.RESET + "");
+		text = text.replaceAll("&k", ChatColor.MAGIC + "");
+		text = text.replaceAll("&l", ChatColor.BOLD + "");
+		
+		return text;
+		
+	}
+	
+	
+	
+	
+	
+	
+	// Event-Teil
+	private void registerEvent() {
+		
+		new CraftZPlayerJoinListener(this);
+		new CraftZCreatureSpawnListener(this);
+		new CraftZItemDespawnListener(this);
+		new CraftZEntityDamageListener(this);
+		new CraftZShearEntityListener(this);
+		new CraftZEntityDeathListener(this);
+		new CraftZZombieSpawnListener(this);
+		new CraftZPlayerBedEnterListener(this);
+		new CraftZBlockBreakListener(this);
+		new CraftZBlockPlaceListener(this);
+		new CraftZPaintingBreakListener(this);
+		new CraftZPaintingBreakByEntityListener(this);
+		new CraftZPaintingPlaceListener(this);
+		new CraftZWeatherChangeListener(this);
+		
+	}
+	
+	private void registerZombieSpawner() {
+		cz_zs = new CraftZZombieSpawner();
+	}
+	
+	private void spawnZombie() {
+		cz_zs.spawn(this);
+	}
+	
+	private CraftZZombieSpawner cz_zs;
+	
+	
+}

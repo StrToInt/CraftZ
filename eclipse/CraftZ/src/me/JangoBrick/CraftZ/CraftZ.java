@@ -232,6 +232,7 @@ public class CraftZ extends JavaPlugin {
 		// CREATURE
 		new CreatureSpawnListener(this);
 		new EntityDamageListener(this);
+		new EntityDamageByEntityListener(this);
 		new EntityDeathListener(this);
 		new SheepDyeWoolListener(this);
 		new EntityRegainHealthListener(this);
@@ -313,9 +314,9 @@ public class CraftZ extends JavaPlugin {
 	
 	private void loadConfig() {
 		
-		loadLangConfig();
-		loadDataConfig();
-		loadLootConfig();
+		reloadLangConfig();
+		reloadDataConfig();
+		reloadLootConfig();
 		
 		// SET HEADER
 		
@@ -390,6 +391,21 @@ public class CraftZ extends JavaPlugin {
 				
 				String path_bleeding_healWithPaper = "Config.players.medical.bleeding.heal-with-paper";
 				this.getConfig().addDefault(path_bleeding_healWithPaper, true);
+				
+				String path_healing_healWithRoseRed = "Config.players.medical.healing.heal-with-rosered";
+				this.getConfig().addDefault(path_healing_healWithRoseRed, true);
+				
+				String path_healing_onlyHealingOthers = "Config.players.medical.healing.only-healing-others";
+				this.getConfig().addDefault(path_healing_onlyHealingOthers, true);
+				
+				String path_poisoning_enable = "Config.players.medical.poisoning.enable";
+				this.getConfig().addDefault(path_poisoning_enable, true);
+				
+				String path_poisoning_chance = "Config.players.medical.poisoning.chance";
+				this.getConfig().addDefault(path_poisoning_chance, 0.04);
+				
+				String path_poisoning_healWithLimeGreen = "Config.players.medical.poisoning.heal-with-limegreen";
+				this.getConfig().addDefault(path_poisoning_healWithLimeGreen, true);
 			
 			// MOBS
 				
@@ -479,7 +495,7 @@ public class CraftZ extends JavaPlugin {
 			this.getConfig().addDefault(path_changeItemnames_enable, true);
 			
 			String path_changeItemnames_names = "Config.change-item-names.names";
-			String[] value_changeItemnames_names = { "339=Bandage" };
+			String[] value_changeItemnames_names = { "339=Bandage", "351:1=Blood Bag", "351:10=Antibiotics" };
 			this.getConfig().addDefault(path_changeItemnames_names, value_changeItemnames_names);
 			
 			
@@ -532,7 +548,16 @@ public class CraftZ extends JavaPlugin {
 		this.getLangConfig().addDefault(path_bleeding, "You are bleeding! You need a bandage to mend the wounds!");
 		
 		String path_bandaged = "Messages.bandaged";
-		this.getLangConfig().addDefault(path_bandaged, "You bandaged your wounds.");
+		this.getLangConfig().addDefault(path_bandaged, "Your wounds are now bandaged.");
+		
+		String path_bloodbag = "Messages.bloodbag";
+		this.getLangConfig().addDefault(path_bloodbag, "Your health is restored.");
+		
+		String path_poisoned = "Messages.poisoned";
+		this.getLangConfig().addDefault(path_poisoned, "You are poisoned! You should use antibiotics soon.");
+		
+		String path_unpoisoned = "Messages.unpoisoned";
+		this.getLangConfig().addDefault(path_unpoisoned, "Your poisoning is healed!");
 		
 		String path_killed_zombie = "Messages.killed.zombie";
 		this.getLangConfig().addDefault(path_killed_zombie, "Killed the zombie! Total zombie kills: %k");
@@ -590,11 +615,15 @@ public class CraftZ extends JavaPlugin {
 	private File langConfigFile = null;
 	
 	public void reloadLangConfig() {
+		
 		if (langConfigFile == null) {
 			langConfigFile = new File(this.getDataFolder(), "messages.yml");
 		}
 		
 		langConfig = YamlConfiguration.loadConfiguration(langConfigFile);
+		
+		loadLangConfig();
+		
 	}
 	
 	public FileConfiguration getLangConfig() {
@@ -641,11 +670,15 @@ public class CraftZ extends JavaPlugin {
 	private File dataConfigFile = null;
 	
 	public void reloadDataConfig() {
+		
 		if (dataConfigFile == null) {
 			dataConfigFile = new File(this.getDataFolder(), "data.yml");
 		}
 		
 		dataConfig = YamlConfiguration.loadConfiguration(dataConfigFile);
+		
+		loadDataConfig();
+		
 	}
 	
 	public FileConfiguration getDataConfig() {
@@ -762,7 +795,8 @@ public class CraftZ extends JavaPlugin {
 			
 			String path_lists_medical = "Loot.lists.medical";
 			String[] value_lists_medical = {
-				"2x260", "2x281", "2x282", "339", "2x353", "357", "360", "374", "391", "2x373:5", "373:16389"
+				"2x260", "2x281", "2x282", "339", "2x351:1", "351:10", "2x353", "357", "360", "374", "391",
+				"2x373:5", "373:16389"
 			};
 			this.getLootConfig().addDefault(path_lists_medical, value_lists_medical);
 		
@@ -779,11 +813,15 @@ public class CraftZ extends JavaPlugin {
 	private File lootConfigFile = null;
 	
 	public void reloadLootConfig() {
+		
 		if (lootConfigFile == null) {
 			lootConfigFile = new File(this.getDataFolder(), "loot.yml");
 		}
 		
 		lootConfig = YamlConfiguration.loadConfiguration(lootConfigFile);
+		
+		loadLootConfig();
+		
 	}
 	
 	public FileConfiguration getLootConfig() {
@@ -811,10 +849,7 @@ public class CraftZ extends JavaPlugin {
 	
 	public void reloadConfigs() {
 		
-		reloadConfig();
-		reloadLangConfig();
-		reloadDataConfig();
-		reloadLootConfig();
+		loadConfig();
 		
 	}
 	

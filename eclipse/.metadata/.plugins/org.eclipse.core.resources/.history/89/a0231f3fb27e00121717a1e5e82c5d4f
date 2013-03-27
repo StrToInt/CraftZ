@@ -1,0 +1,16 @@
+package me.JangoBrick.CraftZ;
+
+public class AdditionalCraftZData {
+	
+	public int thirst = 20;
+	public int zombiesKilled = 0;
+	public int playersKilled = 0;
+	public int minutesSurvived = 0;
+	
+	public AdditionalCraftZData(int thirst, int zombiesKilled, int playersKilled, int minutesSurvived) {
+		
+		this.thirst = thirst;
+		
+	}
+	
+}

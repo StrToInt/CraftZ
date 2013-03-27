@@ -1,0 +1,47 @@
+package me.JangoBrick.CraftZ.Listeners;
+
+import java.util.Random;
+
+import me.JangoBrick.CraftZ.CraftZ;
+
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.inventory.ItemStack;
+
+public class EntityDamageByEntityListener implements Listener {
+	
+	public EntityDamageByEntityListener(CraftZ plugin) {
+		
+		this.plugin = plugin;
+		plugin.getServer().getPluginManager().registerEvents(this, plugin);
+		
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+		
+		String value_world_name = plugin.getConfig().getString("Config.world.name");
+		World eventWorld = event.getEntity().getWorld();
+		if (eventWorld.getName().equalsIgnoreCase(value_world_name)) {
+			
+			
+		
+		}
+		
+	}
+	
+	
+	
+	private CraftZ plugin;
+	
+}

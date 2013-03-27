@@ -1,0 +1,59 @@
+package me.JangoBrick.CraftZ.Util;
+
+import java.util.List;
+
+import org.bukkit.ChatColor;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+
+public class ItemRenamer {
+	
+	public static ItemStack rename(ItemStack input, String name, List<String> lore) {
+		
+		ItemMeta meta = input.getItemMeta();
+		meta.setDisplayName(name);
+		meta.setLore(lore);
+		input.setItemMeta(meta);
+		
+		return input;
+		
+	}
+	
+	
+	
+	
+	
+	public static ItemStack renameWithList(ItemStack input, List<String> entries) {
+		
+		for (String entry : entries) {
+			
+			if (entry.contains("=")) {
+				
+				String idStr = entry.split("=")[0];
+				int id = 0;
+				int meta = 0;
+				
+				try {
+					
+					if (idStr.contains(":")) {
+						id = new Integer(idStr.split(":")[0]);
+						meta = new Integer(idStr.split(":")[1]);
+					} else {
+						id = new Integer(idStr);
+					}
+					
+				} catch (NumberFormatException ex) {
+					return input;
+				}
+				
+				return rename(input, ChatColor.RESET + entry.split("=")[1], null);
+				
+			}
+			
+		}
+		
+		return input;
+		
+	}
+	
+}

@@ -23,7 +23,7 @@ public class InventoryCloseListener implements Listener {
 	}
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onInventoryOpen(InventoryCloseEvent event) {
+	public void onInventoryClose(InventoryCloseEvent event) {
 		
 		String value_world_name = plugin.getConfig().getString("Config.world.name");
 		World eventWorld = event.getPlayer().getWorld();
