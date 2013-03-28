@@ -144,7 +144,7 @@ public class PlayerInteractListener implements Listener {
 					
 					if (eventItemType == Material.INK_SACK && eventItem.getDurability() == 10) {
 						
-						if (plugin.getConfig().getBoolean("Config.players.medical.poisoning.heal-with-limegreen")) {
+						if (plugin.getConfig().getBoolean("Config.players.medical.poisoning.cure-with-limegreen")) {
 							
 							eventPlayer.playSound(eventPlayer.getLocation(), Sound.ZOMBIE_UNFECT, 1, 1);
 							

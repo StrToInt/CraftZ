@@ -81,6 +81,8 @@ public class EntityDamageByEntityListener implements Listener {
 							damager.getItemInHand().setAmount(damager.getItemInHand().getAmount() - 1);
 						}
 						
+						eventPlayer.setHealth(20);
+						
 						eventPlayer.sendMessage(ChatColor.DARK_RED + plugin.getLangConfig()
 								.getString("Messages.bloodbag"));
 						
@@ -93,7 +95,7 @@ public class EntityDamageByEntityListener implements Listener {
 				if (damager.getItemInHand().getType() == Material.INK_SACK
 						&& damager.getItemInHand().getDurability() == 10) {
 					
-					if (plugin.getConfig().getBoolean("Config.players.medical.poisoning.heal-with-limegreen")) {
+					if (plugin.getConfig().getBoolean("Config.players.medical.poisoning.cure-with-limegreen")) {
 						
 						event.setCancelled(true);
 						event.setDamage(0);

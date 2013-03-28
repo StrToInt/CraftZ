@@ -236,6 +236,8 @@ public class PlayerManager {
 				
 				if (players.get(pn).poisoned) {
 					Bukkit.getPlayer(pn).damage(1);
+					Bukkit.getPlayer(pn).addPotionEffect(new PotionEffect(PotionEffectType.HUNGER,
+							20, 1));
 					Bukkit.getPlayer(pn).addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS,
 							10, 1));
 					Bukkit.getPlayer(pn).addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION,

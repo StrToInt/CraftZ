@@ -231,8 +231,8 @@ public class CraftZ extends JavaPlugin {
 		
 		// CREATURE
 		new CreatureSpawnListener(this);
-		new EntityDamageListener(this);
 		new EntityDamageByEntityListener(this);
+		new EntityDamageListener(this);
 		new EntityDeathListener(this);
 		new SheepDyeWoolListener(this);
 		new EntityRegainHealthListener(this);
@@ -404,7 +404,7 @@ public class CraftZ extends JavaPlugin {
 				String path_poisoning_chance = "Config.players.medical.poisoning.chance";
 				this.getConfig().addDefault(path_poisoning_chance, 0.04);
 				
-				String path_poisoning_healWithLimeGreen = "Config.players.medical.poisoning.heal-with-limegreen";
+				String path_poisoning_healWithLimeGreen = "Config.players.medical.poisoning.cure-with-limegreen";
 				this.getConfig().addDefault(path_poisoning_healWithLimeGreen, true);
 			
 			// MOBS
