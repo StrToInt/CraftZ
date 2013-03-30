@@ -144,25 +144,6 @@ public class PlayerInteractListener implements Listener {
 					
 				}
 				
-				
-				
-				if (eventItemType == Material.POTION) {
-					
-					if (eventItem.getDurability() == 0) {
-						
-						if (eventPlayer.getItemInHand().getAmount() < 2) {
-							eventPlayer.setItemInHand(new ItemStack(Material.AIR, 0));
-						} else {
-							eventPlayer.getItemInHand().setAmount(eventPlayer.getItemInHand().getAmount() - 1);
-						}
-						
-						PlayerManager.getData(eventPlayer.getName()).thirst = 20;
-						eventPlayer.setLevel(20);
-						
-					}
-					
-				}
-				
 			}
 			
 			

@@ -270,6 +270,7 @@ public class CraftZ extends JavaPlugin {
 		
 		// PLAYER
 		new PlayerInteractListener(this);
+		new PlayerItemConsumeListener(this);
 		new PlayerJoinListener(this);
 		new PlayerQuitListener(this);
 		new ShearEntityListener(this);
@@ -372,7 +373,7 @@ public class CraftZ extends JavaPlugin {
 			this.getConfig().addDefault(path_world_lobby_x, 0);
 			
 			String path_world_lobby_y = "Config.world.lobby.y";
-			this.getConfig().addDefault(path_world_lobby_y, getServer().getWorlds().get(0).getSeaLevel());
+			this.getConfig().addDefault(path_world_lobby_y, 64);
 			
 			String path_world_lobby_z = "Config.world.lobby.z";
 			this.getConfig().addDefault(path_world_lobby_z, 0);
