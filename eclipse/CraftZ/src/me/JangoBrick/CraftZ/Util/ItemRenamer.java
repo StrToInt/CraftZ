@@ -2,7 +2,10 @@ package me.JangoBrick.CraftZ.Util;
 
 import java.util.List;
 
+import me.JangoBrick.CraftZ.CraftZ;
+
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -24,7 +27,19 @@ public class ItemRenamer {
 	
 	
 	
-	public static ItemStack renameWithList(ItemStack input, List<String> entries) {
+	public static void renameWithList(ItemStack input, List<String> entries) {
+		
+		if (!getNameFromList(input, entries).equals("")) {
+			rename(input, ChatColor.RESET + getNameFromList(input, entries), null);
+		}
+		
+	}
+	
+	
+	
+	
+	
+	public static String getNameFromList(ItemStack input, List<String> entries) {
 		
 		for (String entry : entries) {
 			
@@ -44,18 +59,18 @@ public class ItemRenamer {
 					}
 					
 				} catch (NumberFormatException ex) {
-					return input;
+					continue;
 				}
 				
 				if (input.getTypeId() == id && input.getData().getData() == meta) {
-					return rename(input, ChatColor.RESET + entry.split("=")[1], null);
+					return entry.split("=")[1];
 				}
 				
 			}
 			
 		}
 		
-		return input;
+		return "";
 		
 	}
 	
@@ -65,12 +80,24 @@ public class ItemRenamer {
 	
 	public static void convertInventoryItemNames(Inventory inv, List<String> entries) {
 		
-		for (int i=0; i<inv.getContents().length; i++) {
+		for (int i=0; i<inv.getSize(); i++) {
 			
 			if (inv.getItem(i) != null) {
-				inv.setItem(i, ItemRenamer.renameWithList(inv.getItem(i), entries));
+				renameWithList(inv.getItem(i), entries);
 			}
 			
+		}
+		
+	}
+	
+	
+	
+	
+	
+	public static void convertPlayerInventory(Player p, List<String> entries) {
+		
+		if (p.getWorld().getName().equalsIgnoreCase(CraftZ.instance.getConfig().getString("Config.world.name"))) {
+			convertInventoryItemNames(p.getInventory(), entries);
 		}
 		
 	}

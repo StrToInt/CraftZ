@@ -18,21 +18,19 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 public class PlayerManager {
 	
-	private CraftZ plugin;
-	private BlockChecker blockChecker;
+	private static CraftZ plugin;
 	
-	private HashMap<String, AdditionalCraftZData> players = new HashMap<String, AdditionalCraftZData>();
+	private static HashMap<String, AdditionalCraftZData> players = new HashMap<String, AdditionalCraftZData>();
 	
-	public PlayerManager(CraftZ plugin) {
-		this.plugin = plugin;
-		blockChecker = new BlockChecker(plugin);
+	public static void setup(CraftZ plugin) {
+		PlayerManager.plugin = plugin;
 	}
 	
 	
 	
 	
 	
-	public ConfigurationSection getConfig() {
+	public static ConfigurationSection getConfig() {
 		return plugin.getDataConfig();
 	}
 	
@@ -40,7 +38,7 @@ public class PlayerManager {
 	
 	
 	
-	public void savePlayerToConfig(Player p) {
+	public static void savePlayerToConfig(Player p) {
 		
 		getConfig().set("Data.players." + p.getName() + ".thirst", players.get(p.getName()).thirst);
 		getConfig().set("Data.players." + p.getName() + ".zombiesKilled", players.get(p.getName()).zombiesKilled);
@@ -49,13 +47,13 @@ public class PlayerManager {
 		getConfig().set("Data.players." + p.getName() + ".bleeding", players.get(p.getName()).bleeding);
 		getConfig().set("Data.players." + p.getName() + ".poisoned", players.get(p.getName()).poisoned);
 		
-		
-		
 		plugin.saveDataConfig();
 		
 	}
 	
-	public void loadPlayer(Player p) {
+	public static void loadPlayer(Player p) {
+		
+		p.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 60, 1000));
 		
 		if (getConfig().contains("Data.players." + p.getName())) {
 			
@@ -88,7 +86,7 @@ public class PlayerManager {
 	
 	
 	
-	private void putPlayer(Player p, boolean defaults) {
+	private static void putPlayer(Player p, boolean defaults) {
 		
 		if (defaults) {
 			
@@ -112,7 +110,7 @@ public class PlayerManager {
 	
 	
 	
-	public void spawnPlayerAtRandomSpawn(Player p) {
+	public static void spawnPlayerAtRandomSpawn(Player p) {
 		
 		if (!plugin.getDataConfig().contains("Data.playerspawns")) {
 			return;
@@ -141,7 +139,7 @@ public class PlayerManager {
 			World spnWorld = plugin.getServer().getWorld(plugin.getConfig().getString("Config.world.name"));
 			Location spnLoc = new Location(spnWorld, spnLocX, spnLocY, spnLocZ);
 			
-			Location locToSpawn = blockChecker.getSafeSpawnLocationOver(spnLoc, true);
+			Location locToSpawn = BlockChecker.getSafeSpawnLocationOver(spnLoc, true);
 			
 			p.teleport(locToSpawn);
 			
@@ -157,7 +155,7 @@ public class PlayerManager {
 	
 	
 	
-	public void saveAllPlayersToConfig() {
+	public static void saveAllPlayersToConfig() {
 		
 		for (Player p : plugin.getServer().getOnlinePlayers()) {
 			savePlayerToConfig(p);
@@ -169,7 +167,7 @@ public class PlayerManager {
 	
 	
 	
-	public void resetPlayer(Player p) {
+	public static void resetPlayer(Player p) {
 		
 		getConfig().set("Data.players." + p.getName(), null);
 		plugin.saveDataConfig();
@@ -180,7 +178,7 @@ public class PlayerManager {
 	
 	
 	
-	public AdditionalCraftZData getData(String p) {
+	public static AdditionalCraftZData getData(String p) {
 		
 		if (!players.containsKey(p)) {
 			loadPlayer(Bukkit.getPlayer(p));
@@ -194,9 +192,9 @@ public class PlayerManager {
 	
 	
 	
-	public void onServerTick() {
+	public static void onServerTick(int tickID) {
 		
-		if (plugin.ticks % 1200 == 0) {
+		if (tickID % 1200 == 0) {
 			
 			for (String pn : players.keySet()) {
 				
@@ -215,18 +213,18 @@ public class PlayerManager {
 			
 		}
 		
-		if (plugin.ticks % 10 == 0) {
+		if (tickID % 10 == 0) {
 			
 			for (String pn : players.keySet()) {
 				
 				List<String> names = plugin.getConfig().getStringList("Config.change-item-names.names");
-				ItemRenamer.convertInventoryItemNames(Bukkit.getPlayer(pn).getInventory(), names);
+				ItemRenamer.convertPlayerInventory(Bukkit.getPlayer(pn), names);
 				
 			}
 			
 		}
 		
-		if (plugin.ticks % 200 == 0) {
+		if (tickID % 200 == 0) {
 			
 			for (String pn : players.keySet()) {
 				
@@ -254,9 +252,20 @@ public class PlayerManager {
 	
 	
 	
-	public boolean isOutsideOfWorldRim(Player p, int radius, Location spawn) {
-		
+	public static boolean isOutsideOfWorldRim(Player p, int radius, Location spawn) {
 		return (p.getLocation().getBlockX() > spawn.getBlockX() + radius);
+	}
+	
+	
+	
+	
+	
+	public static boolean isInsideOfLobby(Player p) {
+		
+		Location spawn = p.getWorld().getSpawnLocation();
+		int radius = plugin.getConfig().getInt("Config.world.lobby.radius");
+		
+		return spawn.distance(p.getLocation()) <= radius;
 		
 	}
 	

@@ -3,6 +3,7 @@ package me.JangoBrick.CraftZ.Listeners;
 import java.util.Random;
 
 import me.JangoBrick.CraftZ.CraftZ;
+import me.JangoBrick.CraftZ.PlayerManager;
 import net.minecraft.server.v1_5_R2.EntityZombie;
 
 import org.bukkit.ChatColor;
@@ -49,10 +50,10 @@ public class PlayerDeathListener implements Listener {
 			
 			if (eventPlayer.getKiller() != null) {
 				
-				plugin.getPlayerManager().getData(eventPlayer.getKiller().getName()).playersKilled++;
+				PlayerManager.getData(eventPlayer.getKiller().getName()).playersKilled++;
 				eventPlayer.getKiller().sendMessage(ChatColor.GOLD + plugin.getLangConfig()
 						.getString("Messages.killed.player").replaceAll("%p", eventPlayerName)
-						.replaceAll("%k", "" + plugin.getPlayerManager()
+						.replaceAll("%k", "" + PlayerManager
 								.getData(eventPlayer.getKiller().getName()).playersKilled));
 				
 			}
@@ -94,13 +95,13 @@ public class PlayerDeathListener implements Listener {
 			}
 			
 			String kickMsg = "[CraftZ] " + plugin.getLangConfig().getString("Messages.died");
-			kickMsg = kickMsg.replaceAll("%z", "" + plugin.getPlayerManager().getData(eventPlayerName).zombiesKilled);
-			kickMsg = kickMsg.replaceAll("%p", "" + plugin.getPlayerManager().getData(eventPlayerName).playersKilled);
-			kickMsg = kickMsg.replaceAll("%m", "" + plugin.getPlayerManager().getData(eventPlayerName).minutesSurvived);
+			kickMsg = kickMsg.replaceAll("%z", "" + PlayerManager.getData(eventPlayerName).zombiesKilled);
+			kickMsg = kickMsg.replaceAll("%p", "" + PlayerManager.getData(eventPlayerName).playersKilled);
+			kickMsg = kickMsg.replaceAll("%m", "" + PlayerManager.getData(eventPlayerName).minutesSurvived);
 			
 			eventPlayer.kickPlayer(kickMsg);
 			
-			plugin.getPlayerManager().resetPlayer(eventPlayer);
+			PlayerManager.resetPlayer(eventPlayer);
 			
 		}
 		

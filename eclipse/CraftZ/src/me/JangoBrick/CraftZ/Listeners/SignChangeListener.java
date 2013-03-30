@@ -1,6 +1,8 @@
 package me.JangoBrick.CraftZ.Listeners;
 
+import me.JangoBrick.CraftZ.ChestRefiller;
 import me.JangoBrick.CraftZ.CraftZ;
+import me.JangoBrick.CraftZ.ZombieSpawner;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -104,7 +106,7 @@ public class SignChangeListener implements Listener {
 						String msg_successfullyCreated = ChatColor.RED + plugin.getLangConfig().getString("Messages.successfully-created");
 						eventPlayer.sendMessage(msg_successfullyCreated);
 						
-						plugin.getZombieSpawner().addSpawn(nameForZombieSpawn);
+						ZombieSpawner.addSpawn(nameForZombieSpawn);
 						
 					} else {
 						String value_notEnoughPerms = ChatColor.DARK_RED + plugin.getLangConfig()
@@ -212,7 +214,7 @@ public class SignChangeListener implements Listener {
 						String msg_successfullyCreated = ChatColor.RED + plugin.getLangConfig().getString("Messages.successfully-created");
 						eventPlayer.sendMessage(msg_successfullyCreated);
 						
-						plugin.getChestRefiller().resetChestAndStartRefill(nameForLootSign, false);
+						ChestRefiller.resetChestAndStartRefill(nameForLootSign, false);
 						
 					} else {
 						String value_notEnoughPerms = ChatColor.DARK_RED + plugin.getLangConfig()

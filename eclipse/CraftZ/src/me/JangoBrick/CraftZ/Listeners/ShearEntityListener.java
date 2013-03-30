@@ -29,7 +29,7 @@ public class ShearEntityListener implements Listener {
 			
 			Boolean value_shearing_allow = plugin.getConfig().getBoolean("Config.animals.shearing");
 			
-			if (value_shearing_allow != true && eventPlayer.hasPermission("craftz.admin")) {
+			if (!value_shearing_allow && !eventPlayer.hasPermission("craftz.admin")) {
 				event.setCancelled(true);
 			}
 		

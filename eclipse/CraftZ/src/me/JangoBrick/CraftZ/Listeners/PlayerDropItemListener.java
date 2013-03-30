@@ -34,14 +34,6 @@ public class PlayerDropItemListener implements Listener {
 			if (eventItemType == Material.EYE_OF_ENDER) {
 				event.setCancelled(true);
 			}
-//			
-//			Inventory evtPlrInv = eventPlayer.getInventory();
-//			ItemStack[] validCtnts = itemNamer.validateInventoryContents(evtPlrInv);
-//			evtPlrInv.setContents(validCtnts);
-//			
-//			Map<Player, Inventory> savedInvs = plugin.getSavedInventories();
-//			savedInvs.put(eventPlayer, evtPlrInv);
-//			plugin.setSavedInventories(savedInvs);
 			
 		}
 		

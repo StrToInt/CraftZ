@@ -3,6 +3,7 @@ package me.JangoBrick.CraftZ.Listeners;
 import java.util.List;
 
 import me.JangoBrick.CraftZ.CraftZ;
+import me.JangoBrick.CraftZ.PlayerManager;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -41,9 +42,9 @@ public class EntityDeathListener implements Listener {
 				
 				if (eventEntity.getKiller() != null) {
 					
-					plugin.getPlayerManager().getData(event.getEntity().getKiller().getName()).zombiesKilled++;
+					PlayerManager.getData(event.getEntity().getKiller().getName()).zombiesKilled++;
 					eventEntity.getKiller().sendMessage(ChatColor.GOLD + plugin.getLangConfig()
-							.getString("Messages.killed.zombie").replaceAll("%k", "" + plugin.getPlayerManager()
+							.getString("Messages.killed.zombie").replaceAll("%k", "" + PlayerManager
 									.getData(eventEntity.getKiller().getName()).zombiesKilled));
 					
 				}

@@ -28,7 +28,7 @@ public class PlayerPickupItemListener implements Listener {
 		if (eventWorld.getName().equalsIgnoreCase(value_world_name)) {
 			
 			List<String> names = plugin.getConfig().getStringList("Config.change-item-names.names");
-			ItemRenamer.convertInventoryItemNames(event.getPlayer().getInventory(), names);
+			ItemRenamer.convertPlayerInventory(event.getPlayer(), names);
 		
 		}
 		

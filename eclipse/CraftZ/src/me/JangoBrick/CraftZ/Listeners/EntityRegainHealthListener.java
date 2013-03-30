@@ -21,7 +21,7 @@ public class EntityRegainHealthListener implements Listener {
 	}
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onEntityDeath(EntityRegainHealthEvent event) {
+	public void onEntityRegainHealth(EntityRegainHealthEvent event) {
 		
 		String value_world_name = plugin.getConfig().getString("Config.world.name");
 		World eventWorld = event.getEntity().getWorld();
@@ -31,9 +31,7 @@ public class EntityRegainHealthListener implements Listener {
 			EntityType eventEntityType = eventEntity.getType();
 			
 			if (eventEntityType == EntityType.PLAYER) {
-				
 				event.setCancelled(event.getRegainReason() == RegainReason.SATIATED);
-				
 			}
 		
 		}

@@ -1,6 +1,7 @@
 package me.JangoBrick.CraftZ.Listeners;
 
 import me.JangoBrick.CraftZ.CraftZ;
+import me.JangoBrick.CraftZ.PlayerManager;
 import me.JangoBrick.CraftZ.Util.Messager;
 
 import org.bukkit.ChatColor;
@@ -35,7 +36,7 @@ public class PlayerChangedWorldListener implements Listener {
 			}
 			
 			
-			plugin.getPlayerManager().savePlayerToConfig(eventPlayer);
+			PlayerManager.savePlayerToConfig(eventPlayer);
 			
 		} else if (eventPlayer.getWorld().getName().equalsIgnoreCase(value_world_name)) {
 			
@@ -46,7 +47,7 @@ public class PlayerChangedWorldListener implements Listener {
 			}
 			
 			
-			plugin.getPlayerManager().loadPlayer(eventPlayer);
+			PlayerManager.loadPlayer(eventPlayer);
 			
 		}
 		

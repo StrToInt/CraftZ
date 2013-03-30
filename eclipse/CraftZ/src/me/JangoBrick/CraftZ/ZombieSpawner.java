@@ -21,16 +21,14 @@ import org.bukkit.potion.PotionEffectType;
 
 public class ZombieSpawner implements Listener {
 	
-	private CraftZ plugin;
-	BlockChecker blockChecker;
-	EntityChecker entityChecker;
+	private static CraftZ plugin;
+	private static EntityChecker entityChecker;
 	
-	private Map<String, Integer> cooldowns = new HashMap<String, Integer>();
+	private static Map<String, Integer> cooldowns = new HashMap<String, Integer>();
 	
-	public ZombieSpawner(CraftZ plugin) {
+	public static void setup(CraftZ plugin) {
 		
-		this.plugin = plugin;
-		blockChecker = new BlockChecker(plugin);
+		ZombieSpawner.plugin = plugin;
 		entityChecker = new EntityChecker(plugin);
 		
 	}
@@ -39,7 +37,7 @@ public class ZombieSpawner implements Listener {
 	
 	
 	
-	public void addSpawns() {
+	public static void addSpawns() {
 		
 		if (plugin.getDataConfig().getConfigurationSection("Data.zombiespawns") != null) {
 			
@@ -55,7 +53,7 @@ public class ZombieSpawner implements Listener {
 	
 	
 	
-	public void addSpawn(String spawn) {
+	public static void addSpawn(String spawn) {
 		cooldowns.put(spawn, 0);
 	}
 	
@@ -63,7 +61,7 @@ public class ZombieSpawner implements Listener {
 	
 	
 	
-	public EntityZombie evalZombieSpawn(ConfigurationSection spnptSec) {
+	public static EntityZombie evalZombieSpawn(ConfigurationSection spnptSec) {
 		
 		int spnLocX = spnptSec.getInt("coords.x");
 		int spnLocY = spnptSec.getInt("coords.y");
@@ -71,7 +69,7 @@ public class ZombieSpawner implements Listener {
 		World spnWorld = plugin.getServer().getWorld(plugin.getConfig().getString("Config.world.name"));
 		Location spnLoc = new Location(spnWorld, spnLocX, spnLocY, spnLocZ);
 		
-		Location locToSpawn = blockChecker.getSafeSpawnLocationOver(spnLoc, true);
+		Location locToSpawn = BlockChecker.getSafeSpawnLocationOver(spnLoc, true);
 		
 		int maxZombiesInRadius = spnptSec.getInt("max-zombies-in-radius");
 		int maxZombiesRadius = spnptSec.getInt("max-zombies-radius");
@@ -108,7 +106,7 @@ public class ZombieSpawner implements Listener {
 	
 	
 	
-	public void onServerTick() {
+	public static void onServerTick(int tickID) {
 		
 		for (String str : cooldowns.keySet()) {
 			

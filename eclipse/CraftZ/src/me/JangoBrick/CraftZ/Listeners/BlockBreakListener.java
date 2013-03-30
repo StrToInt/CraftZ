@@ -1,5 +1,6 @@
 package me.JangoBrick.CraftZ.Listeners;
 
+import me.JangoBrick.CraftZ.ChestRefiller;
 import me.JangoBrick.CraftZ.CraftZ;
 
 import org.bukkit.ChatColor;
@@ -162,9 +163,8 @@ public class BlockBreakListener implements Listener {
 								
 								if (((Sign) iBlock.getState()).getLine(2).equals("" + chest.getLocation().getBlockY())) {
 									
-									plugin.getChestRefiller().resetChestAndStartRefill(
-											"x" + iBlock.getLocation().getBlockX() + "y" + i +
-											"z" + iBlock.getLocation().getBlockZ(), true);
+									ChestRefiller.resetChestAndStartRefill("x" + iBlock.getLocation().getBlockX()
+											+ "y" + i + "z" + iBlock.getLocation().getBlockZ(), true);
 									
 								}
 								

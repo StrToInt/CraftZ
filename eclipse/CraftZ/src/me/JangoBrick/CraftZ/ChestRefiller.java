@@ -16,20 +16,18 @@ import org.bukkit.inventory.ItemStack;
 
 public class ChestRefiller {
 	
-	private CraftZ plugin;
-	private Map<String, Integer> cooldowns = new HashMap<String, Integer>();
+	private static CraftZ plugin;
+	private static Map<String, Integer> cooldowns = new HashMap<String, Integer>();
 	
-	public ChestRefiller(CraftZ plugin) {
-		
-		this.plugin = plugin;
-		
+	public static void setup(CraftZ plugin) {
+		ChestRefiller.plugin = plugin;
 	}
 	
 	
 	
 	
 	
-	public void resetAllChestsAndStartRefill() {
+	public static void resetAllChestsAndStartRefill() {
 		
 		if (plugin.getDataConfig().getConfigurationSection("Data.lootchests") != null) {
 			
@@ -47,12 +45,16 @@ public class ChestRefiller {
 	
 	
 	
-	public void resetChestAndStartRefill(String chestEntry, boolean drop) {
+	public static boolean resetChestAndStartRefill(String chestEntry, boolean drop) {
 		
 		cooldowns.put(chestEntry, 0);
 		
 		ConfigurationSection chestSec = plugin.getDataConfig()
 				.getConfigurationSection("Data.lootchests." + chestEntry);
+		
+		if (chestSec == null) {
+			return false;
+		}
 		
 		int rflLocX = chestSec.getInt("coords.x");
 		int rflLocY = chestSec.getInt("coords.y");
@@ -68,13 +70,15 @@ public class ChestRefiller {
 		
 		block.setType(Material.AIR);
 		
+		return true;
+		
 	}
 	
 	
 	
 	
 	
-	public void evalChestRefill(ConfigurationSection chestSec) {
+	public static void evalChestRefill(ConfigurationSection chestSec) {
 		
 		int rflLocX = chestSec.getInt("coords.x");
 		int rflLocY = chestSec.getInt("coords.y");
@@ -161,7 +165,7 @@ public class ChestRefiller {
 	
 	
 	
-	public void onServerTick() {
+	public static void onServerTick(int tickID) {
 		
 		for (String chestKey : cooldowns.keySet()) {
 			

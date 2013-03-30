@@ -1,6 +1,7 @@
 package me.JangoBrick.CraftZ.Listeners;
 
 import me.JangoBrick.CraftZ.CraftZ;
+import me.JangoBrick.CraftZ.PlayerManager;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -31,6 +32,11 @@ public class EntityDamageByEntityListener implements Listener {
 		World eventWorld = event.getEntity().getWorld();
 		if (eventWorld.getName().equalsIgnoreCase(value_world_name)) {
 			
+			if (event.getEntity() instanceof Player && PlayerManager.isInsideOfLobby((Player) event.getEntity())) {
+				event.setCancelled(true);
+				return;
+			}
+			
 			if (event.getDamager() instanceof Player && event.getEntity() instanceof Player
 					&& event.getCause() == DamageCause.ENTITY_ATTACK) {
 				
@@ -53,7 +59,7 @@ public class EntityDamageByEntityListener implements Listener {
 							damager.getItemInHand().setAmount(damager.getItemInHand().getAmount() - 1);
 						}
 						
-						plugin.getPlayerManager().getData(eventPlayer.getName()).bleeding = false;
+						PlayerManager.getData(eventPlayer.getName()).bleeding = false;
 						
 						eventPlayer.sendMessage(ChatColor.DARK_RED + plugin.getLangConfig()
 								.getString("Messages.bandaged"));
@@ -109,7 +115,7 @@ public class EntityDamageByEntityListener implements Listener {
 							damager.getItemInHand().setAmount(damager.getItemInHand().getAmount() - 1);
 						}
 						
-						plugin.getPlayerManager().getData(eventPlayer.getName()).poisoned = false;
+						PlayerManager.getData(eventPlayer.getName()).poisoned = false;
 						
 						eventPlayer.sendMessage(ChatColor.DARK_RED + plugin.getLangConfig()
 								.getString("Messages.unpoisoned"));
@@ -130,7 +136,7 @@ public class EntityDamageByEntityListener implements Listener {
 							.getDouble("Config.players.medical.poisoning.chance");
 					if (Math.random() >= value_poisoning_chance) {
 						
-						plugin.getPlayerManager().getData(((Player) event.getEntity()).getName()).poisoned = true;
+						PlayerManager.getData(((Player) event.getEntity()).getName()).poisoned = true;
 						((Player) event.getEntity()).playSound(event.getEntity().getLocation(),
 								Sound.ZOMBIE_INFECT, 1, 1);
 						((Player) event.getEntity()).sendMessage(ChatColor.DARK_RED + plugin.getLangConfig()

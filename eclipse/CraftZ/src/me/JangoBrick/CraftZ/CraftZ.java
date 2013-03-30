@@ -25,20 +25,26 @@ public class CraftZ extends JavaPlugin {
 	
 	Time time = new Time(this);
 	Messager messager = new Messager(this);
-	private ZombieSpawner zombieSpawner = new ZombieSpawner(this);
-	private ChestRefiller chestRefiller = new ChestRefiller(this);
-	private PlayerManager playerManager = new PlayerManager(this);
-	public int ticks = 0;
+	public static int tickID = 0;
 	public Map<Player, Integer> movingPlayers = new HashMap<Player, Integer>();
+	
+	public static CraftZ instance;
 	
 	
 	public void onEnable() {
+		
+		instance = this;
 		
 		//Load config part
 		loadConfig();
 		
 		//Load event part
 		registerEvents();
+		
+		ZombieSpawner.setup(this);
+		AnimalSpawner.setup(this);
+		ChestRefiller.setup(this);
+		PlayerManager.setup(this);
 		
 		
 		
@@ -50,11 +56,12 @@ public class CraftZ extends JavaPlugin {
 				
 				try {
 					
-					ticks++;
+					tickID++;
 					
-					zombieSpawner.onServerTick();
-					chestRefiller.onServerTick();
-					playerManager.onServerTick();
+					ZombieSpawner.onServerTick(tickID);
+					AnimalSpawner.onServerTick(tickID);
+					ChestRefiller.onServerTick(tickID);
+					PlayerManager.onServerTick(tickID);
 					
 				} catch(Throwable ex) {
 					
@@ -69,8 +76,8 @@ public class CraftZ extends JavaPlugin {
 		this.getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
 			@Override
 			public void run() {
-				chestRefiller.resetAllChestsAndStartRefill();
-				zombieSpawner.addSpawns();
+				ChestRefiller.resetAllChestsAndStartRefill();
+				ZombieSpawner.addSpawns();
 			}
 		});
 		
@@ -88,7 +95,7 @@ public class CraftZ extends JavaPlugin {
 	
 	public void onDisable() {
 		
-		playerManager.saveAllPlayersToConfig();
+		PlayerManager.saveAllPlayersToConfig();
 		
 		System.out.println("++==========================================++");
 		System.out.println("||  [CraftZ] Plugin successfully disabled.  ||");
@@ -205,7 +212,6 @@ public class CraftZ extends JavaPlugin {
 	
 	
 	
-	// Event-Teil
 	private void registerEvents() {
 		
 		// PLAYER
@@ -262,33 +268,6 @@ public class CraftZ extends JavaPlugin {
 		// WEATHER
 		new WeatherChangeListener(this);
 		
-		// SERVER
-		new ServerTickListener(this);
-		
-	}
-	
-	
-	
-	
-	
-	public ChestRefiller getChestRefiller() {
-		return chestRefiller;
-	}
-	
-	
-	
-	
-	
-	public ZombieSpawner getZombieSpawner() {
-		return zombieSpawner;
-	}
-	
-	
-	
-	
-	
-	public PlayerManager getPlayerManager() {
-		return playerManager;
 	}
 	
 	
@@ -330,7 +309,10 @@ public class CraftZ extends JavaPlugin {
 			// WORLD
 			
 			String path_world_name = "Config.world.name";
-			this.getConfig().addDefault(path_world_name, "chernarus");
+			this.getConfig().addDefault(path_world_name, "world");
+			
+			String path_world_lobby_radius = "Config.world.lobby.radius";
+			this.getConfig().addDefault(path_world_lobby_radius, 20);
 			
 			String path_world_realtime = "Config.world.real-time";
 			this.getConfig().addDefault(path_world_realtime, true);
@@ -448,16 +430,16 @@ public class CraftZ extends JavaPlugin {
 						// CHANCE
 						
 						String path_animalspawns_chance_cow = "Config.mobs.animals.spawning.chance.cow";
-						this.getConfig().addDefault(path_animalspawns_chance_cow, 0.3);
+						this.getConfig().addDefault(path_animalspawns_chance_cow, 0.1);
 						
 						String path_animalspawns_chance_chicken = "Config.mobs.animals.spawning.chance.chicken";
-						this.getConfig().addDefault(path_animalspawns_chance_chicken, 0.3);
+						this.getConfig().addDefault(path_animalspawns_chance_chicken, 0.1);
 						
 						String path_animalspawns_chance_pig = "Config.mobs.animals.spawning.chance.pig";
-						this.getConfig().addDefault(path_animalspawns_chance_pig, 0.3);
+						this.getConfig().addDefault(path_animalspawns_chance_pig, 0.1);
 						
 						String path_animalspawns_chance_sheep = "Config.mobs.animals.spawning.chance.sheep";
-						this.getConfig().addDefault(path_animalspawns_chance_sheep, 0.3);
+						this.getConfig().addDefault(path_animalspawns_chance_sheep, 0.1);
 					
 			// CHAT
 		
@@ -482,11 +464,11 @@ public class CraftZ extends JavaPlugin {
 			this.getConfig().addDefault(path_vehicles_speed_streetMulti, 1.6);
 			
 			String path_vehicles_speed_streetBlocks = "Config.vehicles.speed-street-blocks";
-			String[] value_vehicles_speed_streetBlocks = {"35:7", "35", "35:15"};
+			String[] value_vehicles_speed_streetBlocks = { "35:7", "35", "35:15" };
 			this.getConfig().addDefault(path_vehicles_speed_streetBlocks, value_vehicles_speed_streetBlocks);
 			
 			String path_vehicles_streetBorderBlocks = "Config.vehicles.street-border-blocks";
-			String[] value_vehicles_streetBorderBlocks = {"43", "44"};
+			String[] value_vehicles_streetBorderBlocks = { "43", "44" };
 			this.getConfig().addDefault(path_vehicles_streetBorderBlocks, value_vehicles_streetBorderBlocks);
 			
 			// ITEMNAMES
@@ -849,6 +831,7 @@ public class CraftZ extends JavaPlugin {
 	
 	public void reloadConfigs() {
 		
+		reloadConfig();
 		loadConfig();
 		
 	}

@@ -3,8 +3,10 @@ package me.JangoBrick.CraftZ.Listeners;
 import java.util.Random;
 
 import me.JangoBrick.CraftZ.CraftZ;
+import me.JangoBrick.CraftZ.PlayerManager;
 
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -44,18 +46,51 @@ public class EntityDamageListener implements Listener {
 					eventEntity.setFireTicks(0);
 				} else {
 					
+					if (eventEntityType == EntityType.PLAYER) {
+						
+						if (PlayerManager.isInsideOfLobby((Player) eventEntity)) {
+							event.setCancelled(true);
+							return;
+						}
+						
+						if (plugin.getConfig().getBoolean("Config.players.medical.bleeding.enable")
+								&& ((Player) eventEntity).getGameMode() != GameMode.CREATIVE) {
+							
+							double value_bleeding_chance = 1 - plugin.getConfig()
+									.getDouble("Config.players.medical.bleeding.chance");
+							if (Math.random() >= value_bleeding_chance) {
+								
+								PlayerManager.getData(((Player) eventEntity).getName()).bleeding = true;
+								((Player) eventEntity).sendMessage(ChatColor.DARK_RED + plugin.getLangConfig()
+										.getString("Messages.bleeding"));
+								
+							}
+							
+						}
+						
+					}
+					
 					boolean value_mobs_blood = plugin.getConfig().getBoolean("Config.mobs.blood-particles-when-damaged");
-					if (!event.isCancelled() && event.getDamage() > 0 && value_mobs_blood) {
+					if (!event.isCancelled() && value_mobs_blood) {
+						
+						if (!eventEntityType.isAlive() || (eventEntityType == EntityType.PLAYER
+								&& ((Player) eventEntity).getGameMode() == GameMode.CREATIVE)) {
+							return;
+						}
 						
 						int bloodCount = 0;
 						
 						if (eventEntityType == EntityType.ZOMBIE) {
-							bloodCount = event.getDamage() + new Random().nextInt(21);
+							bloodCount = event.getDamage() * 2;
 						} else {
-							bloodCount = event.getDamage() * 2 + new Random().nextInt(41);
+							bloodCount = event.getDamage() * 6;
 						}
 						
 						for (int i=0; i<bloodCount; i++) {
+							
+//							eventWorld.playEffect(eventEntity.getLocation(), Effect.STEP_SOUND,
+//									Material.REDSTONE_WIRE.getId());
+//							eventEntity.playEffect(EntityEffect.HURT);
 							
 							final Item blood = eventWorld.dropItemNaturally(eventEntity.getLocation(),
 									new ItemStack(Material.WOOL, 1, (short) 14));
@@ -67,25 +102,7 @@ public class EntityDamageListener implements Listener {
 								public void run() {
 									blood.remove();
 								}
-							}, 6 + new Random().nextInt(7));
-							
-						}
-						
-					}
-					
-					if (eventEntityType == EntityType.PLAYER) {
-						
-						if (plugin.getConfig().getBoolean("Config.players.medical.bleeding.enable")) {
-							
-							double value_bleeding_chance = 1 - plugin.getConfig()
-									.getDouble("Config.players.medical.bleeding.chance");
-							if (Math.random() >= value_bleeding_chance) {
-								
-								plugin.getPlayerManager().getData(((Player) eventEntity).getName()).bleeding = true;
-								((Player) eventEntity).sendMessage(ChatColor.DARK_RED + plugin.getLangConfig()
-										.getString("Messages.bleeding"));
-								
-							}
+							}, 1 + new Random().nextInt(6));
 							
 						}
 						

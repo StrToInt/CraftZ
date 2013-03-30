@@ -4,7 +4,6 @@ import me.JangoBrick.CraftZ.CraftZ;
 
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -27,8 +26,6 @@ public class CreatureSpawnListener implements Listener {
 		World eventWorld = event.getEntity().getWorld();
 		if (eventWorld.getName().equalsIgnoreCase(value_world_name)) {
 			
-			@SuppressWarnings("unused")
-			LivingEntity eventCreature = event.getEntity();
 			EntityType eventCreatureType = event.getEntityType();
 			SpawnReason spawnReason = event.getSpawnReason();
 			
@@ -87,60 +84,13 @@ public class CreatureSpawnListener implements Listener {
 			
 			
 			Boolean value_animalspawns_allow = plugin.getConfig().getBoolean("Config.mobs.animals.spawning.enable");
-			if (value_animalspawns_allow == true) {
-				
-				
-				Double value_animalspawns_chance_cow = 1 - plugin.getConfig().getDouble("Config.mobs.animals.spawning.chance.cow");
-				if (eventCreatureType == EntityType.COW) {
-					if (Math.random() >= value_animalspawns_chance_cow) {
-						event.setCancelled(true);
-					}
-					if (spawnReason == SpawnReason.SPAWNER_EGG) {
-						event.setCancelled(false);
-					}
-				}
-				
-				Double value_animalspawns_chance_chicken = 1 - plugin.getConfig().getDouble("Config.mobs.animals.spawning.chance.chicken");
-				if (eventCreatureType == EntityType.CHICKEN) {
-					if (Math.random() >= value_animalspawns_chance_chicken) {
-						event.setCancelled(true);
-					}
-					if (spawnReason == SpawnReason.SPAWNER_EGG) {
-						event.setCancelled(false);
-					}
-				}
-				
-				Double value_animalspawns_chance_pig = 1 - plugin.getConfig().getDouble("Config.mobs.animals.spawning.chance.pig");
-				if (eventCreatureType == EntityType.PIG) {
-					if (Math.random() >= value_animalspawns_chance_pig) {
-						event.setCancelled(true);
-					}
-					if (spawnReason == SpawnReason.SPAWNER_EGG) {
-						event.setCancelled(false);
-					}
-				}
-				
-				Double value_animalspawns_chance_sheep = 1 - plugin.getConfig().getDouble("Config.mobs.animals.spawning.chance.sheep");
-				if (eventCreatureType == EntityType.SHEEP) {
-					if (Math.random() >= value_animalspawns_chance_sheep) {
-						event.setCancelled(true);
-					}
-					if (spawnReason == SpawnReason.SPAWNER_EGG) {
-						event.setCancelled(false);
-					}
-				}			
-				
-				
-			} else if (eventCreatureType == EntityType.COW
-					|| eventCreatureType == EntityType.CHICKEN
-					|| eventCreatureType == EntityType.PIG
-					|| eventCreatureType == EntityType.SHEEP) {
+			if (!value_animalspawns_allow) {
 				event.setCancelled(true);
 			}
 			
 			
 			
-			if (eventCreatureType.getName().equalsIgnoreCase("zombie")) {
+			if (eventCreatureType == EntityType.ZOMBIE) {
 				
 				if (spawnReason != SpawnReason.CUSTOM && spawnReason != SpawnReason.SPAWNER_EGG) {
 					event.setCancelled(true);

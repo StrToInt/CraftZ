@@ -37,7 +37,7 @@ public class EntityShootBowListener implements Listener {
 				if (eventPlayer.getInventory().contains(Material.TNT)) {
 					
 					TNTPrimed tnt = (TNTPrimed) eventWorld.spawn(eventPlayer.getLocation().add(0, 1, 0), TNTPrimed.class);
-					tnt.setVelocity(eventPlayer.getLocation().getDirection().multiply(3));
+					tnt.setVelocity(eventPlayer.getLocation().getDirection().clone().multiply(3));
 					event.setCancelled(true);
 					
 					if (eventPlayer.getGameMode() != GameMode.CREATIVE) {
@@ -48,9 +48,8 @@ public class EntityShootBowListener implements Listener {
 						if (firstTnt.getAmount() > 1) {
 							firstTnt.setAmount(firstTnt.getAmount() - 1);
 						} else {
-							ItemStack airItemStack = new ItemStack(Material.AIR, 0);
 							eventPlayer.getInventory().setItem(eventPlayer.getInventory().first(Material.TNT),
-									airItemStack);
+									new ItemStack(Material.AIR, 0));
 						}
 						
 					}

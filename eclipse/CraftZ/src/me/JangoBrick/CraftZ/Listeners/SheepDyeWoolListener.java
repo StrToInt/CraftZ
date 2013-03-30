@@ -2,9 +2,7 @@ package me.JangoBrick.CraftZ.Listeners;
 
 import me.JangoBrick.CraftZ.CraftZ;
 
-import org.bukkit.DyeColor;
 import org.bukkit.World;
-import org.bukkit.entity.Sheep;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -26,10 +24,7 @@ public class SheepDyeWoolListener implements Listener {
 		World eventWorld = event.getEntity().getWorld();
 		if (eventWorld.getName().equalsIgnoreCase(value_world_name)) {
 			
-			Sheep eventSheep = (Sheep) event.getEntity();
-			DyeColor eventSheepColor = eventSheep.getColor();
-			
-			event.setColor(eventSheepColor);
+			event.setCancelled(true);
 			
 		}
 		
