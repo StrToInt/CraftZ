@@ -4,6 +4,7 @@ import me.JangoBrick.CraftZ.CraftZ;
 import me.JangoBrick.CraftZ.PlayerManager;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -31,8 +32,16 @@ public class PlayerJoinListener implements Listener {
 				event.setJoinMessage(ChatColor.RED + "Player " + event.getPlayer().getDisplayName() + " connected.");
 			}
 			
-			
-			PlayerManager.loadPlayer(event.getPlayer());
+			if (PlayerManager.isAlreadyInWorld(event.getPlayer())) {
+				PlayerManager.loadPlayer(event.getPlayer());
+			} else {
+				event.getPlayer().setHealth(20);
+				
+				Location loc = new Location(eventWorld, (double) plugin.getConfig().getInt("Config.world.lobby.x"),
+						(double) plugin.getConfig().getInt("Config.world.lobby.y"),
+						(double) plugin.getConfig().getInt("Config.world.lobby.z"));
+				event.getPlayer().teleport(loc);
+			}
 		
 		}
 		

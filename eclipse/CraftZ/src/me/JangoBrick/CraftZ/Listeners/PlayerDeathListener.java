@@ -43,9 +43,7 @@ public class PlayerDeathListener implements Listener {
 			
 			boolean value_modifyDeathMessages = plugin.getConfig().getBoolean("Config.chat.modify-death-messages");
 			if (value_modifyDeathMessages) {
-				
 				event.setDeathMessage(eventPlayerName + " was killed.");
-				
 			}
 			
 			if (eventPlayer.getKiller() != null) {

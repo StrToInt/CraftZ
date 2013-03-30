@@ -131,6 +131,11 @@ public class CraftZ extends JavaPlugin {
 						sender.sendMessage(msg_craftz_help_rld);
 					}
 					
+					if (sender.hasPermission("craftz.spawn")) {
+						String msg_craftz_help_spawn = ChatColor.YELLOW + this.getLangConfig().getString("Messages.help.spawn-command");
+						sender.sendMessage(msg_craftz_help_spawn);
+					}
+					
 				} else {
 					String value_notEnoughPerms = ChatColor.DARK_RED + this.getLangConfig()
 							.getString("Messages.errors.not-enough-permissions");
@@ -144,9 +149,7 @@ public class CraftZ extends JavaPlugin {
 			
 			
 			
-			if (args.length > 0) {	
-				
-				
+			if (args.length > 0) {
 								
 				if (args[0].equalsIgnoreCase("reload")) {
 					
@@ -194,12 +197,63 @@ public class CraftZ extends JavaPlugin {
 				}
 				
 				
+				
+				if (args[0].equalsIgnoreCase("spawn")) {
+					
+					if (!(sender instanceof Player)) {
+						return true;
+					}
+					
+					Player p = (Player) sender;
+					
+					if (p.hasPermission("craftz.spawn")) {
+						
+						if (PlayerManager.isInsideOfLobby(p)) {
+							PlayerManager.loadPlayer(p);
+						}
+						
+					} else {
+						String value_notEnoughPerms = ChatColor.DARK_RED + this.getLangConfig()
+								.getString("Messages.errors.not-enough-permissions");
+						p.sendMessage(value_notEnoughPerms);
+					}
+					
+				}
+				
+				
+				
+				if (args[0].equalsIgnoreCase("setlobby")) {
+					
+					if (!(sender instanceof Player)) {
+						return true;
+					}
+					
+					Player p = (Player) sender;
+					
+					if (p.hasPermission("craftz.setlobby")) {
+						
+						int x = p.getLocation().getBlockX();
+						int y = p.getLocation().getBlockY();
+						int z = p.getLocation().getBlockZ();
+						
+						getConfig().set("Config.world.lobby.x", x);
+						getConfig().set("Config.world.lobby.y", y);
+						getConfig().set("Config.world.lobby.z", z);
+						
+						saveConfig();
+						
+					} else {
+						String value_notEnoughPerms = ChatColor.DARK_RED + this.getLangConfig()
+								.getString("Messages.errors.not-enough-permissions");
+						p.sendMessage(value_notEnoughPerms);
+					}
+					
+				}
+				
 				return true;
 					
 			}
-				
-				
-				
+			
 		}
 			
 		
@@ -313,6 +367,15 @@ public class CraftZ extends JavaPlugin {
 			
 			String path_world_lobby_radius = "Config.world.lobby.radius";
 			this.getConfig().addDefault(path_world_lobby_radius, 20);
+			
+			String path_world_lobby_x = "Config.world.lobby.x";
+			this.getConfig().addDefault(path_world_lobby_x, 0);
+			
+			String path_world_lobby_y = "Config.world.lobby.y";
+			this.getConfig().addDefault(path_world_lobby_y, getServer().getWorlds().get(0).getSeaLevel());
+			
+			String path_world_lobby_z = "Config.world.lobby.z";
+			this.getConfig().addDefault(path_world_lobby_z, 0);
 			
 			String path_world_realtime = "Config.world.real-time";
 			this.getConfig().addDefault(path_world_realtime, true);
@@ -560,6 +623,12 @@ public class CraftZ extends JavaPlugin {
 			
 			String path_craftz_help_rld = "Messages.help.reload-command";
 			this.getLangConfig().addDefault(path_craftz_help_rld, "/craftz reload: Reload the configuration files.");
+			
+			String path_craftz_help_spawn = "Messages.help.spawn-command";
+			this.getLangConfig().addDefault(path_craftz_help_spawn, "/craftz spawn: Spawn at a random point inside of the world.");
+			
+			String path_craftz_help_setlobby = "Messages.help.setlobby-command";
+			this.getLangConfig().addDefault(path_craftz_help_setlobby, "/craftz setlobby: Set the lobby location where you're standing.");
 			
 			// COMMAND
 			

@@ -20,7 +20,7 @@ public class PlayerKickListener implements Listener {
 	}
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onPlayerQuit(PlayerKickEvent event) {
+	public void onPlayerKick(PlayerKickEvent event) {
 		
 		String value_world_name = plugin.getConfig().getString("Config.world.name");
 		World eventWorld = event.getPlayer().getWorld();

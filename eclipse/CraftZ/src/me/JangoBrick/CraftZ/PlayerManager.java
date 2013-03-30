@@ -40,14 +40,18 @@ public class PlayerManager {
 	
 	public static void savePlayerToConfig(Player p) {
 		
-		getConfig().set("Data.players." + p.getName() + ".thirst", players.get(p.getName()).thirst);
-		getConfig().set("Data.players." + p.getName() + ".zombiesKilled", players.get(p.getName()).zombiesKilled);
-		getConfig().set("Data.players." + p.getName() + ".playersKilled", players.get(p.getName()).playersKilled);
-		getConfig().set("Data.players." + p.getName() + ".minsSurvived", players.get(p.getName()).minutesSurvived);
-		getConfig().set("Data.players." + p.getName() + ".bleeding", players.get(p.getName()).bleeding);
-		getConfig().set("Data.players." + p.getName() + ".poisoned", players.get(p.getName()).poisoned);
-		
-		plugin.saveDataConfig();
+		if (isAlreadyInWorld(p) && players.containsKey(p.getName())) {
+			
+			getConfig().set("Data.players." + p.getName() + ".thirst", players.get(p.getName()).thirst);
+			getConfig().set("Data.players." + p.getName() + ".zombiesKilled", players.get(p.getName()).zombiesKilled);
+			getConfig().set("Data.players." + p.getName() + ".playersKilled", players.get(p.getName()).playersKilled);
+			getConfig().set("Data.players." + p.getName() + ".minsSurvived", players.get(p.getName()).minutesSurvived);
+			getConfig().set("Data.players." + p.getName() + ".bleeding", players.get(p.getName()).bleeding);
+			getConfig().set("Data.players." + p.getName() + ".poisoned", players.get(p.getName()).poisoned);
+			
+			plugin.saveDataConfig();
+			
+		}
 		
 	}
 	
@@ -55,7 +59,7 @@ public class PlayerManager {
 		
 		p.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 60, 1000));
 		
-		if (getConfig().contains("Data.players." + p.getName())) {
+		if (isAlreadyInWorld(p)) {
 			
 			try {
 				
@@ -157,7 +161,7 @@ public class PlayerManager {
 	
 	public static void saveAllPlayersToConfig() {
 		
-		for (Player p : plugin.getServer().getOnlinePlayers()) {
+		for (Player p : plugin.getServer().getWorld(plugin.getConfig().getString("Config.world.name")).getPlayers()) {
 			savePlayerToConfig(p);
 		}
 		
@@ -171,6 +175,7 @@ public class PlayerManager {
 		
 		getConfig().set("Data.players." + p.getName(), null);
 		plugin.saveDataConfig();
+		plugin.reloadDataConfig();
 		
 	}
 	
@@ -262,11 +267,19 @@ public class PlayerManager {
 	
 	public static boolean isInsideOfLobby(Player p) {
 		
-		Location spawn = p.getWorld().getSpawnLocation();
+		Location lobby = p.getWorld().getSpawnLocation();
 		int radius = plugin.getConfig().getInt("Config.world.lobby.radius");
 		
-		return spawn.distance(p.getLocation()) <= radius;
+		return lobby.distance(p.getLocation()) <= radius;
 		
+	}
+	
+	
+	
+	
+	
+	public static boolean isAlreadyInWorld(Player p) {
+		return getConfig().contains("Data.players." + p.getName());
 	}
 	
 }
