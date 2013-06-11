@@ -4,13 +4,12 @@ import java.util.Random;
 
 import me.JangoBrick.CraftZ.CraftZ;
 import me.JangoBrick.CraftZ.PlayerManager;
-import net.minecraft.server.v1_5_R2.EntityZombie;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_5_R2.entity.CraftZombie;
+import org.bukkit.craftbukkit.v1_5_R3.entity.CraftZombie;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -71,25 +70,22 @@ public class PlayerDeathListener implements Listener {
 					new ItemStack(Material.AIR), new ItemStack(Material.AIR),
 					new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
 			
-			EntityZombie spawnedZombie = ((CraftZombie) eventPlayerLoc.getWorld()
-					.spawnEntity(eventPlayerLoc, EntityType.ZOMBIE)).getHandle();
+			CraftZombie spawnedZombie = (CraftZombie) eventPlayerLoc.getWorld()
+					.spawnEntity(eventPlayerLoc, EntityType.ZOMBIE);
 			
 			spawnedZombie.setVillager(true);
 			
 			if (new Random().nextInt(7) > 0) {
-				((CraftZombie) spawnedZombie.getBukkitEntity()).addPotionEffect(
-						new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE,
-								(new Random().nextInt(3) + 1)), true);
-				((CraftZombie) spawnedZombie.getBukkitEntity()).addPotionEffect(
-						new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE,
-								1, true));
+				spawnedZombie.addPotionEffect(new PotionEffect(PotionEffectType.SPEED,
+						Integer.MAX_VALUE, (new Random().nextInt(3) + 1)), false);
+				spawnedZombie.addPotionEffect(new PotionEffect(
+						PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, 1, false));
 			} else {
-				((CraftZombie) spawnedZombie.getBukkitEntity()).addPotionEffect(
-						new PotionEffect(PotionEffectType.JUMP, Integer.MAX_VALUE,
-								1, true));
-				((CraftZombie) spawnedZombie.getBukkitEntity()).addPotionEffect(
-						new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE,
-								1, true));
+				spawnedZombie.addPotionEffect(new PotionEffect(
+						PotionEffectType.JUMP, Integer.MAX_VALUE, 1, false));
+				spawnedZombie.addPotionEffect(new PotionEffect(
+						PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, 1, false));
+				spawnedZombie.setBaby(true);
 			}
 			
 			String kickMsg = "[CraftZ] " + plugin.getLangConfig().getString("Messages.died");

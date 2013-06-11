@@ -7,12 +7,11 @@ import java.util.Set;
 
 import me.JangoBrick.CraftZ.Util.BlockChecker;
 import me.JangoBrick.CraftZ.Util.EntityChecker;
-import net.minecraft.server.v1_5_R2.EntityZombie;
 
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.craftbukkit.v1_5_R2.entity.CraftZombie;
+import org.bukkit.craftbukkit.v1_5_R3.entity.CraftZombie;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.Listener;
@@ -23,6 +22,7 @@ public class ZombieSpawner implements Listener {
 	
 	private static CraftZ plugin;
 	private static EntityChecker entityChecker;
+	private static int ticksForAutoSpawn = 0;
 	
 	private static Map<String, Integer> cooldowns = new HashMap<String, Integer>();
 	
@@ -61,7 +61,7 @@ public class ZombieSpawner implements Listener {
 	
 	
 	
-	public static EntityZombie evalZombieSpawn(ConfigurationSection spnptSec) {
+	public static CraftZombie evalZombieSpawn(ConfigurationSection spnptSec) {
 		
 		int spnLocX = spnptSec.getInt("coords.x");
 		int spnLocY = spnptSec.getInt("coords.y");
@@ -90,7 +90,7 @@ public class ZombieSpawner implements Listener {
 			if (zombies <= maxZombies) {
 				
 				Entity ent = spnWorld.spawnEntity(locToSpawn, EntityType.ZOMBIE);
-				EntityZombie zombie = (EntityZombie) ent;
+				CraftZombie zombie = (CraftZombie) ent;
 				return zombie;
 				
 			} else {
@@ -112,7 +112,7 @@ public class ZombieSpawner implements Listener {
 			
 			cooldowns.put(str, cooldowns.get(str) + 1);
 			
-			if (cooldowns.get(str) >= (plugin.getConfig().getInt("Config.mobs.zombies.spawning.interval") * 20)) {
+			if (cooldowns.get(str) >= plugin.getConfig().getInt("Config.mobs.zombies.spawning.interval") * 20) {
 				
 				cooldowns.put(str, 0);
 				
@@ -130,34 +130,24 @@ public class ZombieSpawner implements Listener {
 						return;
 					}
 					
-					final EntityZombie spawnedZombie = evalZombieSpawn(configSec);
+					final CraftZombie spawnedZombie = evalZombieSpawn(configSec);
 					
 					if (spawnedZombie == null) {
 						return;
 					}
 					
-					plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-						@Override
-						public void run() {
-							
-							if (new Random().nextInt(7) > 0) {
-								((CraftZombie) spawnedZombie.getBukkitEntity()).addPotionEffect(
-										new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE,
-												(new Random().nextInt(3) + 1)), false);
-								((CraftZombie) spawnedZombie.getBukkitEntity()).addPotionEffect(
-										new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE,
-												1, false));
-							} else {
-								((CraftZombie) spawnedZombie.getBukkitEntity()).addPotionEffect(
-										new PotionEffect(PotionEffectType.JUMP, Integer.MAX_VALUE,
-												1, false));
-								((CraftZombie) spawnedZombie.getBukkitEntity()).addPotionEffect(
-										new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE,
-												1, false));
-							}
-							
-						}
-					}, 10L);
+					if (new Random().nextInt(7) > 0) {
+						spawnedZombie.addPotionEffect(new PotionEffect(PotionEffectType.SPEED,
+								Integer.MAX_VALUE, (new Random().nextInt(3) + 1)), false);
+						spawnedZombie.addPotionEffect(new PotionEffect(
+								PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, 1, false));
+					} else {
+						spawnedZombie.addPotionEffect(new PotionEffect(
+								PotionEffectType.JUMP, Integer.MAX_VALUE, 1, false));
+						spawnedZombie.addPotionEffect(new PotionEffect(
+								PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, 1, false));
+						spawnedZombie.setBaby(true);
+					}
 					
 				}
 				

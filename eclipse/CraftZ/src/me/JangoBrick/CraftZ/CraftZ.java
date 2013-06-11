@@ -50,7 +50,7 @@ public class CraftZ extends JavaPlugin {
 		
 		//Server tick event
 		
-		this.getServer().getScheduler().runTaskTimerAsynchronously(this, new Runnable() {
+		this.getServer().getScheduler().runTaskTimer(this, new Runnable() {
 
 			public void run() {
 				
@@ -476,13 +476,17 @@ public class CraftZ extends JavaPlugin {
 					
 					// SPAWNING
 					
-						// INTERVAL
-						
-						String path_zombies_spawninterval = "Config.mobs.zombies.spawning.interval";
-						this.getConfig().addDefault(path_zombies_spawninterval, 40);
-						
-						String path_zombies_maxzombies = "Config.mobs.zombies.spawning.maxzombies";
-						this.getConfig().addDefault(path_zombies_maxzombies, 200);
+					String path_zombies_spawninterval = "Config.mobs.zombies.spawning.interval";
+					this.getConfig().addDefault(path_zombies_spawninterval, 40);
+					
+					String path_zombies_maxzombies = "Config.mobs.zombies.spawning.maxzombies";
+					this.getConfig().addDefault(path_zombies_maxzombies, 200);
+					
+					String path_zombies_autospawn = "Config.mobs.zombies.spawning.enable-auto-spawn";
+					this.getConfig().addDefault(path_zombies_autospawn, false);
+					
+					String path_zombies_autointerval = "Config.mobs.zombies.spawning.auto-spawning-interval";
+					this.getConfig().addDefault(path_zombies_autointerval, 200);
 				
 				// ANIMALS
 				

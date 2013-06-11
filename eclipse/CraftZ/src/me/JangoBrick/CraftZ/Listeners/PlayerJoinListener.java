@@ -42,7 +42,7 @@ public class PlayerJoinListener implements Listener {
 						(double) plugin.getConfig().getInt("Config.world.lobby.z"));
 				event.getPlayer().teleport(loc);
 			}
-		
+			
 		}
 		
 	}

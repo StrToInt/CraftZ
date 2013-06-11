@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="net.minecraft.server.v1_5_R2.EntityZombie"/>
+<fullyQualifiedTypeName name="org.bukkit.craftbukkit.v1_5_R3.entity.CraftZombie"/>
+<fullyQualifiedTypeName name="net.minecraft.server.v1_5_R3.EntityZombie"/>
+<fullyQualifiedTypeName name="org.bukkit.entity.Zombie"/>
+</qualifiedTypeNameHistroy>
