@@ -40,7 +40,8 @@ public class EntityDeathListener implements Listener {
 			
 			if (eventEntityType == EntityType.ZOMBIE) {
 				
-				if (eventEntity.getKiller() != null) {
+				if (eventEntity.getKiller() != null
+						&& !PlayerManager.isInsideOfLobby(eventEntity.getKiller())) {
 					
 					PlayerManager.getData(event.getEntity().getKiller().getName()).zombiesKilled++;
 					eventEntity.getKiller().sendMessage(ChatColor.GOLD + plugin.getLangConfig()

@@ -51,7 +51,7 @@ public class PlayerMoveListener implements Listener {
 					}
 				}
 			}
-			visibilityBar.UpdatePlayerVisibilityBar(eventPlayer);
+			visibilityBar.updatePlayerVisibilityBar(eventPlayer);
 			
 			float visibility = visibilityBar.getVisibility(eventPlayer);
 			List<Entity> nearbyEnts = null;

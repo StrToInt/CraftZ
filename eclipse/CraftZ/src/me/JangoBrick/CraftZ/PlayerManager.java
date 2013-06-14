@@ -1,5 +1,7 @@
 package me.JangoBrick.CraftZ;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -40,14 +42,14 @@ public class PlayerManager {
 	
 	public static void savePlayerToConfig(Player p) {
 		
-		if (isAlreadyInWorld(p) && players.containsKey(p.getName())) {
+		if (players.containsKey(p.getName())) {
 			
-			getConfig().set("Data.players." + p.getName() + ".thirst", players.get(p.getName()).thirst);
-			getConfig().set("Data.players." + p.getName() + ".zombiesKilled", players.get(p.getName()).zombiesKilled);
-			getConfig().set("Data.players." + p.getName() + ".playersKilled", players.get(p.getName()).playersKilled);
-			getConfig().set("Data.players." + p.getName() + ".minsSurvived", players.get(p.getName()).minutesSurvived);
-			getConfig().set("Data.players." + p.getName() + ".bleeding", players.get(p.getName()).bleeding);
-			getConfig().set("Data.players." + p.getName() + ".poisoned", players.get(p.getName()).poisoned);
+			getConfig().set("Data.players." + p.getName() + ".thirst", getData(p.getName()).thirst);
+			getConfig().set("Data.players." + p.getName() + ".zombiesKilled", getData(p.getName()).zombiesKilled);
+			getConfig().set("Data.players." + p.getName() + ".playersKilled", getData(p.getName()).playersKilled);
+			getConfig().set("Data.players." + p.getName() + ".minsSurvived", getData(p.getName()).minutesSurvived);
+			getConfig().set("Data.players." + p.getName() + ".bleeding", getData(p.getName()).bleeding);
+			getConfig().set("Data.players." + p.getName() + ".poisoned", getData(p.getName()).poisoned);
 			
 			plugin.saveDataConfig();
 			
@@ -199,9 +201,22 @@ public class PlayerManager {
 	
 	public static void onServerTick(int tickID) {
 		
-		if (tickID % 1200 == 0) {
+		ArrayList<String> toRemove = new ArrayList<String>();
+		
+		for (String pn : players.keySet()) {
 			
-			for (String pn : players.keySet()) {
+			if (Bukkit.getPlayer(pn) == null || !Bukkit.getPlayer(pn).isOnline()
+					|| !Bukkit.getPlayer(pn).getWorld().getName().equalsIgnoreCase(
+							plugin.getConfig().getString("Config.world.name"))) {
+				
+				toRemove.add(pn);
+				continue;
+				
+			}
+			
+			
+			
+			if (tickID % 1200 == 0) {
 				
 				if (players.get(pn).thirst > 0) {
 					
@@ -216,22 +231,18 @@ public class PlayerManager {
 				
 			}
 			
-		}
-		
-		if (tickID % 10 == 0) {
 			
-			for (String pn : players.keySet()) {
+			
+			if (tickID % 10 == 0) {
 				
 				List<String> names = plugin.getConfig().getStringList("Config.change-item-names.names");
 				ItemRenamer.convertPlayerInventory(Bukkit.getPlayer(pn), names);
 				
 			}
 			
-		}
-		
-		if (tickID % 200 == 0) {
 			
-			for (String pn : players.keySet()) {
+			
+			if (tickID % 200 == 0) {
 				
 				if (players.get(pn).bleeding) {
 					Bukkit.getPlayer(pn).damage(1);
@@ -251,6 +262,12 @@ public class PlayerManager {
 			
 		}
 		
+		
+		
+		for (String pn : toRemove) {
+			players.remove(pn);
+		}
+		
 	}
 	
 	
@@ -267,10 +284,24 @@ public class PlayerManager {
 	
 	public static boolean isInsideOfLobby(Player p) {
 		
-		Location lobby = p.getWorld().getSpawnLocation();
+		Location lobby = getLobby();
 		int radius = plugin.getConfig().getInt("Config.world.lobby.radius");
-		
 		return lobby.distance(p.getLocation()) <= radius;
+		
+	}
+	
+	
+	
+	
+	
+	public static Location getLobby() {
+		
+		Location lobby = plugin.getWorld().getSpawnLocation();
+		lobby.setX(plugin.getConfig().getDouble("Config.world.lobby.x"));
+		lobby.setY(plugin.getConfig().getDouble("Config.world.lobby.y"));
+		lobby.setZ(plugin.getConfig().getDouble("Config.world.lobby.z"));
+		
+		return lobby;
 		
 	}
 	
@@ -280,6 +311,50 @@ public class PlayerManager {
 	
 	public static boolean isAlreadyInWorld(Player p) {
 		return getConfig().contains("Data.players." + p.getName());
+	}
+	
+	
+	
+	
+	
+	public static int getPlayCount() {
+		return players.size();
+	}
+	
+	
+	
+	
+	
+	public static Player randomPlayer() {
+		
+		List<Player> players = plugin.getWorld().getPlayers();
+		if (players.isEmpty()) {
+			return null;
+		}
+		Collections.shuffle(players);
+		
+		Player chosen = players.get(0);
+		
+		if (!isInsideOfLobby(chosen)) {
+			return chosen;
+		}
+		
+		boolean otherExists = false;
+		for (Player p : players) {
+			
+			if (!isInsideOfLobby(p)) {
+				otherExists = true;
+				break;
+			}
+			
+		}
+		
+		if (otherExists) {
+			return randomPlayer();
+		}
+		
+		return null;
+		
 	}
 	
 }

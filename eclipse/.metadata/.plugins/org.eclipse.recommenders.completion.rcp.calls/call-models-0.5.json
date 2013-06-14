@@ -3,5 +3,20 @@
     "location": "C:\\Users\\JangoBrick\\CraftZ-Server\\craftbukkit.jar",
     "status": "UNRESOLVED",
     "error": "No call model found for \u0027C:\\Users\\JangoBrick\\CraftZ-Server\\craftbukkit.jar\u0027. Neither fingerprint \u0027af2da04a4ab60e280a232ee675c9c1d5d3f34ecc\u0027 nor symbolic name \u0027org.xerial.sqlite-jdbc\u0027 are known."
+  },
+  "C:\\Program Files\\Java\\jre7\\lib\\rt.jar": {
+    "coordinate": "jre:jre:zip:call:1.0.0",
+    "location": "C:\\Program Files\\Java\\jre7\\lib\\rt.jar",
+    "status": "RESOLVED"
+  },
+  "C:\\Users\\JangoBrick\\Documents\\GitHub\\CraftZ\\eclipse\\CraftZ\\src": {
+    "location": "C:\\Users\\JangoBrick\\Documents\\GitHub\\CraftZ\\eclipse\\CraftZ\\src",
+    "status": "UNRESOLVED",
+    "error": "No class path info available for \u0027C:\\Users\\JangoBrick\\Documents\\GitHub\\CraftZ\\eclipse\\CraftZ\\src\u0027. Skipped."
+  },
+  "C:\\Users\\JangoBrick\\CraftZ-Server\\plugins\\ControllableMobsAPI.jar": {
+    "location": "C:\\Users\\JangoBrick\\CraftZ-Server\\plugins\\ControllableMobsAPI.jar",
+    "status": "UNRESOLVED",
+    "error": "No call model found for \u0027C:\\Users\\JangoBrick\\CraftZ-Server\\plugins\\ControllableMobsAPI.jar\u0027. Neither fingerprint \u0027f91084245828c10872e838e05df5f5ff5a0fc6b0\u0027 nor symbolic name \u0027ControllableMobsAPI\u0027 are known."
   }
 }

@@ -11,9 +11,10 @@ import me.JangoBrick.CraftZ.Util.EntityChecker;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.craftbukkit.v1_5_R3.entity.CraftZombie;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Zombie;
 import org.bukkit.event.Listener;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -61,12 +62,12 @@ public class ZombieSpawner implements Listener {
 	
 	
 	
-	public static CraftZombie evalZombieSpawn(ConfigurationSection spnptSec) {
+	public static Zombie evalZombieSpawn(ConfigurationSection spnptSec) {
 		
 		int spnLocX = spnptSec.getInt("coords.x");
 		int spnLocY = spnptSec.getInt("coords.y");
 		int spnLocZ = spnptSec.getInt("coords.z");
-		World spnWorld = plugin.getServer().getWorld(plugin.getConfig().getString("Config.world.name"));
+		World spnWorld = plugin.getWorld();
 		Location spnLoc = new Location(spnWorld, spnLocX, spnLocY, spnLocZ);
 		
 		Location locToSpawn = BlockChecker.getSafeSpawnLocationOver(spnLoc, true);
@@ -90,8 +91,7 @@ public class ZombieSpawner implements Listener {
 			if (zombies <= maxZombies) {
 				
 				Entity ent = spnWorld.spawnEntity(locToSpawn, EntityType.ZOMBIE);
-				CraftZombie zombie = (CraftZombie) ent;
-				return zombie;
+				return (Zombie) ent;
 				
 			} else {
 				return null;
@@ -130,29 +130,80 @@ public class ZombieSpawner implements Listener {
 						return;
 					}
 					
-					final CraftZombie spawnedZombie = evalZombieSpawn(configSec);
+					Zombie spawnedZombie = evalZombieSpawn(configSec);
 					
 					if (spawnedZombie == null) {
 						return;
 					}
 					
-					if (new Random().nextInt(7) > 0) {
-						spawnedZombie.addPotionEffect(new PotionEffect(PotionEffectType.SPEED,
-								Integer.MAX_VALUE, (new Random().nextInt(3) + 1)), false);
-						spawnedZombie.addPotionEffect(new PotionEffect(
-								PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, 1, false));
-					} else {
-						spawnedZombie.addPotionEffect(new PotionEffect(
-								PotionEffectType.JUMP, Integer.MAX_VALUE, 1, false));
-						spawnedZombie.addPotionEffect(new PotionEffect(
-								PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, 1, false));
-						spawnedZombie.setBaby(true);
-					}
+					equipZombie(spawnedZombie);
 					
 				}
 				
 			}
 			
+		}
+		
+		
+		
+		if (plugin.getConfig().getBoolean("Config.mobs.zombies.spawning.enable-auto-spawn")) {
+			
+			ticksForAutoSpawn++;
+			if (ticksForAutoSpawn >= plugin.getConfig().getInt("Config.mobs.zombies.spawning." +
+					"auto-spawning-interval") / PlayerManager.getPlayCount()) {
+				
+				ticksForAutoSpawn = 0;
+				
+				Player p = PlayerManager.randomPlayer();
+				if (p == null) {
+					return;
+				}
+				
+				Location randLoc = p.getLocation().add(new Random().nextInt(16) - 8, 0,
+						new Random().nextInt(16) - 8);
+				
+				Location locToSpawn = BlockChecker.getSafeSpawnLocationOver(randLoc, true);
+				int zombies = 0;
+				int maxZombies = plugin.getConfig().getInt("Config.mobs.zombies.spawning.maxzombies");
+				
+				for (Entity ent : p.getWorld().getEntities()) {
+					
+					if (ent.getType() == EntityType.ZOMBIE) {
+						zombies++;
+					}
+					
+				}
+				
+				if (zombies <= maxZombies) {
+					
+					Entity ent = p.getWorld().spawnEntity(locToSpawn, EntityType.ZOMBIE);
+					equipZombie((Zombie) ent);
+					
+				}
+				
+			}
+			
+		}
+		
+	}
+	
+	
+	
+	
+	
+	public static void equipZombie(Zombie zombie) {
+		
+		if (new Random().nextInt(7) > 0) {
+			zombie.addPotionEffect(new PotionEffect(PotionEffectType.SPEED,
+					Integer.MAX_VALUE, (new Random().nextInt(3) + 1)), false);
+			zombie.addPotionEffect(new PotionEffect(
+					PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, 1, false));
+		} else {
+			zombie.addPotionEffect(new PotionEffect(
+					PotionEffectType.JUMP, Integer.MAX_VALUE, 1, false));
+			zombie.addPotionEffect(new PotionEffect(
+					PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, 1, false));
+			zombie.setBaby(true);
 		}
 		
 	}

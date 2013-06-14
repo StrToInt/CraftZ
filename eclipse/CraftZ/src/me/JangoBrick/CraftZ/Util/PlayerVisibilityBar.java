@@ -10,7 +10,7 @@ public class PlayerVisibilityBar {
 	
 	CraftZ plugin = (CraftZ) Bukkit.getPluginManager().getPlugin("CraftZ");
 	
-	public void UpdatePlayerVisibilityBar(Player p) {
+	public void updatePlayerVisibilityBar(Player p) {
 		
 		float visibility = 0.3F;
 		

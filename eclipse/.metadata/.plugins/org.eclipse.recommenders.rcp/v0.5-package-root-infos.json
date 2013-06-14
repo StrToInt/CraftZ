@@ -193,5 +193,18 @@
     "jarFileModificationDate": "2013-04-26T19:31:58.465+02:00",
     "location": "C:\\Program Files\\Java\\jre7\\lib\\ext\\sunjce_provider.jar",
     "javaRuntime": true
+  },
+  {
+    "symbolicName": "ControllableMobsAPI",
+    "version": {
+      "major": -1,
+      "minor": -1,
+      "micro": -1,
+      "qualifier": ""
+    },
+    "jarFileFingerprint": "f91084245828c10872e838e05df5f5ff5a0fc6b0",
+    "jarFileModificationDate": "2013-06-11T22:25:37.725+02:00",
+    "location": "C:\\Users\\JangoBrick\\CraftZ-Server\\plugins\\ControllableMobsAPI.jar",
+    "javaRuntime": false
   }
 ]

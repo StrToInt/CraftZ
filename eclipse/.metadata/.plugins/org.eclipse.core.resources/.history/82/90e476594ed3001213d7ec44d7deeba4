@@ -1,0 +1,22 @@
+package me.JangoBrick.CraftZ;
+
+import org.bukkit.entity.Zombie;
+
+public class ExtendedZombie {
+	
+	public Zombie bukkit;
+	
+	
+	
+	public ExtendedZombie(Zombie bukkitEnt) {
+		
+		bukkit = bukkitEnt;
+		
+		Location location;
+		EntityCreature ec = ((CraftCreature)mob).getHandle();
+		Navigation nav = ec.al();
+		nav.a(location.getX(),location.getY(),location.getZ(),float);
+		
+	}
+	
+}

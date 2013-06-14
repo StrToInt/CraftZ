@@ -1,0 +1,23 @@
+package me.JangoBrick.CraftZ;
+
+import org.bukkit.entity.Zombie;
+
+public class ExtendedZombie {
+	
+	public Zombie bukkit;
+	
+	
+	
+	public ExtendedZombie(Zombie bukkitEnt) {
+		
+		bukkit = bukkitEnt;
+		
+		Mob mob; //"Mob" needs to be the type of creature you wish to control
+		Location location; //set your location
+		EntityCreature ec = ((CraftCreature)mob).getHandle();
+		Navigation nav = ec.al();
+		nav.a(location.getX(),location.getY(),location.getZ(),float);
+		
+	}
+	
+}

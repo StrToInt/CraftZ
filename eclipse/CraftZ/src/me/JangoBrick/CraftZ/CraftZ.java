@@ -7,10 +7,52 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
-import me.JangoBrick.CraftZ.Listeners.*;
-import me.JangoBrick.CraftZ.Util.*;
+import me.JangoBrick.CraftZ.Listeners.AsyncPlayerChatListener;
+import me.JangoBrick.CraftZ.Listeners.BlockBreakListener;
+import me.JangoBrick.CraftZ.Listeners.BlockBurnListener;
+import me.JangoBrick.CraftZ.Listeners.BlockGrowListener;
+import me.JangoBrick.CraftZ.Listeners.BlockIgniteListener;
+import me.JangoBrick.CraftZ.Listeners.BlockPlaceListener;
+import me.JangoBrick.CraftZ.Listeners.CreatureSpawnListener;
+import me.JangoBrick.CraftZ.Listeners.EntityCreatePortalListener;
+import me.JangoBrick.CraftZ.Listeners.EntityDamageByEntityListener;
+import me.JangoBrick.CraftZ.Listeners.EntityDamageListener;
+import me.JangoBrick.CraftZ.Listeners.EntityDeathListener;
+import me.JangoBrick.CraftZ.Listeners.EntityExplodeListener;
+import me.JangoBrick.CraftZ.Listeners.EntityRegainHealthListener;
+import me.JangoBrick.CraftZ.Listeners.EntityShootBowListener;
+import me.JangoBrick.CraftZ.Listeners.FoodLevelChangeListener;
+import me.JangoBrick.CraftZ.Listeners.HangingBreakByEntityListener;
+import me.JangoBrick.CraftZ.Listeners.HangingBreakListener;
+import me.JangoBrick.CraftZ.Listeners.HangingPlaceListener;
+import me.JangoBrick.CraftZ.Listeners.InventoryClickListener;
+import me.JangoBrick.CraftZ.Listeners.InventoryCloseListener;
+import me.JangoBrick.CraftZ.Listeners.ItemDespawnListener;
+import me.JangoBrick.CraftZ.Listeners.PlayerBedEnterListener;
+import me.JangoBrick.CraftZ.Listeners.PlayerChangedWorldListener;
+import me.JangoBrick.CraftZ.Listeners.PlayerCommandPreprocessListener;
+import me.JangoBrick.CraftZ.Listeners.PlayerDeathListener;
+import me.JangoBrick.CraftZ.Listeners.PlayerDropItemListener;
+import me.JangoBrick.CraftZ.Listeners.PlayerInteractListener;
+import me.JangoBrick.CraftZ.Listeners.PlayerItemConsumeListener;
+import me.JangoBrick.CraftZ.Listeners.PlayerJoinListener;
+import me.JangoBrick.CraftZ.Listeners.PlayerMoveListener;
+import me.JangoBrick.CraftZ.Listeners.PlayerPickupItemListener;
+import me.JangoBrick.CraftZ.Listeners.PlayerQuitListener;
+import me.JangoBrick.CraftZ.Listeners.ProjectileHitListener;
+import me.JangoBrick.CraftZ.Listeners.ShearEntityListener;
+import me.JangoBrick.CraftZ.Listeners.SheepDyeWoolListener;
+import me.JangoBrick.CraftZ.Listeners.SignChangeListener;
+import me.JangoBrick.CraftZ.Listeners.StructureGrowListener;
+import me.JangoBrick.CraftZ.Listeners.VehicleBlockCollisionListener;
+import me.JangoBrick.CraftZ.Listeners.VehicleMoveListener;
+import me.JangoBrick.CraftZ.Listeners.VehicleUpdateListener;
+import me.JangoBrick.CraftZ.Listeners.WeatherChangeListener;
+import me.JangoBrick.CraftZ.Util.Messager;
+import me.JangoBrick.CraftZ.Util.Time;
 
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -18,7 +60,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class CraftZ extends JavaPlugin {
@@ -76,17 +117,24 @@ public class CraftZ extends JavaPlugin {
 		this.getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
 			@Override
 			public void run() {
+				
+				if (getWorld() == null) {
+					getLogger().log(Level.SEVERE, "World not found! Please check config.yml. CraftZ will shutdown now.");
+					getPluginLoader().disablePlugin(instance);
+				}
+				
 				ChestRefiller.resetAllChestsAndStartRefill();
 				ZombieSpawner.addSpawns();
+				
 			}
 		});
 		
 	
 		
-		System.out.println("++=========================================++");
-		System.out.println("||  [CraftZ] Plugin by JangoBrick.         ||");
-		System.out.println("||  [CraftZ] Plugin successfully enabled.  ||");
-		System.out.println("++=========================================++");
+		System.out.println("++===================================================++");
+		System.out.println("||  [CraftZ] Visit dev.bukkit.org/server-mods/craftz ||");
+		System.out.println("||  [CraftZ] Plugin successfully enabled.            ||");
+		System.out.println("++===================================================++");
 		
 	}
 	
@@ -324,23 +372,6 @@ public class CraftZ extends JavaPlugin {
 		new WeatherChangeListener(this);
 		
 	}
-	
-	
-	
-	
-	
-	public Map<Player, Inventory> getSavedInventories() {
-		return playerInventories;
-	}
-	
-	public void setSavedInventories(Map<Player, Inventory> map) {
-		playerInventories = map;
-	}
-	
-	Map<Player, Inventory> playerInventories = new HashMap<Player, Inventory>();
-	
-	
-	
 	
 	
 	
@@ -910,5 +941,12 @@ public class CraftZ extends JavaPlugin {
 		
 	}
 	
+	
+	
+	
+	
+	public World getWorld() {
+		return getServer().getWorld(getConfig().getString("Config.world.name"));
+	}
 	
 }
