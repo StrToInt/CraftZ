@@ -250,12 +250,22 @@ public class PlayerManager {
 				
 				if (players.get(pn).poisoned) {
 					Bukkit.getPlayer(pn).damage(1);
-					Bukkit.getPlayer(pn).addPotionEffect(new PotionEffect(PotionEffectType.HUNGER,
-							20, 1));
-					Bukkit.getPlayer(pn).addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS,
-							10, 1));
-					Bukkit.getPlayer(pn).addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION,
-							30, 1));
+					Bukkit.getPlayer(pn).addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 20, 1));
+					Bukkit.getPlayer(pn).addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 10, 1));
+					Bukkit.getPlayer(pn).addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 30, 1));
+				}
+				
+				if (plugin.getConfig().getBoolean("Config.world.world-border.enable")
+						&& isOutsideOfWorldRim(Bukkit.getPlayer(pn), plugin.getConfig()
+						.getInt("Config.world.world-border.radius"), getLobby())) {
+					
+					Bukkit.getPlayer(pn).damage(2);
+					Bukkit.getPlayer(pn).addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 20, 1));
+					Bukkit.getPlayer(pn).addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 10, 1));
+					Bukkit.getPlayer(pn).addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 30, 1));
+					Bukkit.getPlayer(pn).sendMessage("[CraftZ] "
+							+ plugin.getLangConfig().getString("Messages.out-of-world"));
+					
 				}
 				
 			}

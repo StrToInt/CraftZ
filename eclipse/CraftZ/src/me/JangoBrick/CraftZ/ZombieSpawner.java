@@ -150,7 +150,7 @@ public class ZombieSpawner implements Listener {
 			
 			ticksForAutoSpawn++;
 			if (ticksForAutoSpawn >= plugin.getConfig().getInt("Config.mobs.zombies.spawning." +
-					"auto-spawning-interval") / PlayerManager.getPlayCount()) {
+					"auto-spawning-interval") * 20 / PlayerManager.getPlayCount()) {
 				
 				ticksForAutoSpawn = 0;
 				
@@ -159,8 +159,8 @@ public class ZombieSpawner implements Listener {
 					return;
 				}
 				
-				Location randLoc = p.getLocation().add(new Random().nextInt(16) - 8, 0,
-						new Random().nextInt(16) - 8);
+				Location randLoc = p.getLocation().add(new Random().nextInt(128) - 64, 0,
+						new Random().nextInt(128) - 64);
 				
 				Location locToSpawn = BlockChecker.getSafeSpawnLocationOver(randLoc, true);
 				int zombies = 0;

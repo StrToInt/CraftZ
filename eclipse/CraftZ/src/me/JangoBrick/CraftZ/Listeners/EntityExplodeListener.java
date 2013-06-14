@@ -26,7 +26,7 @@ public class EntityExplodeListener implements Listener {
 	}
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onPlayerDropItem(EntityExplodeEvent event) {
+	public void onEntityExplode(EntityExplodeEvent event) {
 		
 		String value_world_name = plugin.getConfig().getString("Config.world.name");
 		World eventWorld = event.getLocation().getWorld();

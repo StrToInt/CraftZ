@@ -39,6 +39,7 @@ import me.JangoBrick.CraftZ.Listeners.PlayerJoinListener;
 import me.JangoBrick.CraftZ.Listeners.PlayerMoveListener;
 import me.JangoBrick.CraftZ.Listeners.PlayerPickupItemListener;
 import me.JangoBrick.CraftZ.Listeners.PlayerQuitListener;
+import me.JangoBrick.CraftZ.Listeners.PlayerTeleportListener;
 import me.JangoBrick.CraftZ.Listeners.ProjectileHitListener;
 import me.JangoBrick.CraftZ.Listeners.ShearEntityListener;
 import me.JangoBrick.CraftZ.Listeners.SheepDyeWoolListener;
@@ -182,6 +183,11 @@ public class CraftZ extends JavaPlugin {
 					if (sender.hasPermission("craftz.spawn")) {
 						String msg_craftz_help_spawn = ChatColor.YELLOW + this.getLangConfig().getString("Messages.help.spawn-command");
 						sender.sendMessage(msg_craftz_help_spawn);
+					}
+					
+					if (sender.hasPermission("craftz.setlobby")) {
+						String msg_craftz_help_setlobby = ChatColor.YELLOW + this.getLangConfig().getString("Messages.help.setlobby-command");
+						sender.sendMessage(msg_craftz_help_setlobby);
 					}
 					
 				} else {
@@ -331,6 +337,7 @@ public class CraftZ extends JavaPlugin {
 		new PlayerCommandPreprocessListener(this);
 		new FoodLevelChangeListener(this);
 		new PlayerChangedWorldListener(this);
+		new PlayerTeleportListener(this);
 		
 		// INVENTORY
 		new PlayerDropItemListener(this);
@@ -517,7 +524,7 @@ public class CraftZ extends JavaPlugin {
 					this.getConfig().addDefault(path_zombies_autospawn, false);
 					
 					String path_zombies_autointerval = "Config.mobs.zombies.spawning.auto-spawning-interval";
-					this.getConfig().addDefault(path_zombies_autointerval, 200);
+					this.getConfig().addDefault(path_zombies_autointerval, 40);
 				
 				// ANIMALS
 				
@@ -576,7 +583,8 @@ public class CraftZ extends JavaPlugin {
 			this.getConfig().addDefault(path_changeItemnames_enable, true);
 			
 			String path_changeItemnames_names = "Config.change-item-names.names";
-			String[] value_changeItemnames_names = { "339=Bandage", "351:1=Blood Bag", "351:10=Antibiotics" };
+			String[] value_changeItemnames_names = { "339=Bandage", "351:1=Blood Bag", "351:10=Antibiotics",
+					"368=Grenade" };
 			this.getConfig().addDefault(path_changeItemnames_names, value_changeItemnames_names);
 			
 			
@@ -639,6 +647,9 @@ public class CraftZ extends JavaPlugin {
 		
 		String path_unpoisoned = "Messages.unpoisoned";
 		this.getLangConfig().addDefault(path_unpoisoned, "Your poisoning is healed!");
+		
+		String path_outOfWorld = "Messages.out-of-world";
+		this.getLangConfig().addDefault(path_outOfWorld, "You're in a very infected area! Go back, or you will die soon!");
 		
 		String path_killed_zombie = "Messages.killed.zombie";
 		this.getLangConfig().addDefault(path_killed_zombie, "Killed the zombie! Total zombie kills: %k");
@@ -823,7 +834,7 @@ public class CraftZ extends JavaPlugin {
 			String[] value_lists_all = {
 				"30", "46", "2x39", "2x40", "258", "259", "2x260", "261", "4x262", "267", "2x268", "272", "3x281", "2x282",
 				"2x296", "297",	"298", "299", "300", "301", "302", "303", "304", "305", "306", "307", "308", "309", "339",
-				"346", "353", "357", "360", "374", "391", "393", "400", "373:5", "373:16389"
+				"346", "353", "357", "360", "368", "374", "391", "393", "400", "373:5", "373:16389"
 			};
 			this.getLootConfig().addDefault(path_lists_all, value_lists_all);
 			
@@ -840,7 +851,7 @@ public class CraftZ extends JavaPlugin {
 			String path_lists_militaryEpic = "Loot.lists.military-epic";
 			String[] value_lists_militaryEpic = {
 				"30", "46", "258", "261", "4x262", "267", "2x268", "272", "2x281", "282", "2x298", "2x299", "2x300",
-				"2x301", "302", "303", "304", "305", "306", "307", "308", "309"
+				"2x301", "302", "303", "304", "305", "306", "307", "308", "309", "368"
 			};
 			this.getLootConfig().addDefault(path_lists_militaryEpic, value_lists_militaryEpic);
 			
