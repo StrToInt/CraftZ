@@ -1,0 +1,11 @@
+package me.JangoBrick.CraftZ;
+
+public class ScoreboardHelper {
+	
+	private static CraftZ plugin;
+	
+	
+	
+	
+	
+}

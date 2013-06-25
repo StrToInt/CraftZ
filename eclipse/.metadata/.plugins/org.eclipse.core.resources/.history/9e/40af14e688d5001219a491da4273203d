@@ -1,0 +1,19 @@
+package me.JangoBrick.CraftZ.Util;
+
+public class StackParser {
+	
+	public static void fromString(String string, boolean withAmount) {
+		
+		int id = 0;
+		int data = 0;
+		int amount = withAmount ? 0 : 1;
+		
+		if (withAmount) {
+			
+			
+			
+		}
+		
+	}
+	
+}

@@ -2,7 +2,7 @@
   "C:\\Users\\JangoBrick\\CraftZ-Server\\craftbukkit.jar": {
     "location": "C:\\Users\\JangoBrick\\CraftZ-Server\\craftbukkit.jar",
     "status": "UNRESOLVED",
-    "error": "No call model found for \u0027C:\\Users\\JangoBrick\\CraftZ-Server\\craftbukkit.jar\u0027. Neither fingerprint \u0027af2da04a4ab60e280a232ee675c9c1d5d3f34ecc\u0027 nor symbolic name \u0027org.xerial.sqlite-jdbc\u0027 are known."
+    "error": "No call model found for \u0027C:\\Users\\JangoBrick\\CraftZ-Server\\craftbukkit.jar\u0027. Neither fingerprint \u0027f27f9d66ed061857f7d7a29e850cea8ac294b2d6\u0027 nor symbolic name \u0027org.xerial.sqlite-jdbc\u0027 are known."
   },
   "C:\\Program Files\\Java\\jre7\\lib\\rt.jar": {
     "coordinate": "jre:jre:zip:call:1.0.0",

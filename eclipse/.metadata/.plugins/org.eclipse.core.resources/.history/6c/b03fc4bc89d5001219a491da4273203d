@@ -1,0 +1,49 @@
+package me.JangoBrick.CraftZ.Util;
+
+import net.minecraft.server.v1_5_R3.ItemStack;
+
+public class StackParser {
+	
+	public static ItemStack fromString(String string, boolean withAmount) {
+		
+		int id = 0;
+		short data = 0;
+		int amount = withAmount ? 1 : 1;
+		
+		if (withAmount) {
+			
+			String[] split = string.split("x");
+			String itemName;
+			if (split.length > 1) {
+				
+				try {
+					amount = new Integer(split[0]);
+				} catch(NumberFormatException ex) { }
+				itemName = split[1];
+				
+			} else {
+				itemName = split[0];
+			}
+			
+			if (itemName.contains(":")) {
+				
+				try {
+					id = new Integer();
+					data = new Integer(itemName.split(":")[1]);
+				} catch(NumberFormatException ex) { }
+				
+			} else {
+				
+				try {
+					id = new Integer(itemName);
+				} catch(NumberFormatException ex) { }
+				
+			}
+			
+		}
+		
+		return new ItemStack(id, amount, data);
+		
+	}
+	
+}

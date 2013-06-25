@@ -1,0 +1,32 @@
+package me.JangoBrick.CraftZ;
+
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.ScoreboardManager;
+
+public class ScoreboardHelper {
+	
+	private static CraftZ plugin;
+	
+	private static ScoreboardManager manager;
+	
+	
+	
+	public static void setup(CraftZ plugin) {
+		
+		ScoreboardHelper.plugin = plugin;
+		manager = Bukkit.getScoreboardManager();
+		
+	}
+	
+	
+	
+	
+	
+	public static void createPlayer(Player p) {
+		
+		
+		
+	}
+	
+}

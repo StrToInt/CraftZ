@@ -1,9 +1,9 @@
 name: CraftZ
-version: 1.5.1
+version: 1.0
 author: JangoBrick
-main: me.JangoBrick.CraftZ.CraftZ
+main: craftZ.CraftZ
 load: STARTUP
 commands:
     craftz:
-        description: Displays the help menu.
+        description: Main command, displays help.
         usage: /<command>
