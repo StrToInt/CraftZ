@@ -59,29 +59,23 @@ public class ScoreboardHelper {
 			Scoreboard board = boards.get(pn);
 			Objective stats = board.getObjective("stats");
 			
-			stats.getScore(Bukkit.getOfflinePlayer("Blood level")).setScore(p.getHealth() * 600);
-			stats.getScore(Bukkit.getOfflinePlayer("Zombies killed")).setScore(
-					PlayerManager.getData(pn).zombiesKilled);
-			stats.getScore(Bukkit.getOfflinePlayer("Players killed")).setScore(
-					PlayerManager.getData(pn).playersKilled);
-			stats.getScore(Bukkit.getOfflinePlayer("Minutes survived")).setScore(
-					PlayerManager.getData(pn).minutesSurvived);
+			stats.getScore(Bukkit.getOfflinePlayer("Blood level")).setScore((int) (p.getHealth() * 600));
+			stats.getScore(Bukkit.getOfflinePlayer("Zombies killed")).setScore(PlayerManager.getData(pn).zombiesKilled);
+			stats.getScore(Bukkit.getOfflinePlayer("Players killed")).setScore(PlayerManager.getData(pn).playersKilled);
+			stats.getScore(Bukkit.getOfflinePlayer("Minutes survived")).setScore(PlayerManager.getData(pn).minutesSurvived);
 			
 			if (CraftZ.instance.getConfig().getBoolean("Config.players.use-scoreboard-for-stats")) {
 				
-				if (stats.getDisplaySlot() != DisplaySlot.SIDEBAR) {
+				if (stats.getDisplaySlot() != DisplaySlot.SIDEBAR)
 					stats.setDisplaySlot(DisplaySlot.SIDEBAR);
-				}
 				
-				if (p.getScoreboard() != board) {
+				if (p.getScoreboard() != board)
 					p.setScoreboard(board);
-				}
 				
 			} else {
 				
-				if (board.getObjective(DisplaySlot.SIDEBAR) == stats) {
+				if (board.getObjective(DisplaySlot.SIDEBAR) == stats)
 					board.clearSlot(DisplaySlot.SIDEBAR);
-				}
 				
 			}
 			
@@ -89,9 +83,8 @@ public class ScoreboardHelper {
 		
 		
 		
-		for (String pn : toRemove) {
+		for (String pn : toRemove)
 			removePlayer(pn);
-		}
 		
 	}
 	

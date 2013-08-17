@@ -1,10 +1,10 @@
 package craftZ.listeners;
 
-
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
@@ -13,9 +13,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import craftZ.CraftZ;
 import craftZ.PlayerManager;
+
 
 public class EntityDamageByEntityListener implements Listener {
 	
@@ -126,6 +128,32 @@ public class EntityDamageByEntityListener implements Listener {
 				}
 				
 			}
+			
+			
+			
+			
+			
+			if (event.getDamager() instanceof Player && event.getEntity() instanceof Zombie) {
+				
+				Player p = (Player) event.getDamager();
+				if (p.getItemInHand() != null && p.getItemInHand().hasItemMeta()) {
+					
+					ItemMeta m = p.getItemInHand().getItemMeta();
+					if (m.hasDisplayName() && m.getDisplayName().equals(ChatColor.GOLD + "Zombie Smasher")) {
+						
+						event.setDamage(((LivingEntity) event.getEntity()).getMaxHealth() * 10);
+						p.playSound(p.getLocation(), Sound.DIG_STONE, 1, 1);
+						p.playSound(p.getLocation(), Sound.DIG_STONE, 1, 1);
+						p.playSound(p.getLocation(), Sound.DIG_STONE, 1, 1);
+						p.playSound(p.getLocation(), Sound.DIG_STONE, 1, 1);
+						
+					}
+					
+				}
+				
+			}
+			
+			
 			
 			
 			

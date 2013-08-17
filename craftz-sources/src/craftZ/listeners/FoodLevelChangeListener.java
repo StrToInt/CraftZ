@@ -35,10 +35,10 @@ public class FoodLevelChangeListener implements Listener {
 				
 				if (event.getFoodLevel() > ((Player) eventEntity).getFoodLevel()) {
 					
-					if (((Player) eventEntity).getHealth() + 2 <= 20) {
+					if (((Player) eventEntity).getHealth() + 2 <= ((Player) eventEntity).getMaxHealth()) {
 						((Player) eventEntity).setHealth(((Player) eventEntity).getHealth() + 2);
 					} else {
-						((Player) eventEntity).setHealth(20);
+						((Player) eventEntity).setHealth(((Player) eventEntity).getMaxHealth());
 					}
 					
 				}

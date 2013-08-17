@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
-
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -17,9 +17,54 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import craftZ.listeners.*;
+import craftZ.listeners.AsyncPlayerChatListener;
+import craftZ.listeners.BlockBreakListener;
+import craftZ.listeners.BlockBurnListener;
+import craftZ.listeners.BlockGrowListener;
+import craftZ.listeners.BlockIgniteListener;
+import craftZ.listeners.BlockPlaceListener;
+import craftZ.listeners.BlockSpreadListener;
+import craftZ.listeners.ChunkLoadListener;
+import craftZ.listeners.CreatureSpawnListener;
+import craftZ.listeners.EntityCreatePortalListener;
+import craftZ.listeners.EntityDamageByEntityListener;
+import craftZ.listeners.EntityDamageListener;
+import craftZ.listeners.EntityDeathListener;
+import craftZ.listeners.EntityExplodeListener;
+import craftZ.listeners.EntityRegainHealthListener;
+import craftZ.listeners.EntityShootBowListener;
+import craftZ.listeners.FoodLevelChangeListener;
+import craftZ.listeners.HangingBreakByEntityListener;
+import craftZ.listeners.HangingBreakListener;
+import craftZ.listeners.HangingPlaceListener;
+import craftZ.listeners.InventoryClickListener;
+import craftZ.listeners.InventoryCloseListener;
+import craftZ.listeners.ItemDespawnListener;
+import craftZ.listeners.PlayerBedEnterListener;
+import craftZ.listeners.PlayerChangedWorldListener;
+import craftZ.listeners.PlayerCommandPreprocessListener;
+import craftZ.listeners.PlayerDeathListener;
+import craftZ.listeners.PlayerDropItemListener;
+import craftZ.listeners.PlayerInteractListener;
+import craftZ.listeners.PlayerItemConsumeListener;
+import craftZ.listeners.PlayerJoinListener;
+import craftZ.listeners.PlayerMoveListener;
+import craftZ.listeners.PlayerPickupItemListener;
+import craftZ.listeners.PlayerQuitListener;
+import craftZ.listeners.PlayerTeleportListener;
+import craftZ.listeners.ProjectileHitListener;
+import craftZ.listeners.ShearEntityListener;
+import craftZ.listeners.SheepDyeWoolListener;
+import craftZ.listeners.SignChangeListener;
+import craftZ.listeners.StructureGrowListener;
+import craftZ.listeners.VehicleBlockCollisionListener;
+import craftZ.listeners.VehicleMoveListener;
+import craftZ.listeners.VehicleUpdateListener;
+import craftZ.listeners.WeatherChangeListener;
 import craftZ.util.Messager;
 import craftZ.util.Time;
 
@@ -150,6 +195,11 @@ public class CraftZ extends JavaPlugin {
 						sender.sendMessage(msg_craftz_help_setlobby);
 					}
 					
+					if (sender.hasPermission("craftz.smasher")) {
+						String msg_craftz_help_smasher = ChatColor.YELLOW + this.getLangConfig().getString("Messages.help.smasher-command");
+						sender.sendMessage(msg_craftz_help_smasher);
+					}
+					
 				} else {
 					String value_notEnoughPerms = ChatColor.DARK_RED + this.getLangConfig()
 							.getString("Messages.errors.not-enough-permissions");
@@ -256,6 +306,9 @@ public class CraftZ extends JavaPlugin {
 						
 						saveConfig();
 						
+						String value_lobbySet = ChatColor.AQUA + this.getLangConfig().getString("Messages.cmd.setlobby");
+						p.sendMessage(value_lobbySet);
+						
 					} else {
 						String value_notEnoughPerms = ChatColor.DARK_RED + this.getLangConfig()
 								.getString("Messages.errors.not-enough-permissions");
@@ -263,6 +316,37 @@ public class CraftZ extends JavaPlugin {
 					}
 					
 				}
+				
+				
+				
+				if (args[0].equalsIgnoreCase("smasher")) {
+					
+					if (!(sender instanceof Player)) {
+						return true;
+					}
+					
+					Player p = (Player) sender;
+					
+					if (p.hasPermission("craftz.smasher")) {
+						
+						ItemStack stack = new ItemStack(Material.STICK);
+						ItemMeta m = stack.getItemMeta();
+						m.setDisplayName(ChatColor.GOLD + "Zombie Smasher");
+						stack.setItemMeta(m);
+						
+						p.getInventory().addItem(stack);
+//						Item i = p.getWorld().dropItem(p.getLocation(), stack);
+//						i.setPickupDelay(0);
+						
+					} else {
+						String value_notEnoughPerms = ChatColor.DARK_RED + this.getLangConfig()
+								.getString("Messages.errors.not-enough-permissions");
+						p.sendMessage(value_notEnoughPerms);
+					}
+					
+				}
+				
+				
 				
 				return true;
 					
@@ -651,6 +735,9 @@ public class CraftZ extends JavaPlugin {
 			String path_craftz_help_setlobby = "Messages.help.setlobby-command";
 			this.getLangConfig().addDefault(path_craftz_help_setlobby, "/craftz setlobby: Set the lobby location where you're standing.");
 			
+			String path_craftz_help_smasher = "Messages.help.smasher-command";
+			this.getLangConfig().addDefault(path_craftz_help_smasher, "/craftz smasher: Get the ultimate zombie smasher!");
+			
 			// COMMAND
 			
 			String path_cmd_removedItems = "Messages.cmd.removed-items";
@@ -658,6 +745,9 @@ public class CraftZ extends JavaPlugin {
 			
 			String path_cmd_reloaded = "Messages.cmd.reloaded";
 			this.getLangConfig().addDefault(path_cmd_reloaded, "Reloaded the config files.");
+			
+			String path_cmd_lobby = "Messages.cmd.setlobby";
+			this.getLangConfig().addDefault(path_cmd_lobby, "The lobby center is set at your location. For lobby radius, see configuration file.");
 			
 			// ERRORS
 		

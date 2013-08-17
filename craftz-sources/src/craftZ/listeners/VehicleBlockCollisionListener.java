@@ -61,12 +61,12 @@ public class VehicleBlockCollisionListener implements Listener {
 							cart.teleport(newLoc, TeleportCause.PLUGIN);
 							
 						} else {
-							int cartDamage = cart.getDamage();
+							int cartDamage = (int) cart.getDamage();
 							cart.setDamage(cartDamage + 1);
 						}
 						
 					} else {
-						int cartDamage = cart.getDamage();
+						int cartDamage = (int) cart.getDamage();
 						cart.setDamage(cartDamage + 1);
 					}
 					

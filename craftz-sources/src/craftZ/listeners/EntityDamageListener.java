@@ -81,9 +81,9 @@ public class EntityDamageListener implements Listener {
 					int bloodCount = 0;
 					
 					if (eventEntityType == EntityType.ZOMBIE) {
-						bloodCount = event.getDamage() * 2;
+						bloodCount = (int) (event.getDamage() * 2);
 					} else {
-						bloodCount = event.getDamage() * 6;
+						bloodCount = (int) (event.getDamage() * 6);
 					}
 					
 					for (int i=0; i<bloodCount; i++) {

@@ -99,12 +99,12 @@ public class VehicleUpdateListener implements Listener {
 										newLoc = overBlock.getLocation();
 										
 									} else {
-										int cartDamage = cart.getDamage();
+										int cartDamage = (int) cart.getDamage();
 										cart.setDamage(cartDamage + 1);
 									}
 									
 								} else {
-									int cartDamage = cart.getDamage();
+									int cartDamage = (int) cart.getDamage();
 									cart.setDamage(cartDamage + 1);
 								}
 								

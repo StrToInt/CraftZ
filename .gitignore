@@ -6,6 +6,8 @@
 .project
 .metadata
 */.metadata
+*/lib
+lib
 bin/
 tmp/
 *.tmp

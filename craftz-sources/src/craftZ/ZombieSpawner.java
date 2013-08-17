@@ -28,6 +28,8 @@ public class ZombieSpawner implements Listener {
 	
 	private static Map<String, Integer> cooldowns = new HashMap<String, Integer>();
 	
+	
+	
 	public static void setup(CraftZ plugin) {
 		
 		ZombieSpawner.plugin = plugin;
@@ -107,7 +109,7 @@ public class ZombieSpawner implements Listener {
 	
 	
 	
-	public static void onServerTick(@SuppressWarnings("unused") int tickID) {
+	public static void onServerTick(int tickID) {
 		
 		for (String str : cooldowns.keySet()) {
 			

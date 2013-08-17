@@ -5,9 +5,9 @@ import java.util.Random;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_5_R3.entity.CraftZombie;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -68,7 +68,7 @@ public class PlayerDeathListener implements Listener {
 //					new ItemStack(Material.AIR), new ItemStack(Material.AIR),
 //					new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
 			
-			CraftZombie spawnedZombie = (CraftZombie) eventPlayerLoc.getWorld()
+			Zombie spawnedZombie = (Zombie) eventPlayerLoc.getWorld()
 					.spawnEntity(eventPlayerLoc, EntityType.ZOMBIE);
 			
 			spawnedZombie.setVillager(true);
