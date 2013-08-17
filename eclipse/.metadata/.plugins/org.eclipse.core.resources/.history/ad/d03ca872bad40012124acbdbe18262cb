@@ -1,5 +1,0 @@
-package me.JangoBrick.CraftZ.Listeners;
-
-public class PlayerTeleportListener {
-
-}
