@@ -1,6 +1,5 @@
 package craftZ.listeners;
 
-
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -24,7 +23,7 @@ import org.bukkit.util.Vector;
 
 import craftZ.CraftZ;
 import craftZ.PlayerManager;
-import craftZ.util.TreeChecker;
+import craftZ.util.BlockChecker;
 
 public class PlayerInteractListener implements Listener {
 	
@@ -34,6 +33,10 @@ public class PlayerInteractListener implements Listener {
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 		
 	}
+	
+	
+	
+	
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerInteract(PlayerInteractEvent event) {
@@ -154,8 +157,7 @@ public class PlayerInteractListener implements Listener {
 				
 				if (eventItemType == Material.IRON_AXE) {
 					
-					TreeChecker treeChecker = new TreeChecker();
-					boolean isTreeBlock = treeChecker.isTree(eventBlock);
+					boolean isTreeBlock = BlockChecker.isTree(eventBlock);
 					if (isTreeBlock == true) {
 						
 						Inventory evtPlrInv = eventPlayer.getInventory();

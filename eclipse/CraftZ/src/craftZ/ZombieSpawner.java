@@ -41,9 +41,9 @@ public class ZombieSpawner implements Listener {
 	
 	public static void addSpawns() {
 		
-		if (plugin.getDataConfig().getConfigurationSection("Data.zombiespawns") != null) {
+		if (WorldData.get().getConfigurationSection("Data.zombiespawns") != null) {
 			
-			for (String spawnEntry : plugin.getDataConfig().getConfigurationSection("Data.zombiespawns").getKeys(false)) {
+			for (String spawnEntry : WorldData.get().getConfigurationSection("Data.zombiespawns").getKeys(false)) {
 				addSpawn(spawnEntry);
 			}
 			
@@ -119,12 +119,12 @@ public class ZombieSpawner implements Listener {
 				
 				
 				
-				Set<String> spts_zombies_set = plugin.getDataConfig()
+				Set<String> spts_zombies_set = WorldData.get()
 						.getConfigurationSection("Data.zombiespawns").getKeys(false);
 				
 				if (spts_zombies_set != null && !spts_zombies_set.isEmpty()) {
 					
-					ConfigurationSection configSec = plugin.getDataConfig().getConfigurationSection("Data.zombiespawns."
+					ConfigurationSection configSec = WorldData.get().getConfigurationSection("Data.zombiespawns."
 							+ str);
 					
 					if (configSec == null) {

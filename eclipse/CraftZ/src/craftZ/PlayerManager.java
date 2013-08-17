@@ -34,7 +34,7 @@ public class PlayerManager {
 	
 	
 	public static ConfigurationSection getConfig() {
-		return plugin.getDataConfig();
+		return WorldData.get();
 	}
 	
 	
@@ -52,7 +52,7 @@ public class PlayerManager {
 			getConfig().set("Data.players." + p.getName() + ".bleeding", getData(p.getName()).bleeding);
 			getConfig().set("Data.players." + p.getName() + ".poisoned", getData(p.getName()).poisoned);
 			
-			plugin.saveDataConfig();
+			WorldData.save();
 			
 		}
 		
@@ -121,11 +121,11 @@ public class PlayerManager {
 	
 	public static void spawnPlayerAtRandomSpawn(Player p) {
 		
-		if (!plugin.getDataConfig().contains("Data.playerspawns")) {
+		if (!getConfig().contains("Data.playerspawns")) {
 			return;
 		}
 		
-		Set<String> spts_players_set = plugin.getDataConfig()
+		Set<String> spts_players_set = getConfig()
 				.getConfigurationSection("Data.playerspawns").getKeys(false);
 		
 		if (spts_players_set != null && !spts_players_set.isEmpty()) {
@@ -135,7 +135,7 @@ public class PlayerManager {
 			
 			int taken = new Random().nextInt(spts_players.length);
 			
-			ConfigurationSection configSec = plugin.getDataConfig().getConfigurationSection("Data.playerspawns."
+			ConfigurationSection configSec = getConfig().getConfigurationSection("Data.playerspawns."
 					+ spts_players[taken].toString());
 			
 			if (configSec == null) {
@@ -179,8 +179,8 @@ public class PlayerManager {
 	public static void resetPlayer(Player p) {
 		
 		getConfig().set("Data.players." + p.getName(), null);
-		plugin.saveDataConfig();
-		plugin.reloadDataConfig();
+		WorldData.save();
+		WorldData.reload();
 		
 		ScoreboardHelper.removePlayer(p.getName());
 		

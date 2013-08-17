@@ -2,10 +2,8 @@ package craftZ.listeners;
 
 import java.util.Random;
 
-
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_5_R3.entity.CraftZombie;
 import org.bukkit.entity.EntityType;
@@ -14,7 +12,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -66,10 +63,10 @@ public class PlayerDeathListener implements Listener {
 			//	}
 			//}
 			
-			eventPlayer.getInventory().clear();
-			eventPlayer.getEquipment().setArmorContents(new ItemStack[] {
-					new ItemStack(Material.AIR), new ItemStack(Material.AIR),
-					new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
+//			eventPlayer.getInventory().clear();
+//			eventPlayer.getEquipment().setArmorContents(new ItemStack[] {
+//					new ItemStack(Material.AIR), new ItemStack(Material.AIR),
+//					new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
 			
 			CraftZombie spawnedZombie = (CraftZombie) eventPlayerLoc.getWorld()
 					.spawnEntity(eventPlayerLoc, EntityType.ZOMBIE);

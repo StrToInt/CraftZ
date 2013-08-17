@@ -48,6 +48,7 @@ public class CraftZ extends JavaPlugin {
 		AnimalSpawner.setup(this);
 		ChestRefiller.setup(this);
 		PlayerManager.setup(this);
+		WorldData.setup(this);
 		
 		
 		
@@ -332,10 +333,12 @@ public class CraftZ extends JavaPlugin {
 		new BlockBurnListener(this);
 		new BlockGrowListener(this);
 		new StructureGrowListener(this);
+		new BlockSpreadListener(this);
 		new SignChangeListener(this);
 		
-		// WEATHER
+		// WORLD
 		new WeatherChangeListener(this);
+		new ChunkLoadListener(this);
 		
 	}
 	
@@ -346,7 +349,6 @@ public class CraftZ extends JavaPlugin {
 	private void loadConfig() {
 		
 		reloadLangConfig();
-		reloadDataConfig();
 		reloadLootConfig();
 		
 		// SET HEADER
@@ -394,6 +396,12 @@ public class CraftZ extends JavaPlugin {
 				
 				String path_worldchange_allowTreeGrow = "Config.world.world-changing.allow-tree-grow";
 				this.getConfig().addDefault(path_worldchange_allowTreeGrow, false);
+				
+				String path_worldchange_allowGrassGrow = "Config.world.world-changing.allow-grass-grow";
+				this.getConfig().addDefault(path_worldchange_allowGrassGrow, false);
+				
+				String path_worldchange_allowNewChunks = "Config.world.world-changing.allow-new-chunks";
+				this.getConfig().addDefault(path_worldchange_allowNewChunks, true);
 				
 				// WEATHER
 				
@@ -709,64 +717,6 @@ public class CraftZ extends JavaPlugin {
 			this.getLogger().log(Level.SEVERE, "Could not save config to " + langConfigFile, ex);
 		}
 	}
-	
-	
-	
-	
-	private void loadDataConfig() {
-		
-		// SET HEADER
-		
-		this.getDataConfig().options().header("++==========================================++"
-								 		  + "\n|| Data for the CraftZ plugin by JangoBrick ||"
-								 		  + "\n++==========================================++"
-		);
-		
-		
-		this.getDataConfig().options().copyDefaults(true);
-		this.saveDataConfig();
-		
-	}
-	
-	
-	
-	private FileConfiguration dataConfig = null;
-	private File dataConfigFile = null;
-	
-	public void reloadDataConfig() {
-		
-		if (dataConfigFile == null) {
-			dataConfigFile = new File(this.getDataFolder(), "data.yml");
-		}
-		
-		dataConfig = YamlConfiguration.loadConfiguration(dataConfigFile);
-		
-		loadDataConfig();
-		
-	}
-	
-	public FileConfiguration getDataConfig() {
-		if (dataConfig == null) {
-			this.reloadDataConfig();
-		}
-		
-		return dataConfig;
-	}
-	
-	public void saveDataConfig() {
-		
-		if (dataConfig == null || dataConfigFile == null) {
-			return;
-		}
-		
-		try {
-			getDataConfig().save(dataConfigFile);
-		} catch (IOException ex) {
-			this.getLogger().log(Level.SEVERE, "Could not save config to " + dataConfigFile, ex);
-		}
-		
-	}
-	
 	
 	
 	

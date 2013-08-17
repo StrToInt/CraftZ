@@ -21,6 +21,10 @@ public class PlayerJoinListener implements Listener {
 		
 	}
 	
+	
+	
+	
+	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		
@@ -36,12 +40,16 @@ public class PlayerJoinListener implements Listener {
 			if (PlayerManager.isAlreadyInWorld(event.getPlayer())) {
 				PlayerManager.loadPlayer(event.getPlayer());
 			} else {
+				
 				event.getPlayer().setHealth(20);
+				event.getPlayer().setFoodLevel(20);
+				event.getPlayer().getInventory().clear();
 				
 				Location loc = new Location(eventWorld, plugin.getConfig().getInt("Config.world.lobby.x"),
 						plugin.getConfig().getInt("Config.world.lobby.y"),
 						plugin.getConfig().getInt("Config.world.lobby.z"));
 				event.getPlayer().teleport(loc);
+				
 			}
 			
 		}

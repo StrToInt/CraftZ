@@ -13,12 +13,27 @@ import craftZ.CraftZ;
 
 public class CreatureSpawnListener implements Listener {
 	
+	public static final EntityType[] blocked = { EntityType.SKELETON, EntityType.CREEPER,
+		EntityType.SPIDER, EntityType.ENDERMAN, EntityType.GHAST, EntityType.SILVERFISH, 
+		EntityType.SLIME, EntityType.SQUID, EntityType.PIG_ZOMBIE, EntityType.MAGMA_CUBE,
+		EntityType.CAVE_SPIDER, EntityType.BLAZE, EntityType.OCELOT, EntityType.BAT,
+		EntityType.WITCH, EntityType.WOLF, EntityType.MUSHROOM_COW };
+	public static final EntityType[] animals = { EntityType.SHEEP, EntityType.PIG,
+		EntityType.COW, EntityType.CHICKEN };
+	
+	
+	
 	public CreatureSpawnListener(CraftZ plugin) {
 		
 		this.plugin = plugin;
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 		
 	}
+	
+	
+	
+	
+	
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onCreatureSpawn(CreatureSpawnEvent event) {
@@ -30,63 +45,23 @@ public class CreatureSpawnListener implements Listener {
 			EntityType eventCreatureType = event.getEntityType();
 			SpawnReason spawnReason = event.getSpawnReason();
 			
-			if (eventCreatureType == EntityType.SKELETON) {
-				event.setCancelled(true);
-			}
-			if (eventCreatureType == EntityType.SPIDER) {
-				event.setCancelled(true);
-			}
-			if (eventCreatureType == EntityType.CREEPER) {
-				event.setCancelled(true);
-			}
-			if (eventCreatureType == EntityType.GHAST) {
-				event.setCancelled(true);
-			}
-			if (eventCreatureType == EntityType.SILVERFISH) {
-				event.setCancelled(true);
-			}
-			if (eventCreatureType == EntityType.SLIME) {
-				event.setCancelled(true);
-			}
-			if (eventCreatureType == EntityType.ENDERMAN) {
-				event.setCancelled(true);
-			}
-			if (eventCreatureType == EntityType.SQUID) {
-				event.setCancelled(true);
-			}
-			if (eventCreatureType == EntityType.PIG_ZOMBIE) {
-				event.setCancelled(true);
-			}
-			if (eventCreatureType == EntityType.MAGMA_CUBE) {
-				event.setCancelled(true);
-			}
-			if (eventCreatureType == EntityType.CAVE_SPIDER) {
-				event.setCancelled(true);
-			}
-			if (eventCreatureType == EntityType.BLAZE) {
-				event.setCancelled(true);
-			}
-			if (eventCreatureType == EntityType.OCELOT) {
-				event.setCancelled(true);
-			}
-			if (eventCreatureType == EntityType.BAT) {
-				event.setCancelled(true);
-			}
-			if (eventCreatureType == EntityType.WITCH) {
-				event.setCancelled(true);
-			}
-			if (eventCreatureType == EntityType.VILLAGER) {
-				event.setCancelled(true);
-			}
-			if (eventCreatureType == EntityType.WITHER) {
-				event.setCancelled(true);
+			for (EntityType type : blocked) {
+				
+				if (eventCreatureType.equals(type)) {
+					event.setCancelled(true);
+				}
+				
 			}
 			
 			
 			
 			Boolean value_animalspawns_allow = plugin.getConfig().getBoolean("Config.mobs.animals.spawning.enable");
-			if (!value_animalspawns_allow) {
-				event.setCancelled(true);
+			for (EntityType type : animals) {
+				
+				if (eventCreatureType.equals(type) && !value_animalspawns_allow) {
+					event.setCancelled(true);
+				}
+				
 			}
 			
 			

@@ -24,6 +24,10 @@ public class InventoryCloseListener implements Listener {
 		
 	}
 	
+	
+	
+	
+	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onInventoryClose(InventoryCloseEvent event) {
 		

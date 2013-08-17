@@ -16,6 +16,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 
 import craftZ.ChestRefiller;
 import craftZ.CraftZ;
+import craftZ.WorldData;
 
 public class BlockBreakListener implements Listener {
 	
@@ -80,9 +81,9 @@ public class BlockBreakListener implements Listener {
 					if (eventPlayer.hasPermission("craftz.buildZombieSpawn")) {
 						
 						String nameOfZombieSpawn = "x" + signLocX + "y" + signLocY + "z" + signLocZ;
-						plugin.getDataConfig().set("Data.zombiespawns." + nameOfZombieSpawn, null);
+						WorldData.get().set("Data.zombiespawns." + nameOfZombieSpawn, null);
 						
-						plugin.saveDataConfig();
+						WorldData.save();
 						
 						String msg_destroyedSign = ChatColor.RED + plugin.getLangConfig().getString("Messages.destroyed-sign");
 						eventPlayer.sendMessage(msg_destroyedSign);
@@ -104,9 +105,9 @@ public class BlockBreakListener implements Listener {
 					if (eventPlayer.hasPermission("craftz.buildPlayerSpawn")) {
 						
 						String nameOfPlayerSpawn = "x" + signLocX + "y" + signLocY + "z" + signLocZ;
-						plugin.getDataConfig().set("Data.playerspawns." + nameOfPlayerSpawn, null);
+						WorldData.get().set("Data.playerspawns." + nameOfPlayerSpawn, null);
 						
-						plugin.saveDataConfig();
+						WorldData.save();
 						
 						String msg_destroyedSign = ChatColor.RED + plugin.getLangConfig().getString("Messages.destroyed-sign");
 						eventPlayer.sendMessage(msg_destroyedSign);
@@ -128,9 +129,9 @@ public class BlockBreakListener implements Listener {
 					if (eventPlayer.hasPermission("craftz.buildLootChest")) {
 						
 						String nameOfLootSign = "x" + signLocX + "y" + signLocY + "z" + signLocZ;
-						plugin.getDataConfig().set("Data.lootchests." + nameOfLootSign, null);
+						WorldData.get().set("Data.lootchests." + nameOfLootSign, null);
 						
-						plugin.saveDataConfig();
+						WorldData.save();
 						
 						String msg_destroyedSign = ChatColor.RED + plugin.getLangConfig().getString("Messages.destroyed-sign");
 						eventPlayer.sendMessage(msg_destroyedSign);

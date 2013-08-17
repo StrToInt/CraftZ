@@ -1379,3 +1379,13 @@ Java Model Exception: Java Model Status [Index out of bounds]
 	at java.lang.Thread.run(Unknown Source)
 !SUBENTRY 1 org.eclipse.jdt.core 4 980 2013-06-15 17:15:08.739
 !MESSAGE Index out of bounds
+!SESSION 2013-08-17 17:49:11.490 -----------------------------------------------
+eclipse.buildId=M20120914-1800
+java.version=1.7.0_25
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US
+Framework arguments:  -product org.eclipse.epp.package.jee.product
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product org.eclipse.epp.package.jee.product
+
+!ENTRY org.eclipse.ui 4 4 2013-08-17 18:06:25.625
+!MESSAGE Unable to find Action Set: org.eclipse.wb.core.ui.actionset

@@ -14,6 +14,7 @@ import org.bukkit.event.block.SignChangeEvent;
 
 import craftZ.ChestRefiller;
 import craftZ.CraftZ;
+import craftZ.WorldData;
 import craftZ.ZombieSpawner;
 
 public class SignChangeListener implements Listener {
@@ -95,14 +96,14 @@ public class SignChangeListener implements Listener {
 						String path_spawnpoint_toAdd = "Data.zombiespawns." + nameForZombieSpawn;
 						String path_spawnpoint_toAdd_coords = path_spawnpoint_toAdd + ".coords";
 						
-						plugin.getDataConfig().set(path_spawnpoint_toAdd_coords + ".x", signLocX);
-						plugin.getDataConfig().set(path_spawnpoint_toAdd_coords + ".y", signLocY);
-						plugin.getDataConfig().set(path_spawnpoint_toAdd_coords + ".z", signLocZ);
+						WorldData.get().set(path_spawnpoint_toAdd_coords + ".x", signLocX);
+						WorldData.get().set(path_spawnpoint_toAdd_coords + ".y", signLocY);
+						WorldData.get().set(path_spawnpoint_toAdd_coords + ".z", signLocZ);
 						
-						plugin.getDataConfig().set(path_spawnpoint_toAdd + ".max-zombies-in-radius", maxZombiesInRadiusI);
-						plugin.getDataConfig().set(path_spawnpoint_toAdd + ".max-zombies-radius", maxZombiesRadiusI);
+						WorldData.get().set(path_spawnpoint_toAdd + ".max-zombies-in-radius", maxZombiesInRadiusI);
+						WorldData.get().set(path_spawnpoint_toAdd + ".max-zombies-radius", maxZombiesRadiusI);
 						
-						plugin.saveDataConfig();
+						WorldData.save();
 						
 						String msg_successfullyCreated = ChatColor.RED + plugin.getLangConfig().getString("Messages.successfully-created");
 						eventPlayer.sendMessage(msg_successfullyCreated);
@@ -142,13 +143,13 @@ public class SignChangeListener implements Listener {
 						String path_spawnpoint_toAdd = "Data.playerspawns." + nameForPlayerSpawn;
 						String path_spawnpoint_toAdd_coords = path_spawnpoint_toAdd + ".coords";
 						
-						plugin.getDataConfig().set(path_spawnpoint_toAdd_coords + ".x", signLocX);
-						plugin.getDataConfig().set(path_spawnpoint_toAdd_coords + ".y", signLocY);
-						plugin.getDataConfig().set(path_spawnpoint_toAdd_coords + ".z", signLocZ);
+						WorldData.get().set(path_spawnpoint_toAdd_coords + ".x", signLocX);
+						WorldData.get().set(path_spawnpoint_toAdd_coords + ".y", signLocY);
+						WorldData.get().set(path_spawnpoint_toAdd_coords + ".z", signLocZ);
 						
-						plugin.getDataConfig().set(path_spawnpoint_toAdd + ".name", line3);
+						WorldData.get().set(path_spawnpoint_toAdd + ".name", line3);
 						
-						plugin.saveDataConfig();
+						WorldData.save();
 						
 						String msg_successfullyCreated = ChatColor.RED + plugin.getLangConfig().getString("Messages.successfully-created");
 						eventPlayer.sendMessage(msg_successfullyCreated);
@@ -204,13 +205,13 @@ public class SignChangeListener implements Listener {
 						
 						String path_lootchest_toAdd = "Data.lootchests." + nameForLootSign;
 						
-						plugin.getDataConfig().set(path_lootchest_toAdd + ".coords.x", signLocX);
-						plugin.getDataConfig().set(path_lootchest_toAdd + ".coords.y", chestLocY);
-						plugin.getDataConfig().set(path_lootchest_toAdd + ".coords.z", signLocZ);
+						WorldData.get().set(path_lootchest_toAdd + ".coords.x", signLocX);
+						WorldData.get().set(path_lootchest_toAdd + ".coords.y", chestLocY);
+						WorldData.get().set(path_lootchest_toAdd + ".coords.z", signLocZ);
 						
-						plugin.getDataConfig().set(path_lootchest_toAdd + ".list", lootList);
+						WorldData.get().set(path_lootchest_toAdd + ".list", lootList);
 						
-						plugin.saveDataConfig();
+						WorldData.save();
 						
 						String msg_successfullyCreated = ChatColor.RED + plugin.getLangConfig().getString("Messages.successfully-created");
 						eventPlayer.sendMessage(msg_successfullyCreated);

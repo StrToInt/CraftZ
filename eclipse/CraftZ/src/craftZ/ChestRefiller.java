@@ -2,9 +2,12 @@ package craftZ;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
+import java.util.TreeSet;
 
 
 import org.bukkit.Location;
@@ -32,12 +35,10 @@ public class ChestRefiller {
 	
 	public static void resetAllChestsAndStartRefill() {
 		
-		if (plugin.getDataConfig().getConfigurationSection("Data.lootchests") != null) {
+		if (WorldData.get().getConfigurationSection("Data.lootchests") != null) {
 			
-			for (String chestEntry : plugin.getDataConfig().getConfigurationSection("Data.lootchests").getKeys(false)) {
-				
+			for (String chestEntry : WorldData.get().getConfigurationSection("Data.lootchests").getKeys(false)) {
 				resetChestAndStartRefill(chestEntry, false);
-				
 			}
 			
 		}
@@ -52,7 +53,7 @@ public class ChestRefiller {
 		
 		cooldowns.put(chestEntry, 0);
 		
-		ConfigurationSection chestSec = plugin.getDataConfig()
+		ConfigurationSection chestSec = WorldData.get()
 				.getConfigurationSection("Data.lootchests." + chestEntry);
 		
 		if (chestSec == null) {
@@ -68,7 +69,7 @@ public class ChestRefiller {
 		Block block = rflLoc.getBlock();
 		
 		if (block.getType() == Material.CHEST && !drop) {
-			((Chest) block.getState()).getInventory().clear();
+			((Chest) block.getState()).getBlockInventory().clear();
 		}
 		
 		block.setType(Material.AIR);
@@ -126,15 +127,15 @@ public class ChestRefiller {
 				
 			}
 			
-			for (int i=0; i<(1 + plugin.getLootConfig().getInt("Loot.settings.min-stacks-filled") + new Random().nextInt(
-					plugin.getLootConfig().getInt("Loot.settings.max-stacks-filled") - plugin.getLootConfig()
-					.getInt("Loot.settings.min-stacks-filled"))); i++) {
+			int min = plugin.getLootConfig().getInt("Loot.settings.min-stacks-filled");
+			int max = plugin.getLootConfig().getInt("Loot.settings.max-stacks-filled");
+			
+			for (int i=0; i<(1 + min + new Random().nextInt(max - min)); i++) {
 				
 				String itemString = items.get(new Random().nextInt(items.size()));
 				ItemStack itemStack = StackParser.fromString(itemString, false);
 				
 				chest.getInventory().addItem(itemStack);
-				
 			}
 			
 		}
@@ -147,17 +148,21 @@ public class ChestRefiller {
 	
 	public static void onServerTick(@SuppressWarnings("unused") int tickID) {
 		
-		for (String chestKey : cooldowns.keySet()) {
+		Set<String> toRemove = new TreeSet<String>();
+		Iterator<Map.Entry<String, Integer>> it = cooldowns.entrySet().iterator();
+		
+		while (it.hasNext()) {
 			
-			cooldowns.put(chestKey, cooldowns.get(chestKey) + 1);
+			Map.Entry<String, Integer> entry = it.next();
 			
-			if (cooldowns.get(chestKey) >= (plugin.getLootConfig()
+			entry.setValue(entry.getValue() + 1);
+			if (entry.getValue() >= (plugin.getLootConfig()
 					.getInt("Loot.settings.time-before-refill") * 20)) {
 				
-				cooldowns.remove(chestKey);
+				toRemove.add(entry.getKey());
 				
-				ConfigurationSection chestSec = plugin.getDataConfig()
-						.getConfigurationSection("Data.lootchests." + chestKey);
+				ConfigurationSection chestSec = WorldData.get()
+						.getConfigurationSection("Data.lootchests." + entry.getKey());
 				
 				if (chestSec != null) {
 					evalChestRefill(chestSec);
@@ -165,6 +170,10 @@ public class ChestRefiller {
 				
 			}
 			
+		}
+		
+		for (String str : toRemove) {
+			cooldowns.remove(str);
 		}
 		
 	}
