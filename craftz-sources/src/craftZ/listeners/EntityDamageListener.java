@@ -70,7 +70,7 @@ public class EntityDamageListener implements Listener {
 					
 				}
 				
-				boolean value_mobs_blood = plugin.getConfig().getBoolean("Config.mobs.blood-particles-when-damaged");
+				boolean value_mobs_blood = false;//plugin.getConfig().getBoolean("Config.mobs.blood-particles-when-damaged");
 				if (!event.isCancelled() && value_mobs_blood) {
 					
 					if (!eventEntityType.isAlive() || (eventEntityType == EntityType.PLAYER
@@ -97,10 +97,12 @@ public class EntityDamageListener implements Listener {
 						blood.setPickupDelay(Integer.MAX_VALUE);
 						
 						plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+							
 							@Override
 							public void run() {
 								blood.remove();
 							}
+							
 						}, 1 + new Random().nextInt(6));
 						
 					}

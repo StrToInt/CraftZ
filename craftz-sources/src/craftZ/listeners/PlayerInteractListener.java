@@ -117,7 +117,7 @@ public class PlayerInteractListener implements Listener {
 							eventPlayer.getItemInHand().setAmount(eventPlayer.getItemInHand().getAmount() - 1);
 						}
 						
-						eventPlayer.setHealth(20);
+						eventPlayer.setHealth(20D);
 						
 						eventPlayer.sendMessage(ChatColor.DARK_RED + plugin.getLangConfig()
 								.getString("Messages.bloodbag"));
