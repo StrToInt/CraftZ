@@ -106,9 +106,9 @@ public class CraftZ extends JavaPlugin {
 				
 				tickID++;
 				
-				ZombieSpawner.onServerTick(tickID);
+				ZombieSpawner.onServerTick();
 				AnimalSpawner.onServerTick(tickID);
-				ChestRefiller.onServerTick(tickID);
+				ChestRefiller.onServerTick();
 				PlayerManager.onServerTick(tickID);
 				
 			}
@@ -445,205 +445,92 @@ public class CraftZ extends JavaPlugin {
 		// CONFIG
 		
 			// WORLD
-			
-			String path_world_name = "Config.world.name";
-			this.getConfig().addDefault(path_world_name, "world");
-			
-			String path_world_lobby_radius = "Config.world.lobby.radius";
-			this.getConfig().addDefault(path_world_lobby_radius, 20);
-			
-			String path_world_lobby_x = "Config.world.lobby.x";
-			this.getConfig().addDefault(path_world_lobby_x, 0);
-			
-			String path_world_lobby_y = "Config.world.lobby.y";
-			this.getConfig().addDefault(path_world_lobby_y, 64);
-			
-			String path_world_lobby_z = "Config.world.lobby.z";
-			this.getConfig().addDefault(path_world_lobby_z, 0);
-			
-			String path_world_realtime = "Config.world.real-time";
-			this.getConfig().addDefault(path_world_realtime, true);
-			
-			String path_worldborder_enable = "Config.world.world-border.enable";
-			this.getConfig().addDefault(path_worldborder_enable, true);
-			
-			String path_worldborder_radius = "Config.world.world-border.radius";
-			this.getConfig().addDefault(path_worldborder_radius, 400);
+			this.getConfig().addDefault("Config.world.name", "world");
+			this.getConfig().addDefault("Config.world.lobby.radius", 20);
+			this.getConfig().addDefault("Config.world.lobby.x", 0);
+			this.getConfig().addDefault("Config.world.lobby.y", 64);
+			this.getConfig().addDefault("Config.world.lobby.z", 0);
+			this.getConfig().addDefault("Config.world.real-time", true);
+			this.getConfig().addDefault("Config.world.world-border.enable", true);
+			this.getConfig().addDefault("Config.world.world-border.radius", 400);
 				
 				// WORLDCHANGE
-				
-				String path_worldchange_allowBlockBurning = "Config.world.world-changing.allow-burning";
-				this.getConfig().addDefault(path_worldchange_allowBlockBurning, false);
-				
-				String path_worldchange_allowBlockGrow = "Config.world.world-changing.allow-block-grow";
-				this.getConfig().addDefault(path_worldchange_allowBlockGrow, false);
-				
-				String path_worldchange_allowTreeGrow = "Config.world.world-changing.allow-tree-grow";
-				this.getConfig().addDefault(path_worldchange_allowTreeGrow, false);
-				
-				String path_worldchange_allowGrassGrow = "Config.world.world-changing.allow-grass-grow";
-				this.getConfig().addDefault(path_worldchange_allowGrassGrow, false);
-				
-				String path_worldchange_allowNewChunks = "Config.world.world-changing.allow-new-chunks";
-				this.getConfig().addDefault(path_worldchange_allowNewChunks, true);
+				this.getConfig().addDefault("Config.world.world-changing.allow-burning", false);
+				this.getConfig().addDefault("Config.world.world-changing.allow-block-grow", false);
+				this.getConfig().addDefault("Config.world.world-changing.allow-tree-grow", false);
+				this.getConfig().addDefault("Config.world.world-changing.allow-grass-grow", false);
+				this.getConfig().addDefault("Config.world.world-changing.allow-new-chunks", true);
 				
 				// WEATHER
-				
-				String path_weatherChanging_allow = "Config.world.weather.allowWeatherChanging";
-				this.getConfig().addDefault(path_weatherChanging_allow, true);
+				this.getConfig().addDefault("Config.world.weather.allowWeatherChanging", true);
 				
 			// PLAYERS
 				
-				String path_use_scoreboard = "Config.players.use-scoreboard-for-stats";
-				this.getConfig().addDefault(path_use_scoreboard, false);
+				this.getConfig().addDefault("Config.players.use-scoreboard-for-stats", false);
+				this.getConfig().addDefault("Config.players.kick-on-death", false);
 			
 				// INTERACT
-				
-				String path_shearing_allow = "Config.players.interact.shearing";
-				this.getConfig().addDefault(path_shearing_allow, false);
-				
-				String path_sleeping_allow = "Config.players.interact.sleeping";
-				this.getConfig().addDefault(path_sleeping_allow, false);
+				this.getConfig().addDefault("Config.players.interact.shearing", false);
+				this.getConfig().addDefault("Config.players.interact.sleeping", false);
 				
 					// BLOCKS
-					
-					String path_blockBreaking_allow = "Config.players.interact.block-breaking";
-					this.getConfig().addDefault(path_blockBreaking_allow, false);
-					
-					String path_blockPlacing_allow = "Config.players.interact.block-placing";
-					this.getConfig().addDefault(path_blockPlacing_allow, false);
-					
-					String path_blockPlacing_spiderweb_allow = "Config.players.interact.allow-spiderweb-placing";
-					this.getConfig().addDefault(path_blockPlacing_spiderweb_allow, true);
+					this.getConfig().addDefault("Config.players.interact.block-breaking", false);
+					this.getConfig().addDefault("Config.players.interact.block-placing", false);
+					this.getConfig().addDefault("Config.players.interact.allow-spiderweb-placing", true);
 				
 				// MEDICAL
-				
-				String path_enableSugarEffect = "Config.players.medical.enable-sugar-speed-effect";
-				this.getConfig().addDefault(path_enableSugarEffect, true);
-				
-				String path_bleeding_enable = "Config.players.medical.bleeding.enable";
-				this.getConfig().addDefault(path_bleeding_enable, true);
-				
-				String path_bleeding_chance = "Config.players.medical.bleeding.chance";
-				this.getConfig().addDefault(path_bleeding_chance, 0.04);
-				
-				String path_bleeding_healWithPaper = "Config.players.medical.bleeding.heal-with-paper";
-				this.getConfig().addDefault(path_bleeding_healWithPaper, true);
-				
-				String path_healing_healWithRoseRed = "Config.players.medical.healing.heal-with-rosered";
-				this.getConfig().addDefault(path_healing_healWithRoseRed, true);
-				
-				String path_healing_onlyHealingOthers = "Config.players.medical.healing.only-healing-others";
-				this.getConfig().addDefault(path_healing_onlyHealingOthers, true);
-				
-				String path_poisoning_enable = "Config.players.medical.poisoning.enable";
-				this.getConfig().addDefault(path_poisoning_enable, true);
-				
-				String path_poisoning_chance = "Config.players.medical.poisoning.chance";
-				this.getConfig().addDefault(path_poisoning_chance, 0.04);
-				
-				String path_poisoning_healWithLimeGreen = "Config.players.medical.poisoning.cure-with-limegreen";
-				this.getConfig().addDefault(path_poisoning_healWithLimeGreen, true);
+				this.getConfig().addDefault("Config.players.medical.enable-sugar-speed-effect", true);
+				this.getConfig().addDefault("Config.players.medical.bleeding.enable", true);
+				this.getConfig().addDefault("Config.players.medical.bleeding.chance", 0.04);
+				this.getConfig().addDefault("Config.players.medical.bleeding.heal-with-paper", true);
+				this.getConfig().addDefault("Config.players.medical.healing.heal-with-rosered", true);
+				this.getConfig().addDefault("Config.players.medical.healing.only-healing-others", true);
+				this.getConfig().addDefault("Config.players.medical.poisoning.enable", true);
+				this.getConfig().addDefault("Config.players.medical.poisoning.chance", 0.04);
+				this.getConfig().addDefault("Config.players.medical.poisoning.cure-with-limegreen", true);
 			
 			// MOBS
-				
-				String path_mobs_blood = "Config.mobs.blood-particles-when-damaged";
-				this.getConfig().addDefault(path_mobs_blood, true);
+				this.getConfig().addDefault("Config.mobs.blood-particles-when-damaged", true);
 			
 				// ZOMBIES
 				
 					// DROPS
-					
-					String path_zombies_drops_enable = "Config.mobs.zombies.enable-drops";
-					this.getConfig().addDefault(path_zombies_drops_enable, true);
-					
-					String path_zombies_drops_chance = "Config.mobs.zombies.drops.chance";
-					this.getConfig().addDefault(path_zombies_drops_chance, 0.3);
-					
-//					String path_zombies_drops_rf = "Config.mobs.zombies.drops.rottenflesh";
-//					this.getConfig().addDefault(path_zombies_drops_rf, true);
-//					
-//					String path_zombies_drops_arrows = "Config.mobs.zombies.drops.arrows";
-//					this.getConfig().addDefault(path_zombies_drops_arrows, true);
-					
-					String path_zombies_drops_items = "Config.mobs.zombies.drops.items";
-					String[] value_zombies_drops_items = { "262", "2x367" };
-					this.getConfig().addDefault(path_zombies_drops_items, value_zombies_drops_items);
+					this.getConfig().addDefault("Config.mobs.zombies.enable-drops", true);
+					this.getConfig().addDefault("Config.mobs.zombies.drops.chance", 0.3);
+					this.getConfig().addDefault("Config.mobs.zombies.drops.items", new String[] { "262", "2x367" });
 					
 					// SPAWNING
-					
-					String path_zombies_spawninterval = "Config.mobs.zombies.spawning.interval";
-					this.getConfig().addDefault(path_zombies_spawninterval, 40);
-					
-					String path_zombies_maxzombies = "Config.mobs.zombies.spawning.maxzombies";
-					this.getConfig().addDefault(path_zombies_maxzombies, 200);
-					
-					String path_zombies_autospawn = "Config.mobs.zombies.spawning.enable-auto-spawn";
-					this.getConfig().addDefault(path_zombies_autospawn, false);
-					
-					String path_zombies_autointerval = "Config.mobs.zombies.spawning.auto-spawning-interval";
-					this.getConfig().addDefault(path_zombies_autointerval, 40);
+					this.getConfig().addDefault("Config.mobs.zombies.spawning.interval", 40);
+					this.getConfig().addDefault("Config.mobs.zombies.spawning.maxzombies", 200);
+					this.getConfig().addDefault("Config.mobs.zombies.spawning.enable-auto-spawn", false);
+					this.getConfig().addDefault("Config.mobs.zombies.spawning.auto-spawning-interval", 40);
 				
-				// ANIMALS
-				
-					// SPAWNS
-					
-					String path_animalspawns_enable = "Config.mobs.animals.spawning.enable";
-					this.getConfig().addDefault(path_animalspawns_enable, true);
-					
-						// CHANCE
-						
-						String path_animalspawns_chance_cow = "Config.mobs.animals.spawning.chance.cow";
-						this.getConfig().addDefault(path_animalspawns_chance_cow, 0.1);
-						
-						String path_animalspawns_chance_chicken = "Config.mobs.animals.spawning.chance.chicken";
-						this.getConfig().addDefault(path_animalspawns_chance_chicken, 0.1);
-						
-						String path_animalspawns_chance_pig = "Config.mobs.animals.spawning.chance.pig";
-						this.getConfig().addDefault(path_animalspawns_chance_pig, 0.1);
-						
-						String path_animalspawns_chance_sheep = "Config.mobs.animals.spawning.chance.sheep";
-						this.getConfig().addDefault(path_animalspawns_chance_sheep, 0.1);
+//				// ANIMALS
+//				
+//					// SPAWNS
+//					this.getConfig().addDefault("Config.mobs.animals.spawning.enable", true);
+//					
+//						// CHANCE
+//						this.getConfig().addDefault("Config.mobs.animals.spawning.chance.cow", 0.1);
+//						this.getConfig().addDefault("Config.mobs.animals.spawning.chance.chicken", 0.1);
+//						this.getConfig().addDefault("Config.mobs.animals.spawning.chance.pig", 0.1);
+//						this.getConfig().addDefault("Config.mobs.animals.spawning.chance.sheep", 0.1);
 					
 			// CHAT
-		
-			String path_modifyJoinQuitMessages = "Config.chat.modify-join-and-quit-messages";
-			this.getConfig().addDefault(path_modifyJoinQuitMessages, true);
-			
-			String path_modifyPlayerMessages = "Config.chat.modify-player-messages";
-			this.getConfig().addDefault(path_modifyPlayerMessages, false);
-			
-			String path_modifyDeathMessages = "Config.chat.modify-death-messages";
-			this.getConfig().addDefault(path_modifyDeathMessages, true);
+			this.getConfig().addDefault("Config.chat.modify-join-and-quit-messages", true);
+			this.getConfig().addDefault("Config.chat.modify-player-messages", false);
+			this.getConfig().addDefault("Config.chat.modify-death-messages", true);
 			
 			// VEHICLES
-			
-			String path_vehicles_enable = "Config.vehicles.enable";
-			this.getConfig().addDefault(path_vehicles_enable, false);
-			
-			String path_vehicles_speed = "Config.vehicles.speed";
-			this.getConfig().addDefault(path_vehicles_speed, 5.0);
-			
-			String path_vehicles_speed_streetMulti = "Config.vehicles.speed-street-multiplier";
-			this.getConfig().addDefault(path_vehicles_speed_streetMulti, 1.6);
-			
-			String path_vehicles_speed_streetBlocks = "Config.vehicles.speed-street-blocks";
-			String[] value_vehicles_speed_streetBlocks = { "35:7", "35", "35:15" };
-			this.getConfig().addDefault(path_vehicles_speed_streetBlocks, value_vehicles_speed_streetBlocks);
-			
-			String path_vehicles_streetBorderBlocks = "Config.vehicles.street-border-blocks";
-			String[] value_vehicles_streetBorderBlocks = { "43", "44" };
-			this.getConfig().addDefault(path_vehicles_streetBorderBlocks, value_vehicles_streetBorderBlocks);
+			this.getConfig().addDefault("Config.vehicles.enable", false);
+			this.getConfig().addDefault("Config.vehicles.speed", 5.0);
+			this.getConfig().addDefault("Config.vehicles.speed-street-multiplier", 1.6);
+			this.getConfig().addDefault("Config.vehicles.speed-street-blocks", new String[] { "35:7", "35", "35:15" });
+			this.getConfig().addDefault("Config.vehicles.street-border-blocks", new String[] { "43", "44" });
 			
 			// ITEMNAMES
-			
-			String path_changeItemnames_enable = "Config.change-item-names.enable";
-			this.getConfig().addDefault(path_changeItemnames_enable, true);
-			
-			String path_changeItemnames_names = "Config.change-item-names.names";
-			String[] value_changeItemnames_names = { "339=Bandage", "351:1=Blood Bag", "351:10=Antibiotics",
-					"368=Grenade" };
-			this.getConfig().addDefault(path_changeItemnames_names, value_changeItemnames_names);
+			this.getConfig().addDefault("Config.change-item-names.enable", true);
+			this.getConfig().addDefault("Config.change-item-names.names", new String[] { "339=Bandage", "351:1=Blood Bag", "351:10=Antibiotics", "368=Grenade" });
 			
 			
 			
@@ -669,99 +556,41 @@ public class CraftZ extends JavaPlugin {
 		);
 		
 		// MESSAGES
-		
-		String path_harvestedTree = "Messages.harvested-tree";
-		this.getLangConfig().addDefault(path_harvestedTree, "A pile of wood has been successfully added to your inventory.");
-		
-		String path_alreadyHaveWood = "Messages.already-have-wood";
-		this.getLangConfig().addDefault(path_alreadyHaveWood, "You already have wood.");
-		
-		String path_isntTree = "Messages.isnt-a-tree";
-		this.getLangConfig().addDefault(path_isntTree, "You must be in a forest and close to a tree to harvest wood.");
-		
-		String path_destroyedSign = "Messages.destroyed-sign";
-		this.getLangConfig().addDefault(path_destroyedSign, "You just destroyed a CraftZ sign.");
-		
-		String path_successfullyCreated = "Messages.successfully-created";
-		this.getLangConfig().addDefault(path_successfullyCreated, "Successfully created!");
-		
-		String path_spawned = "Messages.spawned";
-		this.getLangConfig().addDefault(path_spawned, "You're at spawnpoint %s");
-		
-		String path_died = "Messages.died";
-		this.getLangConfig().addDefault(path_died, "You died! Zombies killed: %z, players killed: %p, minutes survived: %m");
-		
-		String path_bleeding = "Messages.bleeding";
-		this.getLangConfig().addDefault(path_bleeding, "You are bleeding! You need a bandage to mend the wounds!");
-		
-		String path_bandaged = "Messages.bandaged";
-		this.getLangConfig().addDefault(path_bandaged, "Your wounds are now bandaged.");
-		
-		String path_bloodbag = "Messages.bloodbag";
-		this.getLangConfig().addDefault(path_bloodbag, "Your health is restored.");
-		
-		String path_poisoned = "Messages.poisoned";
-		this.getLangConfig().addDefault(path_poisoned, "You are poisoned! You should use antibiotics soon.");
-		
-		String path_unpoisoned = "Messages.unpoisoned";
-		this.getLangConfig().addDefault(path_unpoisoned, "Your poisoning is healed!");
-		
-		String path_outOfWorld = "Messages.out-of-world";
-		this.getLangConfig().addDefault(path_outOfWorld, "You're in a very infected area! Go back, or you will die soon!");
-		
-		String path_killed_zombie = "Messages.killed.zombie";
-		this.getLangConfig().addDefault(path_killed_zombie, "Killed the zombie! Total zombie kills: %k");
-		
-		String path_killed_player = "Messages.killed.player";
-		this.getLangConfig().addDefault(path_killed_player, "Killed %p! Total player kills: %k");
+		this.getLangConfig().addDefault("Messages.harvested-tree", "A pile of wood has been successfully added to your inventory.");
+		this.getLangConfig().addDefault("Messages.already-have-wood", "You already have wood.");
+		this.getLangConfig().addDefault("Messages.isnt-a-tree", "You must be in a forest and close to a tree to harvest wood.");
+		this.getLangConfig().addDefault("Messages.destroyed-sign", "You just destroyed a CraftZ sign.");
+		this.getLangConfig().addDefault("Messages.successfully-created", "Successfully created!");
+		this.getLangConfig().addDefault("Messages.spawned", "You're at spawnpoint %s");
+		this.getLangConfig().addDefault("Messages.died", "You died! Zombies killed: %z, players killed: %p, minutes survived: %m");
+		this.getLangConfig().addDefault("Messages.bleeding", "You are bleeding! You need a bandage to mend the wounds!");
+		this.getLangConfig().addDefault("Messages.bandaged", "Your wounds are now bandaged.");
+		this.getLangConfig().addDefault("Messages.bloodbag", "Your health is restored.");
+		this.getLangConfig().addDefault("Messages.poisoned", "You are poisoned! You should use antibiotics soon.");
+		this.getLangConfig().addDefault("Messages.unpoisoned", "Your poisoning is healed!");
+		this.getLangConfig().addDefault("Messages.out-of-world", "You're in a very infected area! Go back, or you will die soon!");
+		this.getLangConfig().addDefault("Messages.killed.zombie", "Killed the zombie! Total zombie kills: %k");
+		this.getLangConfig().addDefault("Messages.killed.player", "Killed %p! Total player kills: %k");
 		
 			// HELP
-			
-			String path_craftz_helptitle = "Messages.help.title";
-			this.getLangConfig().addDefault(path_craftz_helptitle, "=== CraftZ Help ===");
-			
-			String path_craftz_help_main = "Messages.help.help-command";
-			this.getLangConfig().addDefault(path_craftz_help_main, "/craftz: Displays this help menu.");
-			
-			String path_craftz_help_rmi = "Messages.help.removeitems-command";
-			this.getLangConfig().addDefault(path_craftz_help_rmi, "/craftz removeitems: Removes all items in the world. (Alias: /craftz remitems)");
-			
-			String path_craftz_help_rld = "Messages.help.reload-command";
-			this.getLangConfig().addDefault(path_craftz_help_rld, "/craftz reload: Reload the configuration files.");
-			
-			String path_craftz_help_spawn = "Messages.help.spawn-command";
-			this.getLangConfig().addDefault(path_craftz_help_spawn, "/craftz spawn: Spawn at a random point inside of the world.");
-			
-			String path_craftz_help_setlobby = "Messages.help.setlobby-command";
-			this.getLangConfig().addDefault(path_craftz_help_setlobby, "/craftz setlobby: Set the lobby location where you're standing.");
-			
-			String path_craftz_help_smasher = "Messages.help.smasher-command";
-			this.getLangConfig().addDefault(path_craftz_help_smasher, "/craftz smasher: Get the ultimate zombie smasher!");
+			this.getLangConfig().addDefault("Messages.help.title", "=== CraftZ Help ===");
+			this.getLangConfig().addDefault("Messages.help.help-command", "/craftz: Displays this help menu.");
+			this.getLangConfig().addDefault("Messages.help.removeitems-command", "/craftz removeitems: Removes all items in the world. (Alias: /craftz remitems)");
+			this.getLangConfig().addDefault("Messages.help.reload-command", "/craftz reload: Reload the configuration files.");
+			this.getLangConfig().addDefault("Messages.help.spawn-command", "/craftz spawn: Spawn at a random point inside of the world.");
+			this.getLangConfig().addDefault("Messages.help.setlobby-command", "/craftz setlobby: Set the lobby location where you're standing.");
+			this.getLangConfig().addDefault("Messages.help.smasher-command", "/craftz smasher: Get the ultimate zombie smasher!");
 			
 			// COMMAND
-			
-			String path_cmd_removedItems = "Messages.cmd.removed-items";
-			this.getLangConfig().addDefault(path_cmd_removedItems, "Removed %i items.");
-			
-			String path_cmd_reloaded = "Messages.cmd.reloaded";
-			this.getLangConfig().addDefault(path_cmd_reloaded, "Reloaded the config files.");
-			
-			String path_cmd_lobby = "Messages.cmd.setlobby";
-			this.getLangConfig().addDefault(path_cmd_lobby, "The lobby center is set at your location. For lobby radius, see configuration file.");
+			this.getLangConfig().addDefault("Messages.cmd.removed-items", "Removed %i items.");
+			this.getLangConfig().addDefault("Messages.cmd.reloaded", "Reloaded the config files.");
+			this.getLangConfig().addDefault("Messages.cmd.setlobby", "The lobby center is set at your location. For lobby radius, see configuration file.");
 			
 			// ERRORS
-		
-			String path_error_mustBePlayer = "Messages.errors.mustBePlayer";
-			this.getLangConfig().addDefault(path_error_mustBePlayer, "You must be a player to use this command.");
-			
-			String path_error_tooFewArgs = "Messages.errors.tooFewArguments";
-			this.getLangConfig().addDefault(path_error_tooFewArgs, "Too few arguments given.");
-			
-			String path_error_signNotComplete = "Messages.errors.sign-not-complete";
-			this.getLangConfig().addDefault(path_error_signNotComplete, "The sign is not complete.");
-			
-			String path_error_notEnoughPerms = "Messages.errors.not-enough-permissions";
-			this.getLangConfig().addDefault(path_error_notEnoughPerms, "You don't have the required permission to do this.");
+			this.getLangConfig().addDefault("Messages.errors.mustBePlayer", "You must be a player to use this command.");
+			this.getLangConfig().addDefault("Messages.errors.tooFewArguments", "Too few arguments given.");
+			this.getLangConfig().addDefault("Messages.errors.sign-not-complete", "The sign is not complete.");
+			this.getLangConfig().addDefault("Messages.errors.not-enough-permissions", "You don't have the required permission to do this.");
 		
 		
 		
@@ -826,85 +655,71 @@ public class CraftZ extends JavaPlugin {
 		// LOOT
 			
 			// SETTINGS
-			
-			String path_settings_refillTime = "Loot.settings.time-before-refill";
-			this.getLootConfig().addDefault(path_settings_refillTime, 120);
-			
-			String path_settings_minStacksFilled = "Loot.settings.min-stacks-filled";
-			this.getLootConfig().addDefault(path_settings_minStacksFilled, 1);
-			
-			String path_settings_maxStacksFilled = "Loot.settings.max-stacks-filled";
-			this.getLootConfig().addDefault(path_settings_maxStacksFilled, 3);
+			this.getLootConfig().addDefault("Loot.settings.time-before-refill", 120);
+			this.getLootConfig().addDefault("Loot.settings.min-stacks-filled", 1);
+			this.getLootConfig().addDefault("Loot.settings.max-stacks-filled", 3);
 			
 			// LISTS
 			
-			String path_lists_all = "Loot.lists.all";
 			String[] value_lists_all = {
 				"30", "46", "2x39", "2x40", "258", "259", "2x260", "261", "4x262", "267", "2x268", "272", "3x281", "2x282",
 				"2x296", "297",	"298", "299", "300", "301", "302", "303", "304", "305", "306", "307", "308", "309", "339",
 				"346", "353", "357", "360", "368", "374", "391", "393", "400", "373:5", "373:16389"
 			};
-			this.getLootConfig().addDefault(path_lists_all, value_lists_all);
+			this.getLootConfig().addDefault("Loot.lists.all", value_lists_all);
 			
 			
 			
-			String path_lists_military = "Loot.lists.military";
 			String[] value_lists_military = {
 				"30", "258", "261", "4x262", "2x268", "2x281", "2x282", "3x298", "3x299", "3x300", "3x301"
 			};
-			this.getLootConfig().addDefault(path_lists_military, value_lists_military);
+			this.getLootConfig().addDefault("Loot.lists.military", value_lists_military);
 			
 			
 			
-			String path_lists_militaryEpic = "Loot.lists.military-epic";
 			String[] value_lists_militaryEpic = {
 				"30", "46", "258", "261", "4x262", "267", "2x268", "272", "2x281", "282", "2x298", "2x299", "2x300",
 				"2x301", "302", "303", "304", "305", "306", "307", "308", "309", "368"
 			};
-			this.getLootConfig().addDefault(path_lists_militaryEpic, value_lists_militaryEpic);
+			this.getLootConfig().addDefault("Loot.lists.military-epic", value_lists_militaryEpic);
 			
 			
 			
-			String path_lists_civilian = "Loot.lists.civilian";
 			String[] value_lists_civilian = {
 				"2x39", "2x40", "258", "259", "2x260", "2x262", "268", "2x281", "282", "296", "297", "298", "299",
 				"300", "301", "346", "357", "360", "391", "393", "400"
 			};
-			this.getLootConfig().addDefault(path_lists_civilian, value_lists_civilian);
+			this.getLootConfig().addDefault("Loot.lists.civilian", value_lists_civilian);
 			
 			
 			
-			String path_lists_farms = "Loot.lists.farms";
 			String[] value_lists_farms = {
 				"3x39", "3x40", "258", "259", "4x260", "261", "4x262", "2x268", "4x281", "2x282", "2x296", "2x297",
 				"298", "299", "300", "301", "346", "353", "357", "360", "374", "391", "393", "400"
 			};
-			this.getLootConfig().addDefault(path_lists_farms, value_lists_farms);
+			this.getLootConfig().addDefault("Loot.lists.farms", value_lists_farms);
 			
 			
 			
-			String path_lists_industrial = "Loot.lists.industrial";
 			String[] value_lists_industrial = {
 				"30", "4x262", "2x268", "296"
 			};
-			this.getLootConfig().addDefault(path_lists_industrial, value_lists_industrial);
+			this.getLootConfig().addDefault("Loot.lists.industrial", value_lists_industrial);
 			
 			
 			
-			String path_lists_barracks = "Loot.lists.barracks";
 			String[] value_lists_barracks = {
 				"2x39", "2x40", "260", "262", "268", "281"
 			};
-			this.getLootConfig().addDefault(path_lists_barracks, value_lists_barracks);
+			this.getLootConfig().addDefault("Loot.lists.barracks", value_lists_barracks);
 			
 			
 			
-			String path_lists_medical = "Loot.lists.medical";
 			String[] value_lists_medical = {
 				"2x260", "2x281", "2x282", "339", "2x351:1", "351:10", "2x353", "357", "360", "374", "391",
 				"2x373:5", "373:16389"
 			};
-			this.getLootConfig().addDefault(path_lists_medical, value_lists_medical);
+			this.getLootConfig().addDefault("Loot.lists.medical", value_lists_medical);
 		
 		
 		

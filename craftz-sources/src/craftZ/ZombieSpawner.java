@@ -109,7 +109,7 @@ public class ZombieSpawner implements Listener {
 	
 	
 	
-	public static void onServerTick(int tickID) {
+	public static void onServerTick() {
 		
 		for (String str : cooldowns.keySet()) {
 			

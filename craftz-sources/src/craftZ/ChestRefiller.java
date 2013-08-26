@@ -146,7 +146,7 @@ public class ChestRefiller {
 	
 	
 	
-	public static void onServerTick(int tickID) {
+	public static void onServerTick() {
 		
 		Set<String> toRemove = new TreeSet<String>();
 		Iterator<Map.Entry<String, Integer>> it = cooldowns.entrySet().iterator();
