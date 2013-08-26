@@ -135,10 +135,10 @@ public class CraftZ extends JavaPlugin {
 		
 	
 		
-		System.out.println("++===================================================++");
-		System.out.println("||  [CraftZ] Visit dev.bukkit.org/server-mods/craftz ||");
-		System.out.println("||  [CraftZ] Plugin successfully enabled.            ||");
-		System.out.println("++===================================================++");
+		System.out.println("++======================================================++");
+		System.out.println("||  [CraftZ] Visit dev.bukkit.org/bukkit-plugins/craftz ||");
+		System.out.println("||  [CraftZ] Plugin successfully enabled.               ||");
+		System.out.println("++======================================================++");
 		
 	}
 	
