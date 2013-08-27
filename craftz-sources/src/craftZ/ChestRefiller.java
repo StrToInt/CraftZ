@@ -98,8 +98,7 @@ public class ChestRefiller {
 			block.setType(Material.CHEST);
 			Chest chest = (Chest) block.getState();
 			
-			@SuppressWarnings("unchecked")
-			List<String> bItems = (List<String>) plugin.getLootConfig().getList("Loot.lists." + lootList);
+			List<String> bItems = plugin.getLootConfig().getStringList("Loot.lists." + lootList);
 			
 			if (bItems == null || bItems.isEmpty()) {
 				return;
