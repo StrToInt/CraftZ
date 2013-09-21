@@ -21,61 +21,18 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import craftZ.listeners.AsyncPlayerChatListener;
-import craftZ.listeners.BlockBreakListener;
-import craftZ.listeners.BlockBurnListener;
-import craftZ.listeners.BlockGrowListener;
-import craftZ.listeners.BlockIgniteListener;
-import craftZ.listeners.BlockPlaceListener;
-import craftZ.listeners.BlockSpreadListener;
-import craftZ.listeners.ChunkLoadListener;
-import craftZ.listeners.CreatureSpawnListener;
-import craftZ.listeners.EntityCreatePortalListener;
-import craftZ.listeners.EntityDamageByEntityListener;
-import craftZ.listeners.EntityDamageListener;
-import craftZ.listeners.EntityDeathListener;
-import craftZ.listeners.EntityExplodeListener;
-import craftZ.listeners.EntityRegainHealthListener;
-import craftZ.listeners.EntityShootBowListener;
-import craftZ.listeners.FoodLevelChangeListener;
-import craftZ.listeners.HangingBreakByEntityListener;
-import craftZ.listeners.HangingBreakListener;
-import craftZ.listeners.HangingPlaceListener;
-import craftZ.listeners.InventoryClickListener;
-import craftZ.listeners.InventoryCloseListener;
-import craftZ.listeners.ItemDespawnListener;
-import craftZ.listeners.PlayerBedEnterListener;
-import craftZ.listeners.PlayerChangedWorldListener;
-import craftZ.listeners.PlayerCommandPreprocessListener;
-import craftZ.listeners.PlayerDeathListener;
-import craftZ.listeners.PlayerDropItemListener;
-import craftZ.listeners.PlayerInteractListener;
-import craftZ.listeners.PlayerItemConsumeListener;
-import craftZ.listeners.PlayerJoinListener;
-import craftZ.listeners.PlayerMoveListener;
-import craftZ.listeners.PlayerPickupItemListener;
-import craftZ.listeners.PlayerQuitListener;
-import craftZ.listeners.PlayerTeleportListener;
-import craftZ.listeners.ProjectileHitListener;
-import craftZ.listeners.ShearEntityListener;
-import craftZ.listeners.SheepDyeWoolListener;
-import craftZ.listeners.SignChangeListener;
-import craftZ.listeners.StructureGrowListener;
-import craftZ.listeners.VehicleBlockCollisionListener;
-import craftZ.listeners.VehicleMoveListener;
-import craftZ.listeners.VehicleUpdateListener;
-import craftZ.listeners.WeatherChangeListener;
+import craftZ.listeners.*;
 import craftZ.util.Messager;
 import craftZ.util.Time;
 
 public class CraftZ extends JavaPlugin {
 	
-	Time time = new Time(this);
 	Messager messager = new Messager(this);
 	public static long tickID = 0;
 	public Map<Player, Integer> movingPlayers = new HashMap<Player, Integer>();
 	
 	public static CraftZ i;
+	
 	
 	
 	@Override
@@ -99,6 +56,9 @@ public class CraftZ extends JavaPlugin {
 				AnimalSpawner.onServerTick(tickID);
 				ChestRefiller.onServerTick();
 				PlayerManager.onServerTick(tickID);
+				
+				if (getConfig().getBoolean("Config.world.real-time"))
+					Time.setToServerTime();
 				
 			}
 			
@@ -422,7 +382,6 @@ public class CraftZ extends JavaPlugin {
 				getConfig().addDefault("Config.world.weather.allowWeatherChanging", true);
 				
 			// PLAYERS
-			
 			getConfig().addDefault("Config.players.use-scoreboard-for-stats", false);
 			getConfig().addDefault("Config.players.kick-on-death", false);
 			
