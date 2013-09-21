@@ -22,22 +22,8 @@ import craftZ.util.EntityChecker;
 
 public class ZombieSpawner implements Listener {
 	
-	private static CraftZ plugin;
-	private static EntityChecker entityChecker;
 	private static int ticksForAutoSpawn = 0;
-	
 	private static Map<String, Integer> cooldowns = new HashMap<String, Integer>();
-	
-	
-	
-	public static void setup(CraftZ plugin) {
-		
-		ZombieSpawner.plugin = plugin;
-		entityChecker = new EntityChecker(plugin);
-		
-	}
-	
-	
 	
 	
 	
@@ -70,7 +56,7 @@ public class ZombieSpawner implements Listener {
 		int spnLocX = spnptSec.getInt("coords.x");
 		int spnLocY = spnptSec.getInt("coords.y");
 		int spnLocZ = spnptSec.getInt("coords.z");
-		World spnWorld = plugin.getWorld();
+		World spnWorld = CraftZ.i.getWorld();
 		Location spnLoc = new Location(spnWorld, spnLocX, spnLocY, spnLocZ);
 		
 		Location locToSpawn = BlockChecker.getSafeSpawnLocationOver(spnLoc, true);
@@ -78,10 +64,10 @@ public class ZombieSpawner implements Listener {
 		int maxZombiesInRadius = spnptSec.getInt("max-zombies-in-radius");
 		int maxZombiesRadius = spnptSec.getInt("max-zombies-radius");
 		
-		if (!entityChecker.areEntitiesNearby(locToSpawn, maxZombiesRadius, EntityType.ZOMBIE, maxZombiesInRadius)) {
+		if (!EntityChecker.areEntitiesNearby(locToSpawn, maxZombiesRadius, EntityType.ZOMBIE, maxZombiesInRadius)) {
 			
 			int zombies = 0;
-			int maxZombies = plugin.getConfig().getInt("Config.mobs.zombies.spawning.maxzombies");
+			int maxZombies = CraftZ.i.getConfig().getInt("Config.mobs.zombies.spawning.maxzombies");
 			
 			for (Entity ent : spnWorld.getEntities()) {
 				
@@ -115,7 +101,7 @@ public class ZombieSpawner implements Listener {
 			
 			cooldowns.put(str, cooldowns.get(str) + 1);
 			
-			if (cooldowns.get(str) >= plugin.getConfig().getInt("Config.mobs.zombies.spawning.interval") * 20) {
+			if (cooldowns.get(str) >= CraftZ.i.getConfig().getInt("Config.mobs.zombies.spawning.interval") * 20) {
 				
 				cooldowns.put(str, 0);
 				
@@ -149,10 +135,10 @@ public class ZombieSpawner implements Listener {
 		
 		
 		
-		if (plugin.getConfig().getBoolean("Config.mobs.zombies.spawning.enable-auto-spawn")) {
+		if (CraftZ.i.getConfig().getBoolean("Config.mobs.zombies.spawning.enable-auto-spawn")) {
 			
 			ticksForAutoSpawn++;
-			if (PlayerManager.getPlayCount() > 0 && ticksForAutoSpawn >= plugin.getConfig()
+			if (PlayerManager.getPlayCount() > 0 && ticksForAutoSpawn >= CraftZ.i.getConfig()
 					.getInt("Config.mobs.zombies.spawning.auto-spawning-interval")
 					* 20 / PlayerManager.getPlayCount()) {
 				
@@ -168,7 +154,7 @@ public class ZombieSpawner implements Listener {
 				
 				Location locToSpawn = BlockChecker.getSafeSpawnLocationOver(randLoc, true);
 				int zombies = 0;
-				int maxZombies = plugin.getConfig().getInt("Config.mobs.zombies.spawning.maxzombies");
+				int maxZombies = CraftZ.i.getConfig().getInt("Config.mobs.zombies.spawning.maxzombies");
 				
 				for (Entity ent : p.getWorld().getEntities()) {
 					

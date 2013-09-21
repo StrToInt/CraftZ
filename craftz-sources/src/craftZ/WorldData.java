@@ -12,29 +12,20 @@ import com.google.common.io.Files;
 
 public class WorldData {
 	
-	private static CraftZ plugin;
-	
 	private static HashMap<String, ConfigData> configs = new HashMap<String, ConfigData>();
 	
 	
 	
-	public static void setup(CraftZ plugin) {
+	public static void setup() {
 		
-		WorldData.plugin = plugin;
 		tryUpdate();
 		
-		File worldsFolder = new File(plugin.getDataFolder(), "worlds/");
-		if (!worldsFolder.exists()) {
-			return;
-		}
+		File worldsFolder = new File(CraftZ.i.getDataFolder(), "worlds/");
+		if (!worldsFolder.exists()) return;
 		
-		for (File file : worldsFolder.listFiles()) {
-			
-			if (file.getName().toLowerCase().endsWith(".yml")) {
+		for (File file : worldsFolder.listFiles())
+			if (file.getName().toLowerCase().endsWith(".yml"))
 				reload(file.getName().substring(0, file.getName().length() - 4));
-			}
-			
-		}
 		
 	}
 	
@@ -44,18 +35,14 @@ public class WorldData {
 	
 	public static void tryUpdate() {
 		
-		File old = new File(plugin.getDataFolder(), "data.yml");
-		if (!old.exists()) {
-			return;
-		}
+		File old = new File(CraftZ.i.getDataFolder(), "data.yml");
+		if (!old.exists()) return;
 		
-		String wname = plugin.getConfig().getString("Config.world.name");
+		String wname = CraftZ.i.getConfig().getString("Config.world.name");
 		try {
 			
-			File newFile = new File(plugin.getDataFolder(), "worlds/" + wname + ".yml");
-			if (newFile.exists()) {
-				return;
-			}
+			File newFile = new File(CraftZ.i.getDataFolder(), "worlds/" + wname + ".yml");
+			if (newFile.exists()) return;
 			
 			newFile.getParentFile().mkdirs();
 			newFile.createNewFile();
@@ -89,7 +76,7 @@ public class WorldData {
 	public static void reload(String world) {
 		
 		ConfigData data = new ConfigData();
-		data.configFile = new File(plugin.getDataFolder(), "worlds/" + world + ".yml");
+		data.configFile = new File(CraftZ.i.getDataFolder(), "worlds/" + world + ".yml");
 		data.config = YamlConfiguration.loadConfiguration(data.configFile);
 		
 		if (!configs.containsKey(world)) {
@@ -101,7 +88,7 @@ public class WorldData {
 	}
 	
 	public static void reload() {
-		reload(plugin.getConfig().getString("Config.world.name"));
+		reload(CraftZ.i.getConfig().getString("Config.world.name"));
 	}
 	
 	
@@ -119,7 +106,7 @@ public class WorldData {
 	}
 	
 	public static FileConfiguration get() {
-		return get(plugin.getConfig().getString("Config.world.name"));
+		return get(CraftZ.i.getConfig().getString("Config.world.name"));
 	}
 	
 	
@@ -135,14 +122,14 @@ public class WorldData {
 		try {
 			get(world).save(configs.get(world).configFile);
 		} catch (IOException ex) {
-			plugin.getLogger().log(Level.SEVERE, "Could not save config to "
+			CraftZ.i.getLogger().log(Level.SEVERE, "Could not save config to "
 					+ configs.get(world).configFile, ex);
 		}
 		
 	}
 	
 	public static void save() {
-		save(plugin.getConfig().getString("Config.world.name"));
+		save(CraftZ.i.getConfig().getString("Config.world.name"));
 	}
 	
 }

@@ -29,11 +29,8 @@ public class ItemRenamer {
 	
 	
 	public static void renameWithList(ItemStack input, List<String> entries) {
-		
-		if (!getNameFromList(input, entries).equals("")) {
+		if (!getNameFromList(input, entries).equals(""))
 			rename(input, ChatColor.RESET + getNameFromList(input, entries), null);
-		}
-		
 	}
 	
 	
@@ -97,9 +94,8 @@ public class ItemRenamer {
 	
 	public static void convertPlayerInventory(Player p, List<String> entries) {
 		
-		if (p.getWorld().getName().equalsIgnoreCase(CraftZ.instance.getConfig().getString("Config.world.name"))) {
+		if (p.getWorld().getName().equalsIgnoreCase(CraftZ.i.getConfig().getString("Config.world.name")))
 			convertInventoryItemNames(p.getInventory(), entries);
-		}
 		
 	}
 	

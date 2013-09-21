@@ -56,16 +56,19 @@ public class EntityDamageListener implements Listener {
 					if (plugin.getConfig().getBoolean("Config.players.medical.bleeding.enable")
 							&& ((Player) eventEntity).getGameMode() != GameMode.CREATIVE) {
 						
-						double value_bleeding_chance = 1 - plugin.getConfig()
-								.getDouble("Config.players.medical.bleeding.chance");
+						double value_bleeding_chance = 1D - plugin.getConfig().getDouble("Config.players.medical.bleeding.chance");
 						if (Math.random() >= value_bleeding_chance) {
-							
 							PlayerManager.getData(((Player) eventEntity).getName()).bleeding = true;
-							((Player) eventEntity).sendMessage(ChatColor.DARK_RED + plugin.getLangConfig()
-									.getString("Messages.bleeding"));
-							
+							((Player) eventEntity).sendMessage(ChatColor.DARK_RED + plugin.getLangConfig().getString("Messages.bleeding"));
 						}
 						
+					}
+					
+					int height = (int) (event.getDamage() + 3);
+					if (damageCause == DamageCause.FALL && plugin.getConfig().getBoolean("Config.players.medical.bonebreak.enable")
+							&& height >= plugin.getConfig().getInt("Config.players.medical.bonebreak.height")) {
+						PlayerManager.getData(((Player) eventEntity).getName()).bonesBroken = true;
+						((Player) eventEntity).sendMessage(ChatColor.DARK_RED + plugin.getLangConfig().getString("Messages.bones-broken"));
 					}
 					
 				}
@@ -80,19 +83,17 @@ public class EntityDamageListener implements Listener {
 					
 					int bloodCount = 0;
 					
-					if (eventEntityType == EntityType.ZOMBIE) {
+					if (eventEntityType == EntityType.ZOMBIE)
 						bloodCount = (int) (event.getDamage() * 2);
-					} else {
+					else
 						bloodCount = (int) (event.getDamage() * 6);
-					}
 					
 					for (int i=0; i<bloodCount; i++) {
 						
 //						eventWorld.playEffect(eventEntity.getLocation(), Effect.STEP_SOUND,
 //								Material.REDSTONE_WIRE.getId());
 						
-						final Item blood = eventWorld.dropItemNaturally(eventEntity.getLocation(),
-								new ItemStack(Material.WOOL, 1, (short) 14));
+						final Item blood = eventWorld.dropItemNaturally(eventEntity.getLocation(), new ItemStack(Material.WOOL, 1, (short) 14));
 						
 						blood.setPickupDelay(Integer.MAX_VALUE);
 						

@@ -21,15 +21,7 @@ import craftZ.util.BlockChecker;
 import craftZ.util.ItemRenamer;
 public class PlayerManager {
 	
-	private static CraftZ plugin;
-	
 	private static HashMap<String, AdditionalCraftZData> players = new HashMap<String, AdditionalCraftZData>();
-	
-	public static void setup(CraftZ plugin) {
-		PlayerManager.plugin = plugin;
-	}
-	
-	
 	
 	
 	
@@ -97,20 +89,16 @@ public class PlayerManager {
 	
 	private static void putPlayer(Player p, boolean defaults) {
 		
-		if (defaults) {
-			
-			players.put(p.getName(), new AdditionalCraftZData(20, 0, 0, 0, false, false));
-			
-		} else {
-			
+		if (defaults)
+			players.put(p.getName(), new AdditionalCraftZData(20, 0, 0, 0, false, false, false));
+		else
 			players.put(p.getName(), new AdditionalCraftZData(getConfig().getInt("Data.players." + p.getName() + ".thirst"),
 					getConfig().getInt("Data.players." + p.getName() + ".zombiesKilled"),
 					getConfig().getInt("Data.players." + p.getName() + ".playersKilled"),
 					getConfig().getInt("Data.players." + p.getName() + ".minsSurvived"),
 					getConfig().getBoolean("Data.players." + p.getName() + ".bleeding"),
+					getConfig().getBoolean("Data.players." + p.getName() + ".bonesBroken"),
 					getConfig().getBoolean("Data.players." + p.getName() + ".poisoned")));
-			
-		}
 		
 		
 	}
@@ -121,40 +109,28 @@ public class PlayerManager {
 	
 	public static void spawnPlayerAtRandomSpawn(Player p) {
 		
-		if (!getConfig().contains("Data.playerspawns")) {
-			return;
-		}
+		if (!getConfig().contains("Data.playerspawns")) return;
 		
-		Set<String> spts_players_set = getConfig()
-				.getConfigurationSection("Data.playerspawns").getKeys(false);
+		Set<String> spts_players_set = getConfig().getConfigurationSection("Data.playerspawns").getKeys(false);
 		
 		if (spts_players_set != null && !spts_players_set.isEmpty()) {
 			
-			
 			Object[] spts_players = spts_players_set.toArray();
-			
 			int taken = new Random().nextInt(spts_players.length);
 			
-			ConfigurationSection configSec = getConfig().getConfigurationSection("Data.playerspawns."
-					+ spts_players[taken].toString());
-			
-			if (configSec == null) {
-				return;
-			}
+			ConfigurationSection configSec = getConfig().getConfigurationSection("Data.playerspawns." + spts_players[taken]);
+			if (configSec == null) return;
 			
 			int spnLocX = configSec.getInt("coords.x");
 			int spnLocY = configSec.getInt("coords.y");
 			int spnLocZ = configSec.getInt("coords.z");
-			World spnWorld = plugin.getServer().getWorld(plugin.getConfig().getString("Config.world.name"));
+			World spnWorld = Bukkit.getWorld(CraftZ.i.getConfig().getString("Config.world.name"));
 			Location spnLoc = new Location(spnWorld, spnLocX, spnLocY, spnLocZ);
 			
-			Location locToSpawn = BlockChecker.getSafeSpawnLocationOver(spnLoc, true);
+			p.teleport(BlockChecker.getSafeSpawnLocationOver(spnLoc, true));
 			
-			p.teleport(locToSpawn);
-			
-			p.sendMessage(ChatColor.YELLOW + plugin.getLangConfig().getString("Messages.spawned")
+			p.sendMessage(ChatColor.YELLOW + CraftZ.i.getLangConfig().getString("Messages.spawned")
 					.replaceAll("%s", configSec.getString("name")));
-			
 			
 		}
 		
@@ -166,9 +142,8 @@ public class PlayerManager {
 	
 	public static void saveAllPlayersToConfig() {
 		
-		for (Player p : plugin.getServer().getWorld(plugin.getConfig().getString("Config.world.name")).getPlayers()) {
+		for (Player p : Bukkit.getWorld(CraftZ.i.getConfig().getString("Config.world.name")).getPlayers())
 			savePlayerToConfig(p);
-		}
 		
 	}
 	
@@ -191,97 +166,89 @@ public class PlayerManager {
 	
 	
 	public static AdditionalCraftZData getData(String p) {
-		
-		if (!players.containsKey(p)) {
-			loadPlayer(Bukkit.getPlayer(p));
-		}
-		
+		if (!players.containsKey(p)) loadPlayer(Bukkit.getPlayer(p));
 		return players.get(p);
-		
 	}
 	
 	
 	
 	
 	
-	public static void onServerTick(int tickID) {
+	public static void onServerTick(long tickID) {
 		
 		ArrayList<String> toRemove = new ArrayList<String>();
 		
 		for (String pn : players.keySet()) {
 			
-			if (isPlaying(pn)) {
+			if (isNotPlaying(pn)) {
 				toRemove.add(pn);
 				continue;
 			}
 			
 			
 			
+			Player p = Bukkit.getPlayer(pn);
+			AdditionalCraftZData data = players.get(pn);
+			
+			
+			
 			if (tickID % 1200 == 0) {
 				
-				if (players.get(pn).thirst > 0) {
-					
-					players.get(pn).thirst--;
-					Bukkit.getPlayer(pn).setLevel(players.get(pn).thirst);
-					
+				if (data.thirst > 0) {
+					data.thirst--;
+					p.setLevel(data.thirst);
 				} else {
-					Bukkit.getPlayer(pn).damage(2);
+					p.damage(2);
 				}
 				
-				players.get(pn).minutesSurvived++;
+				data.minutesSurvived++;
 				
 			}
 			
 			
 			
 			if (tickID % 10 == 0) {
-				
-				List<String> names = plugin.getConfig().getStringList("Config.change-item-names.names");
-				ItemRenamer.convertPlayerInventory(Bukkit.getPlayer(pn), names);
-				
+				ItemRenamer.convertPlayerInventory(p, CraftZ.i.getConfig().getStringList("Config.change-item-names.names"));
+				ScoreboardHelper.update();
 			}
 			
 			
 			
 			if (tickID % 200 == 0) {
 				
-				if (players.get(pn).bleeding) {
-					Bukkit.getPlayer(pn).damage(1);
+				if (data.bleeding)
+					p.damage(1);
+				
+				if (data.poisoned) {
+					p.damage(1);
+					p.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 20, 1));
+					p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 10, 1));
+					p.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 30, 1));
 				}
 				
-				if (players.get(pn).poisoned) {
-					Bukkit.getPlayer(pn).damage(1);
-					Bukkit.getPlayer(pn).addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 20, 1));
-					Bukkit.getPlayer(pn).addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 10, 1));
-					Bukkit.getPlayer(pn).addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 30, 1));
-				}
-				
-				if (plugin.getConfig().getBoolean("Config.world.world-border.enable")
-						&& isOutsideOfWorldRim(Bukkit.getPlayer(pn), plugin.getConfig()
-						.getInt("Config.world.world-border.radius"), getLobby())) {
+				if (CraftZ.i.getConfig().getBoolean("Config.world.world-border.enable")
+						&& isOutsideOfWorldRim(p, CraftZ.i.getConfig().getInt("Config.world.world-border.radius"), getLobby())) {
 					
-					Bukkit.getPlayer(pn).damage(2);
-					Bukkit.getPlayer(pn).addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 20, 1));
-					Bukkit.getPlayer(pn).addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 10, 1));
-					Bukkit.getPlayer(pn).addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 30, 1));
-					Bukkit.getPlayer(pn).sendMessage("[CraftZ] "
-							+ plugin.getLangConfig().getString("Messages.out-of-world"));
+					p.damage(2);
+					p.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 20, 1));
+					p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 10, 1));
+					p.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 30, 1));
+					p.sendMessage("[CraftZ] " + CraftZ.i.getLangConfig().getString("Messages.out-of-world"));
 					
 				}
 				
 			}
 			
+			
+			
+			if (data.bonesBroken && !p.hasPotionEffect(PotionEffectType.SLOW))
+				p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, Integer.MAX_VALUE, 1));
+			
 		}
 		
-		if (tickID % 10 == 0) {
-			ScoreboardHelper.update();
-		}
 		
 		
-		
-		for (String pn : toRemove) {
-			players.remove(pn);
-		}
+		for (String pn : toRemove) players.remove(pn);
 		
 	}
 	
@@ -300,7 +267,7 @@ public class PlayerManager {
 	public static boolean isInsideOfLobby(Player p) {
 		
 		Location lobby = getLobby();
-		int radius = plugin.getConfig().getInt("Config.world.lobby.radius");
+		int radius = CraftZ.i.getConfig().getInt("Config.world.lobby.radius");
 		return lobby.distance(p.getLocation()) <= radius;
 		
 	}
@@ -311,10 +278,10 @@ public class PlayerManager {
 	
 	public static Location getLobby() {
 		
-		Location lobby = plugin.getWorld().getSpawnLocation();
-		lobby.setX(plugin.getConfig().getDouble("Config.world.lobby.x"));
-		lobby.setY(plugin.getConfig().getDouble("Config.world.lobby.y"));
-		lobby.setZ(plugin.getConfig().getDouble("Config.world.lobby.z"));
+		Location lobby = CraftZ.i.getWorld().getSpawnLocation();
+		lobby.setX(CraftZ.i.getConfig().getDouble("Config.world.lobby.x"));
+		lobby.setY(CraftZ.i.getConfig().getDouble("Config.world.lobby.y"));
+		lobby.setZ(CraftZ.i.getConfig().getDouble("Config.world.lobby.z"));
 		
 		return lobby;
 		
@@ -342,17 +309,14 @@ public class PlayerManager {
 	
 	public static Player randomPlayer() {
 		
-		List<Player> players = plugin.getWorld().getPlayers();
-		if (players.isEmpty()) {
-			return null;
-		}
+		List<Player> players = CraftZ.i.getWorld().getPlayers();
+		if (players.isEmpty()) return null;
 		Collections.shuffle(players);
 		
 		Player chosen = players.get(0);
 		
-		if (!isInsideOfLobby(chosen)) {
+		if (!isInsideOfLobby(chosen))
 			return chosen;
-		}
 		
 		boolean otherExists = false;
 		for (Player p : players) {
@@ -364,9 +328,8 @@ public class PlayerManager {
 			
 		}
 		
-		if (otherExists) {
+		if (otherExists)
 			return randomPlayer();
-		}
 		
 		return null;
 		
@@ -376,11 +339,9 @@ public class PlayerManager {
 	
 	
 	
-	public static boolean isPlaying(String p) {
-		
+	public static boolean isNotPlaying(String p) {
 		return Bukkit.getPlayer(p) == null || !Bukkit.getPlayer(p).getWorld().getName()
-				.equalsIgnoreCase(plugin.getConfig().getString("Config.world.name"));
-		
+				.equalsIgnoreCase(CraftZ.i.getConfig().getString("Config.world.name"));
 	}
 	
 }

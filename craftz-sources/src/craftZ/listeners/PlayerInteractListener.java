@@ -41,18 +41,16 @@ public class PlayerInteractListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		
-		String value_world_name = plugin.getConfig().getString("Config.world.name");
 		World eventWorld = event.getPlayer().getWorld();
-		if (eventWorld.getName().equalsIgnoreCase(value_world_name)) {
+		if (eventWorld.getName().equalsIgnoreCase(plugin.getConfig().getString("Config.world.name"))) {
 			
 			Player eventPlayer = event.getPlayer();
 			ItemStack eventItem = event.getItem();
 			Material eventItemType;
-			if (eventItem != null) {
+			if (eventItem != null)
 				eventItemType = eventItem.getType();
-			} else {
+			else
 				eventItemType = Material.AIR;
-			}
 			Action eventAction = event.getAction();
 			Block eventBlock = event.getClickedBlock();
 			
@@ -63,15 +61,12 @@ public class PlayerInteractListener implements Listener {
 					boolean value_enableSugarEffect = plugin.getConfig().getBoolean("Config.players.medical.enable-sugar-speed-effect");
 					if (value_enableSugarEffect == true) {
 						
-						if (eventPlayer.getItemInHand().getAmount() < 2) {
-							ItemStack airItemStack = new ItemStack(Material.AIR, 0);
-							eventPlayer.setItemInHand(airItemStack);
-						} else {
+						if (eventPlayer.getItemInHand().getAmount() < 2)
+							eventPlayer.setItemInHand(new ItemStack(Material.AIR, 0));
+						else
 							eventPlayer.getItemInHand().setAmount(eventPlayer.getItemInHand().getAmount() - 1);
-						}
 						
-						PotionEffect sugarSpeedEffect = new PotionEffect(PotionEffectType.SPEED, 3600, 2);
-						eventPlayer.addPotionEffect(sugarSpeedEffect);
+						eventPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 3600, 2));
 						eventPlayer.playSound(eventPlayer.getLocation(), Sound.BURP, 1, 1);
 						
 					}
@@ -84,19 +79,14 @@ public class PlayerInteractListener implements Listener {
 					
 					if (plugin.getConfig().getBoolean("Config.players.medical.bleeding.heal-with-paper")) {
 						
-						eventPlayer.playSound(eventPlayer.getLocation(), Sound.ENDERDRAGON_WINGS, 1, 1);
-						
-						if (eventPlayer.getItemInHand().getAmount() < 2) {
-							ItemStack airItemStack = new ItemStack(Material.AIR, 0);
-							eventPlayer.setItemInHand(airItemStack);
-						} else {
+						if (eventPlayer.getItemInHand().getAmount() < 2)
+							eventPlayer.setItemInHand(new ItemStack(Material.AIR, 0));
+						else
 							eventPlayer.getItemInHand().setAmount(eventPlayer.getItemInHand().getAmount() - 1);
-						}
 						
 						PlayerManager.getData(eventPlayer.getName()).bleeding = false;
-						
-						eventPlayer.sendMessage(ChatColor.DARK_RED + plugin.getLangConfig()
-								.getString("Messages.bandaged"));
+						eventPlayer.playSound(eventPlayer.getLocation(), Sound.ENDERDRAGON_WINGS, 1, 1);
+						eventPlayer.sendMessage(ChatColor.DARK_RED + plugin.getLangConfig().getString("Messages.bandaged"));
 						
 					}
 					
@@ -109,18 +99,14 @@ public class PlayerInteractListener implements Listener {
 					if (plugin.getConfig().getBoolean("Config.players.medical.healing.heal-with-rosered")
 							&& !plugin.getConfig().getBoolean("Config.players.medical.healing.only-healing-others")) {
 						
-						eventPlayer.playSound(eventPlayer.getLocation(), Sound.BREATH, 1, 1);
-						
-						if (eventPlayer.getItemInHand().getAmount() < 2) {
+						if (eventPlayer.getItemInHand().getAmount() < 2)
 							eventPlayer.setItemInHand(new ItemStack(Material.AIR, 0));
-						} else {
+						else
 							eventPlayer.getItemInHand().setAmount(eventPlayer.getItemInHand().getAmount() - 1);
-						}
 						
 						eventPlayer.setHealth(20D);
-						
-						eventPlayer.sendMessage(ChatColor.DARK_RED + plugin.getLangConfig()
-								.getString("Messages.bloodbag"));
+						eventPlayer.playSound(eventPlayer.getLocation(), Sound.BREATH, 1, 1);
+						eventPlayer.sendMessage(ChatColor.DARK_RED + plugin.getLangConfig().getString("Messages.bloodbag"));
 						
 					}
 					
@@ -132,18 +118,33 @@ public class PlayerInteractListener implements Listener {
 					
 					if (plugin.getConfig().getBoolean("Config.players.medical.poisoning.cure-with-limegreen")) {
 						
-						eventPlayer.playSound(eventPlayer.getLocation(), Sound.ZOMBIE_UNFECT, 1, 1);
-						
-						if (eventPlayer.getItemInHand().getAmount() < 2) {
+						if (eventPlayer.getItemInHand().getAmount() < 2)
 							eventPlayer.setItemInHand(new ItemStack(Material.AIR, 0));
-						} else {
+						else
 							eventPlayer.getItemInHand().setAmount(eventPlayer.getItemInHand().getAmount() - 1);
-						}
 						
 						PlayerManager.getData(eventPlayer.getName()).poisoned = false;
+						eventPlayer.playSound(eventPlayer.getLocation(), Sound.ZOMBIE_UNFECT, 1, 1);
+						eventPlayer.sendMessage(ChatColor.DARK_RED + plugin.getLangConfig().getString("Messages.unpoisoned"));
 						
-						eventPlayer.sendMessage(ChatColor.DARK_RED + plugin.getLangConfig()
-								.getString("Messages.unpoisoned"));
+					}
+					
+				}
+				
+				
+				
+				if (eventItemType == Material.BLAZE_ROD) {
+					
+					if (plugin.getConfig().getBoolean("Config.players.medical.bonebreak.heal-with-blazerod")) {
+						
+						if (eventPlayer.getItemInHand().getAmount() < 2)
+							eventPlayer.setItemInHand(new ItemStack(Material.AIR, 0));
+						else
+							eventPlayer.getItemInHand().setAmount(eventPlayer.getItemInHand().getAmount() - 1);
+						
+						PlayerManager.getData(eventPlayer.getName()).bonesBroken = false;
+						eventPlayer.playSound(eventPlayer.getLocation(), Sound.BREATH, 1, 1);
+						eventPlayer.sendMessage(ChatColor.DARK_RED + plugin.getLangConfig().getString("Messages.bones-healed"));
 						
 					}
 					

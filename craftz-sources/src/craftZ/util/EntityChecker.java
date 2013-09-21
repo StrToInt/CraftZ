@@ -8,38 +8,20 @@ import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
-import craftZ.CraftZ;
-
 
 public class EntityChecker {
 	
-	@SuppressWarnings("unused")
-	private CraftZ plugin;
-	
-	public EntityChecker(CraftZ plugin) {
-		
-		this.plugin = plugin;
-		
-	}
-	
-	
-	
-	public List<Entity> getNearbyEntities(Location loc, double radius) {
+	public static List<Entity> getNearbyEntities(Location loc, double radius) {
 		
 		try {
 			
 			World locWorld = loc.getWorld();
 			Arrow tester = locWorld.spawn(loc, Arrow.class);
-			
 			List<Entity> nearby = tester.getNearbyEntities(radius, radius, radius);
-			
 			tester.remove();
-			
 			return nearby;
 			
-		} catch(NullPointerException ex) {
-			
-		}
+		} catch(NullPointerException ex) { }
 		
 		return null;
 		
@@ -47,30 +29,23 @@ public class EntityChecker {
 	
 	
 	
-	public boolean areEntitiesNearby(Location loc, double radius, EntityType entityType, int howMuch) {
+	public static boolean areEntitiesNearby(Location loc, double radius, EntityType entityType, int howMuch) {
 		
 		List<Entity> nearby = getNearbyEntities(loc, radius);
 		
-		if (nearby == null) {
-			return true;
-		}
+		if (nearby == null) return false;
 		
 		int howMuchFound = 0;
 		
 		for (Entity ent : nearby) {
-			
 			EntityType tempType = ent.getType();
-			if (tempType == entityType) {
-				howMuchFound++;
-			}
-			
+			if (tempType == entityType) howMuchFound++;
 		}
 		
-		if (howMuchFound >= howMuch) {
+		if (howMuchFound >= howMuch)
 			return true;
-		} else {
+		else
 			return false;
-		}
 		
 	}
 	
@@ -82,18 +57,12 @@ public class EntityChecker {
 		int count = 0;
 		
 		for (Entity ent : entities) {
-			
 			EntityType entType = ent.getType();
-			if (entType == entityType) {
-				count++;
-			}
-			
+			if (entType == entityType) count++;
 		}
 		
 		return count;
 		
 	}
 	
-	
-
 }
