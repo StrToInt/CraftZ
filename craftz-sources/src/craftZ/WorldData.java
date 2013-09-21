@@ -79,9 +79,8 @@ public class WorldData {
 		data.configFile = new File(CraftZ.i.getDataFolder(), "worlds/" + world + ".yml");
 		data.config = YamlConfiguration.loadConfiguration(data.configFile);
 		
-		if (!configs.containsKey(world)) {
+		if (!configs.containsKey(world))
 			configs.put(world, data);
-		}
 		
 		load(world);
 		

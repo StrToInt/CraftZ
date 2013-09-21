@@ -38,10 +38,8 @@ public class PlayerDeathListener implements Listener {
 			String eventPlayerName = eventPlayer.getName();
 			Location eventPlayerLoc = eventPlayer.getLocation();
 			
-			boolean value_modifyDeathMessages = plugin.getConfig().getBoolean("Config.chat.modify-death-messages");
-			if (value_modifyDeathMessages) {
+			if (plugin.getConfig().getBoolean("Config.chat.modify-death-messages"))
 				event.setDeathMessage(eventPlayerName + " was killed.");
-			}
 			
 			if (eventPlayer.getKiller() != null) {
 				
@@ -68,21 +66,16 @@ public class PlayerDeathListener implements Listener {
 //					new ItemStack(Material.AIR), new ItemStack(Material.AIR),
 //					new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
 			
-			Zombie spawnedZombie = (Zombie) eventPlayerLoc.getWorld()
-					.spawnEntity(eventPlayerLoc, EntityType.ZOMBIE);
+			Zombie spawnedZombie = (Zombie) eventPlayerLoc.getWorld().spawnEntity(eventPlayerLoc, EntityType.ZOMBIE);
 			
 			spawnedZombie.setVillager(true);
 			
 			if (new Random().nextInt(7) > 0) {
-				spawnedZombie.addPotionEffect(new PotionEffect(PotionEffectType.SPEED,
-						Integer.MAX_VALUE, (new Random().nextInt(3) + 1)), false);
-				spawnedZombie.addPotionEffect(new PotionEffect(
-						PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, 1, false));
+				spawnedZombie.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, (new Random().nextInt(3) + 1)), false);
+				spawnedZombie.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, 1, false));
 			} else {
-				spawnedZombie.addPotionEffect(new PotionEffect(
-						PotionEffectType.JUMP, Integer.MAX_VALUE, 1, false));
-				spawnedZombie.addPotionEffect(new PotionEffect(
-						PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, 1, false));
+				spawnedZombie.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, Integer.MAX_VALUE, 1, false));
+				spawnedZombie.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, 1, false));
 				spawnedZombie.setBaby(true);
 			}
 			
@@ -91,7 +84,21 @@ public class PlayerDeathListener implements Listener {
 			kickMsg = kickMsg.replaceAll("%p", "" + PlayerManager.getData(eventPlayerName).playersKilled);
 			kickMsg = kickMsg.replaceAll("%m", "" + PlayerManager.getData(eventPlayerName).minutesSurvived);
 			
-			eventPlayer.kickPlayer(kickMsg);
+			if (plugin.getConfig().getBoolean("Config.players.kick-on-death")) {
+				eventPlayer.kickPlayer(kickMsg);
+			} else {
+				
+				eventPlayer.setHealth(20D);
+				eventPlayer.setFoodLevel(20);
+				eventPlayer.getInventory().clear();
+				
+				Location loc = new Location(eventWorld, plugin.getConfig().getInt("Config.world.lobby.x"),
+						plugin.getConfig().getInt("Config.world.lobby.y"), plugin.getConfig().getInt("Config.world.lobby.z"));
+				eventPlayer.teleport(loc);
+				
+				eventPlayer.sendMessage(ChatColor.GREEN + kickMsg);
+				
+			}
 			
 			PlayerManager.resetPlayer(eventPlayer);
 			

@@ -383,7 +383,7 @@ public class CraftZ extends JavaPlugin {
 				
 			// PLAYERS
 			getConfig().addDefault("Config.players.use-scoreboard-for-stats", false);
-			getConfig().addDefault("Config.players.kick-on-death", false);
+			getConfig().addDefault("Config.players.kick-on-death", true);
 			
 				// INTERACT
 				getConfig().addDefault("Config.players.interact.shearing", false);
