@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -17,17 +18,17 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import craftZ.listeners.*;
-import craftZ.util.Messager;
 import craftZ.util.Time;
+
 
 public class CraftZ extends JavaPlugin {
 	
-	Messager messager = new Messager(this);
 	public static long tickID = 0;
 	public Map<Player, Integer> movingPlayers = new HashMap<Player, Integer>();
 	
@@ -71,7 +72,7 @@ public class CraftZ extends JavaPlugin {
 			@Override
 			public void run() {
 				
-				if (getWorld() == null) {
+				if (world() == null) {
 					getLogger().log(Level.SEVERE, "World not found! Please check config.yml. CraftZ will shutdown now.");
 					getPluginLoader().disablePlugin(i);
 					return;
@@ -160,7 +161,7 @@ public class CraftZ extends JavaPlugin {
 				if (args[0].equalsIgnoreCase("reload")) {
 					
 					if (sender.hasPermission("craftz.reload")) {
-						this.reloadConfigs();
+						reloadConfigs();
 						sender.sendMessage(ChatColor.GREEN + getLangConfig().getString("Messages.cmd.reloaded"));
 					} else {
 						sender.sendMessage(noPerms);
@@ -281,65 +282,65 @@ public class CraftZ extends JavaPlugin {
 	
 	
 	
-	private void registerEvents() {
+	private static void registerEvents() {
 		
 		// PLAYER
-		new PlayerInteractListener(this);
-		new PlayerItemConsumeListener(this);
-		new PlayerJoinListener(this);
-		new PlayerQuitListener(this);
-		new ShearEntityListener(this);
-		new PlayerMoveListener(this);
-		new PlayerBedEnterListener(this);
-		new AsyncPlayerChatListener(this);
-		new PlayerDeathListener(this);
-		new EntityShootBowListener(this);
-		new EntityCreatePortalListener(this);
-		new PlayerCommandPreprocessListener(this);
-		new FoodLevelChangeListener(this);
-		new PlayerChangedWorldListener(this);
-		new PlayerTeleportListener(this);
+		rl(new PlayerInteractListener());
+		rl(new PlayerItemConsumeListener());
+		rl(new PlayerJoinListener());
+		rl(new PlayerQuitListener());
+		rl(new ShearEntityListener());
+		rl(new PlayerMoveListener());
+		rl(new PlayerBedEnterListener());
+		rl(new AsyncPlayerChatListener());
+		rl(new PlayerDeathListener());
+		rl(new EntityShootBowListener());
+		rl(new EntityCreatePortalListener());
+		rl(new PlayerCommandPreprocessListener());
+		rl(new FoodLevelChangeListener());
+		rl(new PlayerChangedWorldListener());
+		rl(new PlayerTeleportListener());
 		
 		// INVENTORY
-		new PlayerDropItemListener(this);
-		new PlayerPickupItemListener(this);
-		new InventoryCloseListener(this);
-		new InventoryClickListener(this);
+		rl(new PlayerDropItemListener());
+		rl(new PlayerPickupItemListener());
+		rl(new InventoryCloseListener());
+		rl(new InventoryClickListener());
 		
 		// CREATURE
-		new CreatureSpawnListener(this);
-		new EntityDamageByEntityListener(this);
-		new EntityDamageListener(this);
-		new EntityDeathListener(this);
-		new SheepDyeWoolListener(this);
-		new EntityRegainHealthListener(this);
+		rl(new CreatureSpawnListener());
+		rl(new EntityDamageByEntityListener());
+		rl(new EntityDamageListener());
+		rl(new EntityDeathListener());
+		rl(new SheepDyeWoolListener());
+		rl(new EntityRegainHealthListener());
 		
 		// ITEM
-		new ItemDespawnListener(this);
+		rl(new ItemDespawnListener());
 		
 		// ENTITY
-		new ProjectileHitListener(this);
-		new EntityExplodeListener(this);
-		new VehicleUpdateListener(this);
-		new VehicleBlockCollisionListener(this);
-		new VehicleMoveListener(this);
+		rl(new ProjectileHitListener());
+		rl(new EntityExplodeListener());
+		rl(new VehicleUpdateListener());
+		rl(new VehicleBlockCollisionListener());
+		rl(new VehicleMoveListener());
 		
 		// BLOCK
-		new BlockBreakListener(this);
-		new BlockPlaceListener(this);
-		new HangingBreakListener(this);
-		new HangingBreakByEntityListener(this);
-		new HangingPlaceListener(this);
-		new BlockIgniteListener(this);
-		new BlockBurnListener(this);
-		new BlockGrowListener(this);
-		new StructureGrowListener(this);
-		new BlockSpreadListener(this);
-		new SignChangeListener(this);
+		rl(new BlockBreakListener());
+		rl(new BlockPlaceListener());
+		rl(new HangingBreakListener());
+		rl(new HangingBreakByEntityListener());
+		rl(new HangingPlaceListener());
+		rl(new BlockIgniteListener());
+		rl(new BlockBurnListener());
+		rl(new BlockGrowListener());
+		rl(new StructureGrowListener());
+		rl(new BlockSpreadListener());
+		rl(new SignChangeListener());
 		
 		// WORLD
-		new WeatherChangeListener(this);
-		new ChunkLoadListener(this);
+		rl(new WeatherChangeListener());
+		rl(new ChunkLoadListener());
 		
 	}
 	
@@ -347,14 +348,22 @@ public class CraftZ extends JavaPlugin {
 	
 	
 	
-	private void loadConfig() {
+	private static void rl(Listener l) {
+		Bukkit.getPluginManager().registerEvents(l, i);
+	}
+	
+	
+	
+	
+	
+	private static void loadConfig() {
 		
 		reloadLangConfig();
 		reloadLootConfig();
 		
 		// SET HEADER
 		
-		getConfig().options().header(  "++===================================================++"
+		i.getConfig().options().header(  "++===================================================++"
 								 		+ "\n|| Configuration for the CraftZ plugin by JangoBrick ||"
 								 		+ "\n++===================================================++"
 		);
@@ -362,67 +371,67 @@ public class CraftZ extends JavaPlugin {
 		// CONFIG
 		
 			// WORLD
-			getConfig().addDefault("Config.world.name", "world");
-			getConfig().addDefault("Config.world.lobby.radius", 20);
-			getConfig().addDefault("Config.world.lobby.x", 0);
-			getConfig().addDefault("Config.world.lobby.y", 64);
-			getConfig().addDefault("Config.world.lobby.z", 0);
-			getConfig().addDefault("Config.world.real-time", true);
-			getConfig().addDefault("Config.world.world-border.enable", true);
-			getConfig().addDefault("Config.world.world-border.radius", 400);
+			i.getConfig().addDefault("Config.world.name", "world");
+			i.getConfig().addDefault("Config.world.lobby.radius", 20);
+			i.getConfig().addDefault("Config.world.lobby.x", 0);
+			i.getConfig().addDefault("Config.world.lobby.y", 64);
+			i.getConfig().addDefault("Config.world.lobby.z", 0);
+			i.getConfig().addDefault("Config.world.real-time", true);
+			i.getConfig().addDefault("Config.world.world-border.enable", true);
+			i.getConfig().addDefault("Config.world.world-border.radius", 400);
 				
 				// WORLDCHANGE
-				getConfig().addDefault("Config.world.world-changing.allow-burning", false);
-				getConfig().addDefault("Config.world.world-changing.allow-block-grow", false);
-				getConfig().addDefault("Config.world.world-changing.allow-tree-grow", false);
-				getConfig().addDefault("Config.world.world-changing.allow-grass-grow", false);
-				getConfig().addDefault("Config.world.world-changing.allow-new-chunks", true);
+				i.getConfig().addDefault("Config.world.world-changing.allow-burning", false);
+				i.getConfig().addDefault("Config.world.world-changing.allow-block-grow", false);
+				i.getConfig().addDefault("Config.world.world-changing.allow-tree-grow", false);
+				i.getConfig().addDefault("Config.world.world-changing.allow-grass-grow", false);
+				i.getConfig().addDefault("Config.world.world-changing.allow-new-chunks", true);
 				
 				// WEATHER
-				getConfig().addDefault("Config.world.weather.allowWeatherChanging", true);
+				i.getConfig().addDefault("Config.world.weather.allowWeatherChanging", true);
 				
 			// PLAYERS
-			getConfig().addDefault("Config.players.use-scoreboard-for-stats", false);
-			getConfig().addDefault("Config.players.kick-on-death", true);
+			i.getConfig().addDefault("Config.players.use-scoreboard-for-stats", false);
+			i.getConfig().addDefault("Config.players.kick-on-death", true);
 			
 				// INTERACT
-				getConfig().addDefault("Config.players.interact.shearing", false);
-				getConfig().addDefault("Config.players.interact.sleeping", false);
+				i.getConfig().addDefault("Config.players.interact.shearing", false);
+				i.getConfig().addDefault("Config.players.interact.sleeping", false);
 				
 					// BLOCKS
-					getConfig().addDefault("Config.players.interact.block-breaking", false);
-					getConfig().addDefault("Config.players.interact.block-placing", false);
-					getConfig().addDefault("Config.players.interact.allow-spiderweb-placing", true);
+					i.getConfig().addDefault("Config.players.interact.block-breaking", false);
+					i.getConfig().addDefault("Config.players.interact.block-placing", false);
+					i.getConfig().addDefault("Config.players.interact.allow-spiderweb-placing", true);
 				
 				// MEDICAL
-				getConfig().addDefault("Config.players.medical.enable-sugar-speed-effect", true);
-				getConfig().addDefault("Config.players.medical.bleeding.enable", true);
-				getConfig().addDefault("Config.players.medical.bleeding.chance", 0.04);
-				getConfig().addDefault("Config.players.medical.bleeding.heal-with-paper", true);
-				getConfig().addDefault("Config.players.medical.healing.heal-with-rosered", true);
-				getConfig().addDefault("Config.players.medical.healing.only-healing-others", true);
-				getConfig().addDefault("Config.players.medical.poisoning.enable", true);
-				getConfig().addDefault("Config.players.medical.poisoning.chance", 0.04);
-				getConfig().addDefault("Config.players.medical.poisoning.cure-with-limegreen", true);
-				getConfig().addDefault("Config.players.medical.bonebreak.enable", true);
-				getConfig().addDefault("Config.players.medical.bonebreak.height", 6);
-				getConfig().addDefault("Config.players.medical.bonebreak.heal-with-blazerod", true);
+				i.getConfig().addDefault("Config.players.medical.enable-sugar-speed-effect", true);
+				i.getConfig().addDefault("Config.players.medical.bleeding.enable", true);
+				i.getConfig().addDefault("Config.players.medical.bleeding.chance", 0.04);
+				i.getConfig().addDefault("Config.players.medical.bleeding.heal-with-paper", true);
+				i.getConfig().addDefault("Config.players.medical.healing.heal-with-rosered", true);
+				i.getConfig().addDefault("Config.players.medical.healing.only-healing-others", true);
+				i.getConfig().addDefault("Config.players.medical.poisoning.enable", true);
+				i.getConfig().addDefault("Config.players.medical.poisoning.chance", 0.04);
+				i.getConfig().addDefault("Config.players.medical.poisoning.cure-with-limegreen", true);
+				i.getConfig().addDefault("Config.players.medical.bonebreak.enable", true);
+				i.getConfig().addDefault("Config.players.medical.bonebreak.height", 6);
+				i.getConfig().addDefault("Config.players.medical.bonebreak.heal-with-blazerod", true);
 			
 			// MOBS
-			getConfig().addDefault("Config.mobs.blood-particles-when-damaged", true);
+			i.getConfig().addDefault("Config.mobs.blood-particles-when-damaged", true);
 			
 				// ZOMBIES
 				
 					// DROPS
-					getConfig().addDefault("Config.mobs.zombies.enable-drops", true);
-					getConfig().addDefault("Config.mobs.zombies.drops.chance", 0.3);
-					getConfig().addDefault("Config.mobs.zombies.drops.items", new String[] { "262", "2x367" });
+					i.getConfig().addDefault("Config.mobs.zombies.enable-drops", true);
+					i.getConfig().addDefault("Config.mobs.zombies.drops.chance", 0.3);
+					i.getConfig().addDefault("Config.mobs.zombies.drops.items", new String[] { "262", "2x367" });
 					
 					// SPAWNING
-					getConfig().addDefault("Config.mobs.zombies.spawning.interval", 40);
-					getConfig().addDefault("Config.mobs.zombies.spawning.maxzombies", 200);
-					getConfig().addDefault("Config.mobs.zombies.spawning.enable-auto-spawn", false);
-					getConfig().addDefault("Config.mobs.zombies.spawning.auto-spawning-interval", 40);
+					i.getConfig().addDefault("Config.mobs.zombies.spawning.interval", 40);
+					i.getConfig().addDefault("Config.mobs.zombies.spawning.maxzombies", 200);
+					i.getConfig().addDefault("Config.mobs.zombies.spawning.enable-auto-spawn", false);
+					i.getConfig().addDefault("Config.mobs.zombies.spawning.auto-spawning-interval", 40);
 				
 //				// ANIMALS
 //				
@@ -436,26 +445,26 @@ public class CraftZ extends JavaPlugin {
 //						getConfig().addDefault("Config.mobs.animals.spawning.chance.sheep", 0.1);
 					
 			// CHAT
-			getConfig().addDefault("Config.chat.modify-join-and-quit-messages", true);
-			getConfig().addDefault("Config.chat.modify-player-messages", false);
-			getConfig().addDefault("Config.chat.modify-death-messages", true);
+			i.getConfig().addDefault("Config.chat.modify-join-and-quit-messages", true);
+			i.getConfig().addDefault("Config.chat.modify-player-messages", false);
+			i.getConfig().addDefault("Config.chat.modify-death-messages", true);
 			
 			// VEHICLES
-			getConfig().addDefault("Config.vehicles.enable", false);
-			getConfig().addDefault("Config.vehicles.speed", 5.0);
-			getConfig().addDefault("Config.vehicles.speed-street-multiplier", 1.6);
-			getConfig().addDefault("Config.vehicles.speed-street-blocks", new String[] { "35:7", "35", "35:15" });
-			getConfig().addDefault("Config.vehicles.street-border-blocks", new String[] { "43", "44" });
+			i.getConfig().addDefault("Config.vehicles.enable", false);
+			i.getConfig().addDefault("Config.vehicles.speed", 5.0);
+			i.getConfig().addDefault("Config.vehicles.speed-street-multiplier", 1.6);
+			i.getConfig().addDefault("Config.vehicles.speed-street-blocks", new String[] { "35:7", "35", "35:15" });
+			i.getConfig().addDefault("Config.vehicles.street-border-blocks", new String[] { "43", "44" });
 			
 			// ITEMNAMES
-			getConfig().addDefault("Config.change-item-names.enable", true);
-			getConfig().addDefault("Config.change-item-names.names",
+			i.getConfig().addDefault("Config.change-item-names.enable", true);
+			i.getConfig().addDefault("Config.change-item-names.names",
 					new String[] { "339=Bandage", "351:1=Blood Bag", "351:10=Antibiotics", "368=Grenade", "369=Morphine Auto Injector" });
 		
 		
 		
-		getConfig().options().copyDefaults(true);
-		saveConfig();
+		i.getConfig().options().copyDefaults(true);
+		i.saveConfig();
 		
 	}
 	
@@ -463,7 +472,7 @@ public class CraftZ extends JavaPlugin {
 	
 	
 	
-	private void loadLangConfig() {
+	private static void loadLangConfig() {
 		
 		// SET HEADER
 		
@@ -523,28 +532,28 @@ public class CraftZ extends JavaPlugin {
 	
 	
 	
-	private FileConfiguration langConfig = null;
-	private File langConfigFile = null;
+	private static FileConfiguration langConfig = null;
+	private static File langConfigFile = null;
 	
-	public void reloadLangConfig() {
-		if (langConfigFile == null) langConfigFile = new File(this.getDataFolder(), "messages.yml");
+	public static void reloadLangConfig() {
+		if (langConfigFile == null) langConfigFile = new File(i.getDataFolder(), "messages.yml");
 		langConfig = YamlConfiguration.loadConfiguration(langConfigFile);
 		loadLangConfig();
 	}
 	
-	public FileConfiguration getLangConfig() {
+	public static FileConfiguration getLangConfig() {
 		if (langConfig == null) reloadLangConfig();
 		return langConfig;
 	}
 	
-	public void saveLangConfig() {
+	public static void saveLangConfig() {
 		
 		if (langConfig == null || langConfigFile == null) return;
 		
 		try {
 			getLangConfig().save(langConfigFile);
 		} catch (IOException ex) {
-			getLogger().log(Level.SEVERE, "Could not save config to " + langConfigFile, ex);
+			i.getLogger().log(Level.SEVERE, "Could not save config to " + langConfigFile, ex);
 		}
 		
 	}
@@ -553,11 +562,11 @@ public class CraftZ extends JavaPlugin {
 	
 	
 	
-	private void loadLootConfig() {
+	private static void loadLootConfig() {
 		
 		// SET HEADER
 		
-		this.getLootConfig().options().header("++==========================================++"
+		getLootConfig().options().header("++==========================================++"
 								 		  + "\n|| Loot for the CraftZ plugin by JangoBrick ||"
 								 		  + "\n++==========================================++"
 		);
@@ -576,7 +585,7 @@ public class CraftZ extends JavaPlugin {
 			String[] value_lists_all = {
 				"30", "46", "2x39", "2x40", "258", "259", "2x260", "261", "4x262", "267", "2x268", "272", "3x281", "2x282",
 				"2x296", "297",	"298", "299", "300", "301", "302", "303", "304", "305", "306", "307", "308", "309", "339",
-				"346", "353", "357", "360", "368", "374", "391", "393", "400", "373:5", "373:16389"
+				"346", "353", "357", "360", "368", "369", "374", "391", "393", "400", "373:5", "373:16389"
 			};
 			getLootConfig().addDefault("Loot.lists.all", value_lists_all);
 			
@@ -599,7 +608,7 @@ public class CraftZ extends JavaPlugin {
 			
 			String[] value_lists_civilian = {
 				"2x39", "2x40", "258", "259", "2x260", "2x262", "268", "2x281", "282", "296", "297", "298", "299",
-				"300", "301", "346", "357", "360", "391", "393", "400"
+				"300", "301", "346", "357", "360", "369", "391", "393", "400"
 			};
 			getLootConfig().addDefault("Loot.lists.civilian", value_lists_civilian);
 			
@@ -628,7 +637,7 @@ public class CraftZ extends JavaPlugin {
 			
 			
 			String[] value_lists_medical = {
-				"2x260", "2x281", "2x282", "339", "2x351:1", "351:10", "2x353", "357", "360", "374", "391",
+				"2x260", "2x281", "2x282", "339", "2x351:1", "351:10", "2x353", "357", "2x369", "360", "374", "391",
 				"2x373:5", "373:16389"
 			};
 			getLootConfig().addDefault("Loot.lists.medical", value_lists_medical);
@@ -644,29 +653,29 @@ public class CraftZ extends JavaPlugin {
 	
 	
 	
-	private FileConfiguration lootConfig = null;
-	private File lootConfigFile = null;
+	private static FileConfiguration lootConfig = null;
+	private static File lootConfigFile = null;
 	
-	public void reloadLootConfig() {
-		if (lootConfigFile == null) lootConfigFile = new File(this.getDataFolder(), "loot.yml");
+	public static void reloadLootConfig() {
+		if (lootConfigFile == null) lootConfigFile = new File(i.getDataFolder(), "loot.yml");
 		lootConfig = YamlConfiguration.loadConfiguration(lootConfigFile);
 		loadLootConfig();
 		
 	}
 	
-	public FileConfiguration getLootConfig() {
+	public static FileConfiguration getLootConfig() {
 		if (lootConfig == null) reloadLootConfig();
 		return lootConfig;
 	}
 	
-	public void saveLootConfig() {
+	public static void saveLootConfig() {
 		
 		if (lootConfig == null || lootConfigFile == null) return;
 		
 		try {
 			getLootConfig().save(lootConfigFile);
 		} catch (IOException ex) {
-			getLogger().log(Level.SEVERE, "Could not save config to " + lootConfigFile, ex);
+			i.getLogger().log(Level.SEVERE, "Could not save config to " + lootConfigFile, ex);
 		}
 		
 	}
@@ -675,8 +684,8 @@ public class CraftZ extends JavaPlugin {
 	
 	
 	
-	public void reloadConfigs() {
-		reloadConfig();
+	public static void reloadConfigs() {
+		i.reloadConfig();
 		loadConfig();
 	}
 	
@@ -684,8 +693,12 @@ public class CraftZ extends JavaPlugin {
 	
 	
 	
-	public World getWorld() {
-		return getServer().getWorld(getConfig().getString("Config.world.name"));
+	public static String worldName() {
+		return i.getConfig().getString("Config.world.name");
+	}
+	
+	public static World world() {
+		return Bukkit.getWorld(worldName());
 	}
 	
 }

@@ -3,9 +3,7 @@ package craftZ.listeners;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import org.bukkit.ChatColor;
-import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
@@ -18,21 +16,13 @@ import craftZ.CraftZ;
 import craftZ.PlayerManager;
 import craftZ.util.StackParser;
 
+
 public class EntityDeathListener implements Listener {
-	
-	public EntityDeathListener(CraftZ plugin) {
-		
-		this.plugin = plugin;
-		plugin.getServer().getPluginManager().registerEvents(this, plugin);
-		
-	}
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onEntityDeath(EntityDeathEvent event) {
 		
-		String value_world_name = plugin.getConfig().getString("Config.world.name");
-		World eventWorld = event.getEntity().getWorld();
-		if (eventWorld.getName().equalsIgnoreCase(value_world_name)) {
+		if (event.getEntity().getWorld().getName().equals(CraftZ.worldName())) {
 		
 			LivingEntity eventEntity = event.getEntity();
 			EntityType eventEntityType = eventEntity.getType();
@@ -42,11 +32,10 @@ public class EntityDeathListener implements Listener {
 			
 			if (eventEntityType == EntityType.ZOMBIE) {
 				
-				if (eventEntity.getKiller() != null
-						&& !PlayerManager.isInsideOfLobby(eventEntity.getKiller())) {
+				if (eventEntity.getKiller() != null && !PlayerManager.isInsideOfLobby(eventEntity.getKiller())) {
 					
 					PlayerManager.getData(event.getEntity().getKiller().getName()).zombiesKilled++;
-					eventEntity.getKiller().sendMessage(ChatColor.GOLD + plugin.getLangConfig()
+					eventEntity.getKiller().sendMessage(ChatColor.GOLD + CraftZ.getLangConfig()
 							.getString("Messages.killed.zombie").replaceAll("%k", "" + PlayerManager
 									.getData(eventEntity.getKiller().getName()).zombiesKilled));
 					
@@ -54,24 +43,24 @@ public class EntityDeathListener implements Listener {
 				
 				drops.clear();
 				
-				boolean value_zombies_drops_enable = plugin.getConfig().getBoolean("Config.mobs.zombies.enable-drops");
-				if (value_zombies_drops_enable) {
+				if (CraftZ.i.getConfig().getBoolean("Config.mobs.zombies.enable-drops")) {
 					
-					ArrayList<String> items = (ArrayList<String>) plugin.getConfig().getStringList("Config.mobs.zombies.drops.items");
+					ArrayList<String> items = (ArrayList<String>) CraftZ.i.getConfig().getStringList("Config.mobs.zombies.drops.items");
 					
 					for (String itemString : items) {
 						
 						ItemStack item = StackParser.fromString(itemString, true);
-						double dropChance = 1 - plugin.getConfig().getDouble("Config.mobs.zombies.drops.chance");
-						if (Math.random() >= dropChance) {
+						double dropChance = 1 - CraftZ.i.getConfig().getDouble("Config.mobs.zombies.drops.chance");
+						if (Math.random() >= dropChance)
 							drops.add(item);
-						}
 						
 					}
 					
 				}
 				
 			}
+			
+			
 			
 			if (eventEntityType == EntityType.COW) {
 				
@@ -92,9 +81,5 @@ public class EntityDeathListener implements Listener {
 		}
 		
 	}
-	
-	
-	
-	private CraftZ plugin;
 	
 }

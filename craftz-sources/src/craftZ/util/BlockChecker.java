@@ -13,11 +13,8 @@ public class BlockChecker {
 		
 		for (int i=1; i<256; i++) {
 			Location tempLoc = loc.clone().add(0, i, 0);
-			Block tempBlock = tempLoc.getBlock();
-			Material tempMat = tempBlock.getType();
-			if (tempMat == material) {
-				return tempBlock;
-			}
+			if (tempLoc.getBlock().getType() == material)
+				return tempLoc.getBlock();
 		}
 		
 		return null;
@@ -31,11 +28,8 @@ public class BlockChecker {
 		
 		for (int i=1; i<256; i++) {
 			Location tempLoc = loc.clone().subtract(0, i, 0);
-			Block tempBlock = tempLoc.getBlock();
-			Material tempMat = tempBlock.getType();
-			if (tempMat == material) {
-				return tempBlock;
-			}
+			if (tempLoc.getBlock().getType() == material)
+				return tempLoc.getBlock();
 		}
 		
 		return null;
@@ -57,9 +51,7 @@ public class BlockChecker {
 		safeMaterials.add(Material.REDSTONE_TORCH_ON);
 		safeMaterials.add(Material.TRIPWIRE);
 		safeMaterials.add(Material.TRIPWIRE_HOOK);
-		if (allowWater == true) {
-			safeMaterials.add(Material.WATER);
-		}
+		if (allowWater == true) safeMaterials.add(Material.WATER);
 		
 		for (int i=1; i<256 - loc.getBlockY(); i++) {
 			
@@ -71,9 +63,8 @@ public class BlockChecker {
 			Block tempOverBlock = tempOverLoc.getBlock();
 			Material tempOverMat = tempOverBlock.getType();
 			
-			if (safeMaterials.contains(tempMat) && safeMaterials.contains(tempOverMat)) {
+			if (safeMaterials.contains(tempMat) && safeMaterials.contains(tempOverMat))
 				return tempLoc;
-			}
 			
 		}
 		
@@ -96,9 +87,7 @@ public class BlockChecker {
 		safeMaterials.add(Material.REDSTONE_TORCH_ON);
 		safeMaterials.add(Material.TRIPWIRE);
 		safeMaterials.add(Material.TRIPWIRE_HOOK);
-		if (allowWater == true) {
-			safeMaterials.add(Material.WATER);
-		}
+		if (allowWater == true) safeMaterials.add(Material.WATER);
 		
 		for (int i=0; i<256 - loc.getBlockY(); i++) {
 			
@@ -114,10 +103,8 @@ public class BlockChecker {
 			Block tempOverBlock = tempOverLoc.getBlock();
 			Material tempOverMat = tempOverBlock.getType();
 			
-			if (safeMaterials.contains(tempMat) && safeMaterials.contains(tempOverMat)
-					&& !safeMaterials.contains(tempUnderMat)) {
+			if (safeMaterials.contains(tempMat) && safeMaterials.contains(tempOverMat) && !safeMaterials.contains(tempUnderMat))
 				return tempLoc;
-			}
 			
 		}
 		
@@ -137,23 +124,19 @@ public class BlockChecker {
 		while (true) {
 			
 			Block above = block.getRelative(0, i, 0);
-			if (above == null) {
-				break;
-			}
+			if (above == null)
+				return false;;
 			
-			if (above.getType() == Material.LOG) {
+			if (above.getType() == Material.LOG)
 				logList.add(above);
-			} else if (above.getType() != Material.LEAVES) {
+			else if (above.getType() != Material.LEAVES)
 				return false;
-			} else {
+			else
 				return true;
-			}
 			
 			i++;
 			
 		}
-
-		return false;
 		
 	}
 

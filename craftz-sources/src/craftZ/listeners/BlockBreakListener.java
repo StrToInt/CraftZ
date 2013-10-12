@@ -1,10 +1,8 @@
 package craftZ.listeners;
 
-
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
@@ -20,126 +18,85 @@ import craftZ.WorldData;
 
 public class BlockBreakListener implements Listener {
 	
-	public BlockBreakListener(CraftZ plugin) {
-		
-		this.plugin = plugin;
-		plugin.getServer().getPluginManager().registerEvents(this, plugin);
-		
-	}
-	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockBreak(BlockBreakEvent event) {
 		
-		String value_world_name = plugin.getConfig().getString("Config.world.name");
-		World eventWorld = event.getPlayer().getWorld();
-		if (eventWorld.getName().equalsIgnoreCase(value_world_name)) {
+		if (event.getPlayer().getWorld().getName().equals(CraftZ.worldName())) {
 			
-			Player eventPlayer = event.getPlayer();
-			Block eventBlock = event.getBlock();
-			Material eventBlockType = eventBlock.getType();
+			Player p = event.getPlayer();
 			
-			boolean value_blockBreaking_allow = plugin.getConfig().getBoolean("Config.players.interact.block-breaking");
-			
-			if (value_blockBreaking_allow != true) {
-				if (!eventPlayer.hasPermission("craftz.build")) {
-					
+			if (!CraftZ.i.getConfig().getBoolean("Config.players.interact.block-breaking")) {
+				
+				if (!p.hasPermission("craftz.build")) {
 					event.setCancelled(true);
 					return;
-					
 				} else {
 					event.setExpToDrop(0);
 				}
+				
 			} else {
 				event.setExpToDrop(0);
 			}
 			
 			
-			if (eventBlockType == Material.SIGN_POST || eventBlockType == Material.WALL_SIGN) {
+			
+			if (event.getBlock().getType() == Material.SIGN_POST || event.getBlock().getType() == Material.WALL_SIGN) {
 				
-				Sign eventSign = (Sign) eventBlock.getState();
+				Sign sign = (Sign) event.getBlock().getState();
 				
-				String line1 = eventSign.getLine(0);
-				String line2 = eventSign.getLine(1);
-				@SuppressWarnings("unused")
-				String line3 = eventSign.getLine(2);
-				@SuppressWarnings("unused")
-				String line4 = eventSign.getLine(3);
-				
-				if (!line1.equalsIgnoreCase("[CraftZ]")) {					
+				if (!sign.getLine(0).equalsIgnoreCase("[CraftZ]"))
 					return;
-				}
 				
-				Location signLoc = eventSign.getLocation();
+				Location signLoc = sign.getLocation();
 				int signLocX = (int) signLoc.getX();
 				int signLocY = (int) signLoc.getY();
 				int signLocZ = (int) signLoc.getZ();
 				
-				
-				
-				if (line2.equalsIgnoreCase("zombiespawn")) {
+				if (sign.getLine(1).equalsIgnoreCase("zombiespawn")) {
 					
-					if (eventPlayer.hasPermission("craftz.buildZombieSpawn")) {
+					if (p.hasPermission("craftz.buildZombieSpawn")) {
 						
-						String nameOfZombieSpawn = "x" + signLocX + "y" + signLocY + "z" + signLocZ;
-						WorldData.get().set("Data.zombiespawns." + nameOfZombieSpawn, null);
-						
+						WorldData.get().set("Data.zombiespawns.x" + signLocX + "y" + signLocY + "z" + signLocZ, null);
 						WorldData.save();
 						
-						String msg_destroyedSign = ChatColor.RED + plugin.getLangConfig().getString("Messages.destroyed-sign");
-						eventPlayer.sendMessage(msg_destroyedSign);
+						p.sendMessage(ChatColor.RED + CraftZ.getLangConfig().getString("Messages.destroyed-sign"));
 						
 					} else {
-						String value_notEnoughPerms = ChatColor.DARK_RED + plugin.getLangConfig()
-								.getString("Messages.errors.not-enough-permissions");
-						eventPlayer.sendMessage(value_notEnoughPerms);
+						event.getPlayer().sendMessage(ChatColor.DARK_RED + CraftZ.getLangConfig().getString("Messages.errors.not-enough-permissions"));
 					}
 					
 				}
 				
 				
 				
-				
-				
-				if (line2.equalsIgnoreCase("playerspawn")) {
+				if (sign.getLine(1).equalsIgnoreCase("playerspawn")) {
 					
-					if (eventPlayer.hasPermission("craftz.buildPlayerSpawn")) {
+					if (event.getPlayer().hasPermission("craftz.buildPlayerSpawn")) {
 						
-						String nameOfPlayerSpawn = "x" + signLocX + "y" + signLocY + "z" + signLocZ;
-						WorldData.get().set("Data.playerspawns." + nameOfPlayerSpawn, null);
-						
+						WorldData.get().set("Data.playerspawns.x" + signLocX + "y" + signLocY + "z" + signLocZ, null);
 						WorldData.save();
 						
-						String msg_destroyedSign = ChatColor.RED + plugin.getLangConfig().getString("Messages.destroyed-sign");
-						eventPlayer.sendMessage(msg_destroyedSign);
+						event.getPlayer().sendMessage(ChatColor.RED + CraftZ.getLangConfig().getString("Messages.destroyed-sign"));
 						
 					} else {
-						String value_notEnoughPerms = ChatColor.DARK_RED + plugin.getLangConfig()
-								.getString("Messages.errors.not-enough-permissions");
-						eventPlayer.sendMessage(value_notEnoughPerms);
+						event.getPlayer().sendMessage(ChatColor.DARK_RED + CraftZ.getLangConfig().getString("Messages.errors.not-enough-permissions"));
 					}
 					
 				}
 				
 				
 				
-				
-				
-				if (line2.equalsIgnoreCase("lootchest")) {
+				if (sign.getLine(1).equalsIgnoreCase("lootchest")) {
 					
-					if (eventPlayer.hasPermission("craftz.buildLootChest")) {
+					if (event.getPlayer().hasPermission("craftz.buildLootChest")) {
 						
-						String nameOfLootSign = "x" + signLocX + "y" + signLocY + "z" + signLocZ;
-						WorldData.get().set("Data.lootchests." + nameOfLootSign, null);
-						
+						WorldData.get().set("Data.lootchests.x" + signLocX + "y" + signLocY + "z" + signLocZ, null);
 						WorldData.save();
 						
-						String msg_destroyedSign = ChatColor.RED + plugin.getLangConfig().getString("Messages.destroyed-sign");
-						eventPlayer.sendMessage(msg_destroyedSign);
+						event.getPlayer().sendMessage(ChatColor.RED + CraftZ.getLangConfig().getString("Messages.destroyed-sign"));
 						
 					} else {
-						String value_notEnoughPerms = ChatColor.DARK_RED + plugin.getLangConfig()
-								.getString("Messages.errors.not-enough-permissions");
-						eventPlayer.sendMessage(value_notEnoughPerms);
+						event.getPlayer().sendMessage(ChatColor.DARK_RED + CraftZ.getLangConfig().getString("Messages.errors.not-enough-permissions"));
 					}
 					
 				}
@@ -154,21 +111,16 @@ public class BlockBreakListener implements Listener {
 					
 					Chest chest = (Chest) event.getBlock().getState();
 					
-					for (int i=0; i<256; i++) {
+					for (int i = 0; i < 256; i++) {
 						
-						Block iBlock = new Location(eventWorld, chest.getLocation().getBlockX(), 
-								i, chest.getLocation().getBlockZ()).getBlock();
+						Block iBlock = new Location(event.getPlayer().getWorld(), chest.getLocation().getBlockX(), i, chest.getLocation().getBlockZ())
+								.getBlock();
 						
 						if (iBlock.getType() == Material.SIGN_POST || iBlock.getType() == Material.WALL_SIGN) {
 							
-							if (iBlock.getState() instanceof Sign) {
-								
-								if (((Sign) iBlock.getState()).getLine(2).equals("" + chest.getLocation().getBlockY())) {
-									
-									ChestRefiller.resetChestAndStartRefill("x" + iBlock.getLocation().getBlockX()
-											+ "y" + i + "z" + iBlock.getLocation().getBlockZ(), true);
-									
-								}
+							if (iBlock.getState() instanceof Sign && ((Sign) iBlock.getState()).getLine(2).equals("" + chest.getLocation().getBlockY())) {
+								ChestRefiller.resetChestAndStartRefill("x" + iBlock.getLocation().getBlockX() + "y" + i + "z"
+										+ iBlock.getLocation().getBlockZ(), true);
 								
 							}
 							
@@ -183,10 +135,5 @@ public class BlockBreakListener implements Listener {
 		}
 		
 	}
-	
-	
-	
-	
-	private CraftZ plugin;
 	
 }

@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -19,6 +18,8 @@ import org.bukkit.potion.PotionEffectType;
 
 import craftZ.util.BlockChecker;
 import craftZ.util.ItemRenamer;
+
+
 public class PlayerManager {
 	
 	private static HashMap<String, AdditionalCraftZData> players = new HashMap<String, AdditionalCraftZData>();
@@ -50,6 +51,10 @@ public class PlayerManager {
 		
 	}
 	
+	
+	
+	
+	
 	public static void loadPlayer(Player p) {
 		
 		p.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 60, 1000));
@@ -57,13 +62,9 @@ public class PlayerManager {
 		if (isAlreadyInWorld(p)) {
 			
 			try {
-				
 				putPlayer(p, false);
 				p.setLevel(players.get(p.getName()).thirst);
-				
-			} catch(Throwable ex) {
-				
-			}
+			} catch(Throwable ex) { }
 			
 		} else {
 			
@@ -124,12 +125,12 @@ public class PlayerManager {
 			int spnLocX = configSec.getInt("coords.x");
 			int spnLocY = configSec.getInt("coords.y");
 			int spnLocZ = configSec.getInt("coords.z");
-			World spnWorld = Bukkit.getWorld(CraftZ.i.getConfig().getString("Config.world.name"));
+			World spnWorld = CraftZ.world();
 			Location spnLoc = new Location(spnWorld, spnLocX, spnLocY, spnLocZ);
 			
 			p.teleport(BlockChecker.getSafeSpawnLocationOver(spnLoc, true));
 			
-			p.sendMessage(ChatColor.YELLOW + CraftZ.i.getLangConfig().getString("Messages.spawned")
+			p.sendMessage(ChatColor.YELLOW + CraftZ.getLangConfig().getString("Messages.spawned")
 					.replaceAll("%s", configSec.getString("name")));
 			
 		}
@@ -142,7 +143,7 @@ public class PlayerManager {
 	
 	public static void saveAllPlayersToConfig() {
 		
-		for (Player p : Bukkit.getWorld(CraftZ.i.getConfig().getString("Config.world.name")).getPlayers())
+		for (Player p : CraftZ.world().getPlayers())
 			savePlayerToConfig(p);
 		
 	}
@@ -158,6 +159,7 @@ public class PlayerManager {
 		WorldData.reload();
 		
 		ScoreboardHelper.removePlayer(p.getName());
+		players.remove(p.getName());
 		
 	}
 	
@@ -216,8 +218,7 @@ public class PlayerManager {
 			
 			if (tickID % 200 == 0) {
 				
-				if (data.bleeding)
-					p.damage(1);
+				if (data.bleeding) p.damage(1);
 				
 				if (data.poisoned) {
 					p.damage(1);
@@ -233,7 +234,7 @@ public class PlayerManager {
 					p.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 20, 1));
 					p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 10, 1));
 					p.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 30, 1));
-					p.sendMessage("[CraftZ] " + CraftZ.i.getLangConfig().getString("Messages.out-of-world"));
+					p.sendMessage("[CraftZ] " + CraftZ.getLangConfig().getString("Messages.out-of-world"));
 					
 				}
 				
@@ -242,7 +243,7 @@ public class PlayerManager {
 			
 			
 			if (data.bonesBroken && !p.hasPotionEffect(PotionEffectType.SLOW))
-				p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, Integer.MAX_VALUE, 1));
+				p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 40, 2), true);
 			
 		}
 		
@@ -265,11 +266,9 @@ public class PlayerManager {
 	
 	
 	public static boolean isInsideOfLobby(Player p) {
-		
 		Location lobby = getLobby();
 		int radius = CraftZ.i.getConfig().getInt("Config.world.lobby.radius");
 		return lobby.distance(p.getLocation()) <= radius;
-		
 	}
 	
 	
@@ -278,7 +277,7 @@ public class PlayerManager {
 	
 	public static Location getLobby() {
 		
-		Location lobby = CraftZ.i.getWorld().getSpawnLocation();
+		Location lobby = CraftZ.world().getSpawnLocation();
 		lobby.setX(CraftZ.i.getConfig().getDouble("Config.world.lobby.x"));
 		lobby.setY(CraftZ.i.getConfig().getDouble("Config.world.lobby.y"));
 		lobby.setZ(CraftZ.i.getConfig().getDouble("Config.world.lobby.z"));
@@ -309,14 +308,13 @@ public class PlayerManager {
 	
 	public static Player randomPlayer() {
 		
-		List<Player> players = CraftZ.i.getWorld().getPlayers();
+		List<Player> players = CraftZ.world().getPlayers();
 		if (players.isEmpty()) return null;
 		Collections.shuffle(players);
 		
 		Player chosen = players.get(0);
 		
-		if (!isInsideOfLobby(chosen))
-			return chosen;
+		if (!isInsideOfLobby(chosen)) return chosen;
 		
 		boolean otherExists = false;
 		for (Player p : players) {
@@ -328,8 +326,7 @@ public class PlayerManager {
 			
 		}
 		
-		if (otherExists)
-			return randomPlayer();
+		if (otherExists) return randomPlayer();
 		
 		return null;
 		
@@ -340,8 +337,8 @@ public class PlayerManager {
 	
 	
 	public static boolean isNotPlaying(String p) {
-		return Bukkit.getPlayer(p) == null || !Bukkit.getPlayer(p).getWorld().getName()
-				.equalsIgnoreCase(CraftZ.i.getConfig().getString("Config.world.name"));
+		return Bukkit.getPlayer(p) == null || !Bukkit.getPlayer(p).getWorld().getName().equals(CraftZ.worldName())
+				|| isInsideOfLobby(Bukkit.getPlayer(p)) || !players.containsKey(p);
 	}
 	
 }

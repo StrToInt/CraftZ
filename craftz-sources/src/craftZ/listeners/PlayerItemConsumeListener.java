@@ -1,8 +1,6 @@
 package craftZ.listeners;
 
-
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -13,53 +11,34 @@ import org.bukkit.inventory.ItemStack;
 import craftZ.CraftZ;
 import craftZ.PlayerManager;
 
+
 public class PlayerItemConsumeListener implements Listener {
-	
-	public PlayerItemConsumeListener(CraftZ plugin) {
-		
-		this.plugin = plugin;
-		plugin.getServer().getPluginManager().registerEvents(this, plugin);
-		
-	}
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerItemConsume(PlayerItemConsumeEvent event) {
 		
-		String value_world_name = plugin.getConfig().getString("Config.world.name");
-		World eventWorld = event.getPlayer().getWorld();
-		if (eventWorld.getName().equalsIgnoreCase(value_world_name)) {
+		if (event.getPlayer().getWorld().getName().equals(CraftZ.worldName())) {
 			
-			Player eventPlayer = event.getPlayer();
-			ItemStack eventItem = event.getItem();
-			Material eventItemType;
-			if (eventItem != null) {
-				eventItemType = eventItem.getType();
-			} else {
-				eventItemType = Material.AIR;
-			}
+			Player p = event.getPlayer();
+			ItemStack item = event.getItem();
+			Material itemType = item != null ? item.getType() : Material.AIR;
 			
 			
 			
-			if (eventItemType == Material.POTION && eventItem.getDurability() == 0
-					&& PlayerManager.isAlreadyInWorld(eventPlayer)) {
+			if (itemType == Material.POTION && item.getDurability() == 0 && PlayerManager.isAlreadyInWorld(p)) {
 					
-				if (eventPlayer.getItemInHand().getAmount() < 2) {
-					eventPlayer.setItemInHand(new ItemStack(Material.AIR, 0));
-				} else {
-					eventPlayer.getItemInHand().setAmount(eventPlayer.getItemInHand().getAmount() - 1);
-				}
+				if (p.getItemInHand().getAmount() < 2)
+					p.setItemInHand(new ItemStack(Material.AIR, 0));
+				else
+					p.getItemInHand().setAmount(p.getItemInHand().getAmount() - 1);
 				
-				PlayerManager.getData(eventPlayer.getName()).thirst = 20;
-				eventPlayer.setLevel(20);
+				PlayerManager.getData(p.getName()).thirst = 20;
+				p.setLevel(20);
 				
 			}
 		
 		}
 		
 	}
-	
-	
-	
-	private CraftZ plugin;
 	
 }

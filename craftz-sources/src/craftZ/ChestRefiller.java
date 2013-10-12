@@ -29,11 +29,8 @@ public class ChestRefiller {
 	public static void resetAllChestsAndStartRefill() {
 		
 		if (WorldData.get().getConfigurationSection("Data.lootchests") != null) {
-			
-			for (String chestEntry : WorldData.get().getConfigurationSection("Data.lootchests").getKeys(false)) {
+			for (String chestEntry : WorldData.get().getConfigurationSection("Data.lootchests").getKeys(false))
 				resetChestAndStartRefill(chestEntry, false);
-			}
-			
 		}
 		
 	}
@@ -46,12 +43,10 @@ public class ChestRefiller {
 		
 		cooldowns.put(chestEntry, 0);
 		
-		ConfigurationSection chestSec = WorldData.get()
-				.getConfigurationSection("Data.lootchests." + chestEntry);
+		ConfigurationSection chestSec = WorldData.get().getConfigurationSection("Data.lootchests." + chestEntry);
 		
-		if (chestSec == null) {
+		if (chestSec == null)
 			return false;
-		}
 		
 		int rflLocX = chestSec.getInt("coords.x");
 		int rflLocY = chestSec.getInt("coords.y");
@@ -61,9 +56,8 @@ public class ChestRefiller {
 		
 		Block block = rflLoc.getBlock();
 		
-		if (block.getType() == Material.CHEST && !drop) {
+		if (block.getType() == Material.CHEST && !drop)
 			((Chest) block.getState()).getBlockInventory().clear();
-		}
 		
 		block.setType(Material.AIR);
 		
@@ -91,7 +85,7 @@ public class ChestRefiller {
 			block.setType(Material.CHEST);
 			Chest chest = (Chest) block.getState();
 			
-			List<String> bItems = CraftZ.i.getLootConfig().getStringList("Loot.lists." + lootList);
+			List<String> bItems = CraftZ.getLootConfig().getStringList("Loot.lists." + lootList);
 			if (bItems == null || bItems.isEmpty()) return;
 			List<String> items = new ArrayList<String>();
 			
@@ -102,7 +96,8 @@ public class ChestRefiller {
 				if (str.contains("x")) {
 					
 					try {
-						for (int i=0; i<=new Integer(str.split("x")[0]); i++) items.add(str.split("x")[1]);
+						for (int i=0; i<=Integer.parseInt(str.split("x")[0]); i++)
+							items.add(str.split("x")[1]);
 					} catch(NumberFormatException ex) {
 						return;
 					}
@@ -113,14 +108,12 @@ public class ChestRefiller {
 				
 			}
 			
-			int min = CraftZ.i.getLootConfig().getInt("Loot.settings.min-stacks-filled");
-			int max = CraftZ.i.getLootConfig().getInt("Loot.settings.max-stacks-filled");
+			int min = CraftZ.getLootConfig().getInt("Loot.settings.min-stacks-filled");
+			int max = CraftZ.getLootConfig().getInt("Loot.settings.max-stacks-filled");
 			
 			for (int i=0; i<(1 + min + new Random().nextInt(max - min)); i++) {
-				
 				String itemString = items.get(new Random().nextInt(items.size()));
 				ItemStack itemStack = StackParser.fromString(itemString, false);
-				
 				chest.getInventory().addItem(itemStack);
 			}
 			
@@ -142,11 +135,12 @@ public class ChestRefiller {
 			Map.Entry<String, Integer> entry = it.next();
 			
 			entry.setValue(entry.getValue() + 1);
-			if (entry.getValue() >= (CraftZ.i.getLootConfig().getInt("Loot.settings.time-before-refill") * 20)) {
+			if (entry.getValue() >= (CraftZ.getLootConfig().getInt("Loot.settings.time-before-refill") * 20)) {
 				
 				toRemove.add(entry.getKey());
 				ConfigurationSection chestSec = WorldData.get().getConfigurationSection("Data.lootchests." + entry.getKey());
-				if (chestSec != null) evalChestRefill(chestSec);
+				if (chestSec != null)
+					evalChestRefill(chestSec);
 				
 			}
 			

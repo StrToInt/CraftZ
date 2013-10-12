@@ -2,8 +2,6 @@ package craftZ.listeners;
 
 import java.util.List;
 
-import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -16,94 +14,61 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import craftZ.CraftZ;
 import craftZ.util.PlayerVisibilityBar;
 
+
 public class PlayerMoveListener implements Listener {
-	
-	private PlayerVisibilityBar visibilityBar = new PlayerVisibilityBar();
-	
-	public PlayerMoveListener(CraftZ plugin) {
-		
-		this.plugin = plugin;
-		plugin.getServer().getPluginManager().registerEvents(this, plugin);
-		
-	}
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerMove(PlayerMoveEvent event) {
 		
-		String value_world_name = plugin.getConfig().getString("Config.world.name");
-		World eventWorld = event.getPlayer().getWorld();
-		if (eventWorld.getName().equalsIgnoreCase(value_world_name)) {
+		if (event.getPlayer().getWorld().getName().equals(CraftZ.worldName())) {
 			
-			Player eventPlayer = event.getPlayer();
-			Location eventFrom = event.getFrom();
-			Location eventTo = event.getTo();
+			Player p = event.getPlayer();
 			
-			double eventDistance = eventFrom.distance(eventTo);
-			
-			if (eventDistance > 0) {
-				plugin.movingPlayers.put(eventPlayer, 0);
+			if (event.getFrom().distance(event.getTo()) > 0) {
+				CraftZ.i.movingPlayers.put(p, 0);
 			} else {
 				
-				if (plugin.movingPlayers.containsKey(eventPlayer)) {
+				if (CraftZ.i.movingPlayers.containsKey(p)) {
 					
-					if (plugin.movingPlayers.get(eventPlayer) < 20) {
-						plugin.movingPlayers.put(eventPlayer, plugin.movingPlayers.get(eventPlayer) + 1);
-					} else {
-						plugin.movingPlayers.remove(eventPlayer);
-					}
+					if (CraftZ.i.movingPlayers.get(p) < 20)
+						CraftZ.i.movingPlayers.put(p, CraftZ.i.movingPlayers.get(p) + 1);
+					else
+						CraftZ.i.movingPlayers.remove(p);
 					
 				}
 				
 			}
-			visibilityBar.updatePlayerVisibilityBar(eventPlayer);
 			
-			float visibility = visibilityBar.getVisibility(eventPlayer);
+			
+			
+			PlayerVisibilityBar.updatePlayerVisibilityBar(p);
+			
+			
+			
+			float visibility = PlayerVisibilityBar.getVisibility(p);
 			List<Entity> nearbyEnts = null;
 			
-			if (visibility <= 0.1F) {
-				nearbyEnts = eventPlayer.getNearbyEntities(2, 2, 2);
-			}
-			
-			if (nearbyEnts == null) {
-				
-				if (visibility <= 0.3F) {
-					nearbyEnts = eventPlayer.getNearbyEntities(4, 4, 4);
-				}
-				
-				if (visibility <= 0.5F) {
-					nearbyEnts = eventPlayer.getNearbyEntities(7, 7, 7);
-				}
-				
-				if (visibility <= 0.8F) {
-					nearbyEnts = eventPlayer.getNearbyEntities(10, 10, 10);
-				}
-				
-				if (visibility <= 1.0F) {
-					nearbyEnts = eventPlayer.getNearbyEntities(14, 14, 14);
-				}
-				
-			}
+			if (visibility <= 0.1F)
+				nearbyEnts = p.getNearbyEntities(2, 2, 2);
+			else if (visibility <= 0.3F)
+				nearbyEnts = p.getNearbyEntities(4, 4, 4);
+			else if (visibility <= 0.5F)
+				nearbyEnts = p.getNearbyEntities(7, 7, 7);
+			else if (visibility <= 0.8F)
+				nearbyEnts = p.getNearbyEntities(10, 10, 10);
+			else if (visibility <= 1.0F)
+				nearbyEnts = p.getNearbyEntities(14, 14, 14);
 			
 			if (nearbyEnts != null) {
 				
-				for (Entity forEnt : nearbyEnts) {
-					
-					EntityType forEntType = forEnt.getType();
-					if (forEntType == EntityType.ZOMBIE) {
-						Zombie forZombie = (Zombie) forEnt;
-						forZombie.setTarget(eventPlayer);
-					}
-					
-				}
+				for (Entity forEnt : nearbyEnts)
+					if (forEnt.getType() == EntityType.ZOMBIE)
+						((Zombie) forEnt).setTarget(p);
 				
 			}
 			
 		}
 		
 	}
-	
-	
-	
-	private CraftZ plugin;
 	
 }

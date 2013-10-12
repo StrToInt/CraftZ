@@ -2,10 +2,8 @@ package craftZ.listeners;
 
 import java.util.List;
 
-
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
@@ -20,39 +18,30 @@ import org.bukkit.util.Vector;
 
 import craftZ.CraftZ;
 
+
 public class VehicleUpdateListener implements Listener {
-	
-	public VehicleUpdateListener(CraftZ plugin) {
-		
-		this.plugin = plugin;
-		plugin.getServer().getPluginManager().registerEvents(this, plugin);
-		
-	}
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onVehicleUpdate(VehicleUpdateEvent event) {
 		
-		String value_world_name = plugin.getConfig().getString("Config.world.name");
-		World eventWorld = event.getVehicle().getWorld();
-		if (eventWorld.getName().equalsIgnoreCase(value_world_name)) {
+		if (event.getVehicle().getWorld().getName().equals(CraftZ.worldName())) {
 			
-			boolean value_enableCars = plugin.getConfig().getBoolean("Config.vehicles.enable");
-			if (value_enableCars) {
+			if (CraftZ.i.getConfig().getBoolean("Config.vehicles.enable")) {
 				
 				Vehicle vehicle = event.getVehicle();
 				Entity passenger = vehicle.getPassenger();
-				if (!(passenger instanceof Player)) {
+				if (!(passenger instanceof Player))
 					return;
-				}
 				
 				Player player = (Player) passenger;
 				
 				if ((event.getVehicle() instanceof Minecart)) {
+					
 					Minecart cart = (Minecart) vehicle;
 					
 					Location newLoc = cart.getLocation();
 					Vector plvelocity = cart.getPassenger().getVelocity();
-					plvelocity.multiply(2);
+					plvelocity = plvelocity.multiply(2);
 					
 					if (player.isInsideVehicle()) {
 						
@@ -66,10 +55,10 @@ public class VehicleUpdateListener implements Listener {
 							groundID = "" + groundMaterial.getId() + ":" + groundData;
 						}
 						
-						List<String> value_vehicles_speed_streetBlocks = plugin.getConfig().getStringList("Config.vehicles.speed-street-blocks");
+						List<String> value_vehicles_speed_streetBlocks = CraftZ.i.getConfig().getStringList("Config.vehicles.speed-street-blocks");
 						if (!value_vehicles_speed_streetBlocks.contains(groundID)) {
 							plvelocity.multiply(2);
-							double value_vehicles_speed = plugin.getConfig().getDouble("Config.vehicles.speed");
+							double value_vehicles_speed = CraftZ.i.getConfig().getDouble("Config.vehicles.speed");
 							newLoc.add(new Vector(plvelocity.getX() * value_vehicles_speed, 0.0D, plvelocity.getZ() * value_vehicles_speed));
 							cart.teleport(newLoc);
 							
@@ -78,8 +67,9 @@ public class VehicleUpdateListener implements Listener {
 							dirVel.multiply(-1.5);
 							cart.setVelocity(dirVel);
 						} else {
-							double value_vehicles_speed_streetMulti = plugin.getConfig().getDouble("Config.vehicles.speed-street-multiplier");
-							double value_vehicles_speed = plugin.getConfig().getDouble("Config.vehicles.speed");
+							
+							double value_vehicles_speed_streetMulti = CraftZ.i.getConfig().getDouble("Config.vehicles.speed-street-multiplier");
+							double value_vehicles_speed = CraftZ.i.getConfig().getDouble("Config.vehicles.speed");
 							double speedMulti = value_vehicles_speed * value_vehicles_speed_streetMulti;
 							
 							plvelocity.multiply(2);
@@ -116,8 +106,11 @@ public class VehicleUpdateListener implements Listener {
 							dirVel.setY(0);
 							dirVel.multiply(-1.5);
 							cart.setVelocity(dirVel);
+							
 						}
+						
 					}
+					
 				}
 				
 			}
@@ -125,10 +118,5 @@ public class VehicleUpdateListener implements Listener {
 		}
 	    
 	}
-	
-	
-	
-	
-	private CraftZ plugin;
 	
 }

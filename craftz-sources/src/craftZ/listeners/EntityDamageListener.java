@@ -1,123 +1,101 @@
 package craftZ.listeners;
 
-import java.util.Random;
-
-
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.inventory.ItemStack;
 
 import craftZ.CraftZ;
 import craftZ.PlayerManager;
 
+
 public class EntityDamageListener implements Listener {
-	
-	public EntityDamageListener(CraftZ plugin) {
-		
-		this.plugin = plugin;
-		plugin.getServer().getPluginManager().registerEvents(this, plugin);
-		
-	}
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onEntityDamage(EntityDamageEvent event) {
 		
-		String value_world_name = plugin.getConfig().getString("Config.world.name");
-		World eventWorld = event.getEntity().getWorld();
-		if (eventWorld.getName().equalsIgnoreCase(value_world_name)) {
+		if (event.getEntity().getWorld().getName().equals(CraftZ.worldName())) {
 			
-			Entity eventEntity = event.getEntity();
-			EntityType eventEntityType = event.getEntity().getType();
-			DamageCause damageCause = event.getCause();
-			
-			if (eventEntityType == EntityType.ZOMBIE && damageCause == DamageCause.FIRE_TICK) {
+			if (event.getEntityType() == EntityType.ZOMBIE && event.getCause() == DamageCause.FIRE_TICK) {
 				event.setCancelled(true);
-				eventEntity.setFireTicks(0);
+				event.getEntity().setFireTicks(0);
 			} else {
 				
-				if (eventEntityType == EntityType.PLAYER) {
+				if (event.getEntityType() == EntityType.PLAYER) {
 					
-					if (PlayerManager.isInsideOfLobby((Player) eventEntity)) {
+					Player p = (Player) event.getEntity();
+					
+					if (PlayerManager.isNotPlaying(p.getName())) {
 						event.setCancelled(true);
 						return;
 					}
 					
-					if (plugin.getConfig().getBoolean("Config.players.medical.bleeding.enable")
-							&& ((Player) eventEntity).getGameMode() != GameMode.CREATIVE) {
+					if (CraftZ.i.getConfig().getBoolean("Config.players.medical.bleeding.enable")
+							&& p.getGameMode() != GameMode.CREATIVE) {
 						
-						double value_bleeding_chance = 1D - plugin.getConfig().getDouble("Config.players.medical.bleeding.chance");
+						double value_bleeding_chance = 1D - CraftZ.i.getConfig().getDouble("Config.players.medical.bleeding.chance");
 						if (Math.random() >= value_bleeding_chance) {
-							PlayerManager.getData(((Player) eventEntity).getName()).bleeding = true;
-							((Player) eventEntity).sendMessage(ChatColor.DARK_RED + plugin.getLangConfig().getString("Messages.bleeding"));
+							PlayerManager.getData(p.getName()).bleeding = true;
+							p.sendMessage(ChatColor.DARK_RED + CraftZ.getLangConfig().getString("Messages.bleeding"));
 						}
 						
 					}
 					
 					int height = (int) (event.getDamage() + 3);
-					if (damageCause == DamageCause.FALL && plugin.getConfig().getBoolean("Config.players.medical.bonebreak.enable")
-							&& height >= plugin.getConfig().getInt("Config.players.medical.bonebreak.height")) {
-						PlayerManager.getData(((Player) eventEntity).getName()).bonesBroken = true;
-						((Player) eventEntity).sendMessage(ChatColor.DARK_RED + plugin.getLangConfig().getString("Messages.bones-broken"));
+					if (event.getCause() == DamageCause.FALL && CraftZ.i.getConfig().getBoolean("Config.players.medical.bonebreak.enable")
+							&& height >= CraftZ.i.getConfig().getInt("Config.players.medical.bonebreak.height")) {
+						PlayerManager.getData(p.getName()).bonesBroken = true;
+						p.sendMessage(ChatColor.DARK_RED + CraftZ.getLangConfig().getString("Messages.bones-broken"));
 					}
 					
 				}
 				
-				boolean value_mobs_blood = false;//plugin.getConfig().getBoolean("Config.mobs.blood-particles-when-damaged");
-				if (!event.isCancelled() && value_mobs_blood) {
-					
-					if (!eventEntityType.isAlive() || (eventEntityType == EntityType.PLAYER
-							&& ((Player) eventEntity).getGameMode() == GameMode.CREATIVE)) {
-						return;
-					}
-					
-					int bloodCount = 0;
-					
-					if (eventEntityType == EntityType.ZOMBIE)
-						bloodCount = (int) (event.getDamage() * 2);
-					else
-						bloodCount = (int) (event.getDamage() * 6);
-					
-					for (int i=0; i<bloodCount; i++) {
-						
-//						eventWorld.playEffect(eventEntity.getLocation(), Effect.STEP_SOUND,
-//								Material.REDSTONE_WIRE.getId());
-						
-						final Item blood = eventWorld.dropItemNaturally(eventEntity.getLocation(), new ItemStack(Material.WOOL, 1, (short) 14));
-						
-						blood.setPickupDelay(Integer.MAX_VALUE);
-						
-						plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-							
-							@Override
-							public void run() {
-								blood.remove();
-							}
-							
-						}, 1 + new Random().nextInt(6));
-						
-					}
-					
-				}
+//				boolean value_mobs_blood = false;//plugin.getConfig().getBoolean("Config.mobs.blood-particles-when-damaged");
+//				if (!event.isCancelled() && value_mobs_blood) {
+//					
+//					if (!eventEntityType.isAlive() || (eventEntityType == EntityType.PLAYER
+//							&& ((Player) eventEntity).getGameMode() == GameMode.CREATIVE)) {
+//						return;
+//					}
+//					
+//					int bloodCount = 0;
+//					
+//					if (eventEntityType == EntityType.ZOMBIE)
+//						bloodCount = (int) (event.getDamage() * 2);
+//					else
+//						bloodCount = (int) (event.getDamage() * 6);
+//					
+//					for (int i=0; i<bloodCount; i++) {
+//						
+////						eventWorld.playEffect(eventEntity.getLocation(), Effect.STEP_SOUND,
+////								Material.REDSTONE_WIRE.getId());
+//						
+//						final Item blood = eventWorld.dropItemNaturally(eventEntity.getLocation(), new ItemStack(Material.WOOL, 1, (short) 14));
+//						
+//						blood.setPickupDelay(Integer.MAX_VALUE);
+//						
+//						plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+//							
+//							@Override
+//							public void run() {
+//								blood.remove();
+//							}
+//							
+//						}, 1 + new Random().nextInt(6));
+//						
+//					}
+//					
+//				}
 				
 			}
 		
 		}
 		
 	}
-	
-	
-	
-	private CraftZ plugin;
 	
 }

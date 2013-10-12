@@ -5,7 +5,6 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Minecart;
@@ -15,7 +14,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -27,47 +25,30 @@ import craftZ.util.BlockChecker;
 
 public class PlayerInteractListener implements Listener {
 	
-	public PlayerInteractListener(CraftZ plugin) {
-		
-		this.plugin = plugin;
-		plugin.getServer().getPluginManager().registerEvents(this, plugin);
-		
-	}
-	
-	
-	
-	
-	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		
-		World eventWorld = event.getPlayer().getWorld();
-		if (eventWorld.getName().equalsIgnoreCase(plugin.getConfig().getString("Config.world.name"))) {
+		if (event.getPlayer().getWorld().getName().equals(CraftZ.worldName())) {
 			
-			Player eventPlayer = event.getPlayer();
-			ItemStack eventItem = event.getItem();
-			Material eventItemType;
-			if (eventItem != null)
-				eventItemType = eventItem.getType();
-			else
-				eventItemType = Material.AIR;
-			Action eventAction = event.getAction();
-			Block eventBlock = event.getClickedBlock();
+			Player p = event.getPlayer();
+			ItemStack item = event.getItem();
+			Material itemType = item != null ? item.getType() : Material.AIR;
+			Action action = event.getAction();
+			Block block = event.getClickedBlock();
 			
-			if (eventAction == Action.RIGHT_CLICK_AIR || eventAction == Action.RIGHT_CLICK_BLOCK) {
+			if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
 				
-				if (eventItemType == Material.SUGAR) {
+				if (itemType == Material.SUGAR) {
 					
-					boolean value_enableSugarEffect = plugin.getConfig().getBoolean("Config.players.medical.enable-sugar-speed-effect");
-					if (value_enableSugarEffect == true) {
+					if (CraftZ.i.getConfig().getBoolean("Config.players.medical.enable-sugar-speed-effect") == true) {
 						
-						if (eventPlayer.getItemInHand().getAmount() < 2)
-							eventPlayer.setItemInHand(new ItemStack(Material.AIR, 0));
+						if (p.getItemInHand().getAmount() < 2)
+							p.setItemInHand(new ItemStack(Material.AIR, 0));
 						else
-							eventPlayer.getItemInHand().setAmount(eventPlayer.getItemInHand().getAmount() - 1);
+							p.getItemInHand().setAmount(p.getItemInHand().getAmount() - 1);
 						
-						eventPlayer.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 3600, 2));
-						eventPlayer.playSound(eventPlayer.getLocation(), Sound.BURP, 1, 1);
+						p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 3600, 2));
+						p.playSound(p.getLocation(), Sound.BURP, 1, 1);
 						
 					}
 					
@@ -75,18 +56,18 @@ public class PlayerInteractListener implements Listener {
 				
 				
 				
-				if (eventItemType == Material.PAPER) {
+				if (itemType == Material.PAPER) {
 					
-					if (plugin.getConfig().getBoolean("Config.players.medical.bleeding.heal-with-paper")) {
+					if (CraftZ.i.getConfig().getBoolean("Config.players.medical.bleeding.heal-with-paper")) {
 						
-						if (eventPlayer.getItemInHand().getAmount() < 2)
-							eventPlayer.setItemInHand(new ItemStack(Material.AIR, 0));
+						if (p.getItemInHand().getAmount() < 2)
+							p.setItemInHand(new ItemStack(Material.AIR, 0));
 						else
-							eventPlayer.getItemInHand().setAmount(eventPlayer.getItemInHand().getAmount() - 1);
+							p.getItemInHand().setAmount(p.getItemInHand().getAmount() - 1);
 						
-						PlayerManager.getData(eventPlayer.getName()).bleeding = false;
-						eventPlayer.playSound(eventPlayer.getLocation(), Sound.ENDERDRAGON_WINGS, 1, 1);
-						eventPlayer.sendMessage(ChatColor.DARK_RED + plugin.getLangConfig().getString("Messages.bandaged"));
+						PlayerManager.getData(p.getName()).bleeding = false;
+						p.playSound(p.getLocation(), Sound.ENDERDRAGON_WINGS, 1, 1);
+						p.sendMessage(ChatColor.DARK_RED + CraftZ.getLangConfig().getString("Messages.bandaged"));
 						
 					}
 					
@@ -94,19 +75,19 @@ public class PlayerInteractListener implements Listener {
 				
 				
 				
-				if (eventItemType == Material.INK_SACK && eventItem.getDurability() == 1) {
+				if (itemType == Material.INK_SACK && item.getDurability() == 1) {
 					
-					if (plugin.getConfig().getBoolean("Config.players.medical.healing.heal-with-rosered")
-							&& !plugin.getConfig().getBoolean("Config.players.medical.healing.only-healing-others")) {
+					if (CraftZ.i.getConfig().getBoolean("Config.players.medical.healing.heal-with-rosered")
+							&& !CraftZ.i.getConfig().getBoolean("Config.players.medical.healing.only-healing-others")) {
 						
-						if (eventPlayer.getItemInHand().getAmount() < 2)
-							eventPlayer.setItemInHand(new ItemStack(Material.AIR, 0));
+						if (p.getItemInHand().getAmount() < 2)
+							p.setItemInHand(new ItemStack(Material.AIR, 0));
 						else
-							eventPlayer.getItemInHand().setAmount(eventPlayer.getItemInHand().getAmount() - 1);
+							p.getItemInHand().setAmount(p.getItemInHand().getAmount() - 1);
 						
-						eventPlayer.setHealth(20D);
-						eventPlayer.playSound(eventPlayer.getLocation(), Sound.BREATH, 1, 1);
-						eventPlayer.sendMessage(ChatColor.DARK_RED + plugin.getLangConfig().getString("Messages.bloodbag"));
+						p.setHealth(20);
+						p.playSound(p.getLocation(), Sound.BREATH, 1, 1);
+						p.sendMessage(ChatColor.DARK_RED + CraftZ.getLangConfig().getString("Messages.bloodbag"));
 						
 					}
 					
@@ -114,18 +95,18 @@ public class PlayerInteractListener implements Listener {
 				
 				
 				
-				if (eventItemType == Material.INK_SACK && eventItem.getDurability() == 10) {
+				if (itemType == Material.INK_SACK && item.getDurability() == 10) {
 					
-					if (plugin.getConfig().getBoolean("Config.players.medical.poisoning.cure-with-limegreen")) {
+					if (CraftZ.i.getConfig().getBoolean("Config.players.medical.poisoning.cure-with-limegreen")) {
 						
-						if (eventPlayer.getItemInHand().getAmount() < 2)
-							eventPlayer.setItemInHand(new ItemStack(Material.AIR, 0));
+						if (p.getItemInHand().getAmount() < 2)
+							p.setItemInHand(new ItemStack(Material.AIR, 0));
 						else
-							eventPlayer.getItemInHand().setAmount(eventPlayer.getItemInHand().getAmount() - 1);
+							p.getItemInHand().setAmount(p.getItemInHand().getAmount() - 1);
 						
-						PlayerManager.getData(eventPlayer.getName()).poisoned = false;
-						eventPlayer.playSound(eventPlayer.getLocation(), Sound.ZOMBIE_UNFECT, 1, 1);
-						eventPlayer.sendMessage(ChatColor.DARK_RED + plugin.getLangConfig().getString("Messages.unpoisoned"));
+						PlayerManager.getData(p.getName()).poisoned = false;
+						p.playSound(p.getLocation(), Sound.ZOMBIE_UNFECT, 1, 1);
+						p.sendMessage(ChatColor.DARK_RED + CraftZ.getLangConfig().getString("Messages.unpoisoned"));
 						
 					}
 					
@@ -133,18 +114,19 @@ public class PlayerInteractListener implements Listener {
 				
 				
 				
-				if (eventItemType == Material.BLAZE_ROD) {
+				if (itemType == Material.BLAZE_ROD) {
 					
-					if (plugin.getConfig().getBoolean("Config.players.medical.bonebreak.heal-with-blazerod")) {
+					if (CraftZ.i.getConfig().getBoolean("Config.players.medical.bonebreak.heal-with-blazerod")) {
 						
-						if (eventPlayer.getItemInHand().getAmount() < 2)
-							eventPlayer.setItemInHand(new ItemStack(Material.AIR, 0));
+						if (p.getItemInHand().getAmount() < 2)
+							p.setItemInHand(new ItemStack(Material.AIR, 0));
 						else
-							eventPlayer.getItemInHand().setAmount(eventPlayer.getItemInHand().getAmount() - 1);
+							p.getItemInHand().setAmount(p.getItemInHand().getAmount() - 1);
 						
-						PlayerManager.getData(eventPlayer.getName()).bonesBroken = false;
-						eventPlayer.playSound(eventPlayer.getLocation(), Sound.BREATH, 1, 1);
-						eventPlayer.sendMessage(ChatColor.DARK_RED + plugin.getLangConfig().getString("Messages.bones-healed"));
+						PlayerManager.getData(p.getName()).bonesBroken = false;
+						p.removePotionEffect(PotionEffectType.SLOW);
+						p.playSound(p.getLocation(), Sound.BREATH, 1, 1);
+						p.sendMessage(ChatColor.DARK_RED + CraftZ.getLangConfig().getString("Messages.bones-healed"));
 						
 					}
 					
@@ -154,49 +136,40 @@ public class PlayerInteractListener implements Listener {
 			
 			
 			
-			if (eventAction == Action.RIGHT_CLICK_BLOCK) {
+			if (action == Action.RIGHT_CLICK_BLOCK) {
 				
-				if (eventItemType == Material.IRON_AXE) {
+				if (itemType == Material.IRON_AXE) {
 					
-					boolean isTreeBlock = BlockChecker.isTree(eventBlock);
-					if (isTreeBlock == true) {
+					if (BlockChecker.isTree(block)) {
 						
-						Inventory evtPlrInv = eventPlayer.getInventory();
-						if (!evtPlrInv.contains(Material.LOG)) {
+						if (!p.getInventory().contains(Material.LOG)) {
 							
-							ItemStack logFromTree = new ItemStack(Material.LOG, 1);
-							Item item = eventWorld.dropItem(eventPlayer.getLocation(), logFromTree);
-							item.setPickupDelay(0);
-							String msg_harvestedTree = plugin.getLangConfig().getString("Messages.harvested-tree");
-							eventPlayer.sendMessage(msg_harvestedTree);
+							Item itm = p.getWorld().dropItem(p.getLocation(), new ItemStack(Material.LOG, 1));
+							itm.setPickupDelay(0);
+							p.sendMessage(CraftZ.getLangConfig().getString("Messages.harvested-tree"));
 							
 						} else {
-							String msg_alreadyHaveWood = plugin.getLangConfig().getString("Messages.already-have-wood");
-							eventPlayer.sendMessage(msg_alreadyHaveWood);
+							p.sendMessage(CraftZ.getLangConfig().getString("Messages.already-have-wood"));
 						}
 						
 					} else {
-						String msg_isntTree = plugin.getLangConfig().getString("Messages.isnt-a-tree");
-						eventPlayer.sendMessage(msg_isntTree);
+						p.sendMessage(CraftZ.getLangConfig().getString("Messages.isnt-a-tree"));
 					}
 					
 				}
 				
 				
 				
-				if (eventItemType == Material.MINECART) {
+				if (itemType == Material.MINECART) {
 					
-					boolean value_enableCars = plugin.getConfig().getBoolean("Config.vehicles.enable");
-					if (value_enableCars) {
+					if (CraftZ.i.getConfig().getBoolean("Config.vehicles.enable")) {
 						
-						Location locForMinecart = eventBlock.getLocation();
+						Location locForMinecart = block.getLocation();
 						locForMinecart.add(new Vector(0, 1, 0));
-						eventWorld.spawn(locForMinecart, Minecart.class);
+						p.getWorld().spawn(locForMinecart, Minecart.class);
 						
-						if (eventPlayer.getGameMode() != GameMode.CREATIVE) {
-							eventPlayer.getInventory().removeItem(new ItemStack[] {
-									event.getPlayer().getInventory().getItemInHand() });
-						}
+						if (p.getGameMode() != GameMode.CREATIVE)
+							p.getInventory().removeItem(p.getInventory().getItemInHand());
 					
 					}
 					
@@ -204,21 +177,13 @@ public class PlayerInteractListener implements Listener {
 				
 				
 				
-				if (eventBlock.getType() == Material.FIRE) {
-					
-					String msg_alreadyHaveWood = plugin.getLangConfig().getString("Messages.already-have-wood");
-					eventPlayer.sendMessage(msg_alreadyHaveWood);
-					
-				}
+				if (block.getType() == Material.FIRE)
+					p.sendMessage(CraftZ.getLangConfig().getString("Messages.already-have-wood"));
 				
 			}
 		
 		}
 		
 	}
-	
-	
-	
-	private CraftZ plugin;
 	
 }

@@ -2,23 +2,23 @@ package craftZ.listeners;
 
 
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.ItemStack;
 
 import craftZ.CraftZ;
 import craftZ.PlayerManager;
 
 public class PlayerJoinListener implements Listener {
 	
-	public PlayerJoinListener(CraftZ plugin) {
-		
-		this.plugin = plugin;
-		plugin.getServer().getPluginManager().registerEvents(this, plugin);
-		
+	public static PlayerJoinListener i;
+	
+	
+	
+	public PlayerJoinListener() {
+		i = this;
 	}
 	
 	
@@ -28,11 +28,9 @@ public class PlayerJoinListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		
-		World eventWorld = event.getPlayer().getWorld();
-		if (eventWorld.getName().equalsIgnoreCase(plugin.getConfig().getString("Config.world.name"))) {
+		if (event.getPlayer().getWorld().getName().equals(CraftZ.worldName())) {
 			
-			boolean value_modifyJoinQuitMessages = plugin.getConfig().getBoolean("Config.chat.modify-join-and-quit-messages");
-			if (value_modifyJoinQuitMessages)
+			if (CraftZ.i.getConfig().getBoolean("Config.chat.modify-join-and-quit-messages"))
 				event.setJoinMessage(ChatColor.RED + "Player " + event.getPlayer().getDisplayName() + " connected.");
 			
 			if (PlayerManager.isAlreadyInWorld(event.getPlayer())) {
@@ -42,21 +40,14 @@ public class PlayerJoinListener implements Listener {
 				event.getPlayer().setHealth(20);
 				event.getPlayer().setFoodLevel(20);
 				event.getPlayer().getInventory().clear();
+				event.getPlayer().getInventory().setArmorContents(new ItemStack[] { null, null, null, null });
 				
-				Location loc = new Location(eventWorld, plugin.getConfig().getInt("Config.world.lobby.x"),
-						plugin.getConfig().getInt("Config.world.lobby.y"),
-						plugin.getConfig().getInt("Config.world.lobby.z"));
-				event.getPlayer().teleport(loc);
+				event.getPlayer().teleport(PlayerManager.getLobby());
 				
 			}
 			
 		}
 		
 	}
-	
-	
-	
-	
-	private CraftZ plugin;
 	
 }

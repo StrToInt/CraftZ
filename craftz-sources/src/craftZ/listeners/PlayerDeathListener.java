@@ -2,9 +2,8 @@ package craftZ.listeners;
 
 import java.util.Random;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
@@ -12,6 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -20,34 +20,22 @@ import craftZ.PlayerManager;
 
 public class PlayerDeathListener implements Listener {
 	
-	public PlayerDeathListener(CraftZ plugin) {
-		
-		this.plugin = plugin;
-		plugin.getServer().getPluginManager().registerEvents(this, plugin);
-		
-	}
-	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerDeath(PlayerDeathEvent event) {
 		
-		String value_world_name = plugin.getConfig().getString("Config.world.name");
-		World eventWorld = event.getEntity().getWorld();
-		if (eventWorld.getName().equalsIgnoreCase(value_world_name)) {
+		if (event.getEntity().getWorld().getName().equals(CraftZ.worldName())) {
 			
-			Player eventPlayer = event.getEntity();
-			String eventPlayerName = eventPlayer.getName();
-			Location eventPlayerLoc = eventPlayer.getLocation();
+			final Player p = event.getEntity();
 			
-			if (plugin.getConfig().getBoolean("Config.chat.modify-death-messages"))
-				event.setDeathMessage(eventPlayerName + " was killed.");
+			if (CraftZ.i.getConfig().getBoolean("Config.chat.modify-death-messages"))
+				event.setDeathMessage(p.getDisplayName() + " was killed.");
 			
-			if (eventPlayer.getKiller() != null) {
+			if (p.getKiller() != null) {
 				
-				PlayerManager.getData(eventPlayer.getKiller().getName()).playersKilled++;
-				eventPlayer.getKiller().sendMessage(ChatColor.GOLD + plugin.getLangConfig()
-						.getString("Messages.killed.player").replaceAll("%p", eventPlayerName)
-						.replaceAll("%k", "" + PlayerManager
-								.getData(eventPlayer.getKiller().getName()).playersKilled));
+				PlayerManager.getData(p.getKiller().getName()).playersKilled++;
+				p.getKiller().sendMessage(ChatColor.GOLD + CraftZ.getLangConfig()
+						.getString("Messages.killed.player").replaceAll("%p", p.getDisplayName())
+						.replaceAll("%k", "" + PlayerManager.getData(p.getKiller().getName()).playersKilled));
 				
 			}
 			
@@ -66,7 +54,7 @@ public class PlayerDeathListener implements Listener {
 //					new ItemStack(Material.AIR), new ItemStack(Material.AIR),
 //					new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
 			
-			Zombie spawnedZombie = (Zombie) eventPlayerLoc.getWorld().spawnEntity(eventPlayerLoc, EntityType.ZOMBIE);
+			Zombie spawnedZombie = (Zombie) p.getWorld().spawnEntity(p.getLocation(), EntityType.ZOMBIE);
 			
 			spawnedZombie.setVillager(true);
 			
@@ -79,36 +67,35 @@ public class PlayerDeathListener implements Listener {
 				spawnedZombie.setBaby(true);
 			}
 			
-			String kickMsg = "[CraftZ] " + plugin.getLangConfig().getString("Messages.died");
-			kickMsg = kickMsg.replaceAll("%z", "" + PlayerManager.getData(eventPlayerName).zombiesKilled);
-			kickMsg = kickMsg.replaceAll("%p", "" + PlayerManager.getData(eventPlayerName).playersKilled);
-			kickMsg = kickMsg.replaceAll("%m", "" + PlayerManager.getData(eventPlayerName).minutesSurvived);
+			final String kickMsg = ("[CraftZ] " + CraftZ.getLangConfig().getString("Messages.died"))
+					.replaceAll("%z", "" + PlayerManager.getData(p.getName()).zombiesKilled)
+					.replaceAll("%p", "" + PlayerManager.getData(p.getName()).playersKilled)
+					.replaceAll("%m", "" + PlayerManager.getData(p.getName()).minutesSurvived);
 			
-			if (plugin.getConfig().getBoolean("Config.players.kick-on-death")) {
-				eventPlayer.kickPlayer(kickMsg);
+			PlayerManager.resetPlayer(p);
+			
+			if (CraftZ.i.getConfig().getBoolean("Config.players.kick-on-death")) {
+				p.kickPlayer(kickMsg);
 			} else {
 				
-				eventPlayer.setHealth(20D);
-				eventPlayer.setFoodLevel(20);
-				eventPlayer.getInventory().clear();
-				
-				Location loc = new Location(eventWorld, plugin.getConfig().getInt("Config.world.lobby.x"),
-						plugin.getConfig().getInt("Config.world.lobby.y"), plugin.getConfig().getInt("Config.world.lobby.z"));
-				eventPlayer.teleport(loc);
-				
-				eventPlayer.sendMessage(ChatColor.GREEN + kickMsg);
+				Bukkit.getScheduler().runTaskLater(CraftZ.i, new Runnable() {
+					
+					@Override
+					public void run() {
+						
+						p.sendMessage(ChatColor.GREEN + kickMsg);
+						
+						PlayerJoinEvent e = new PlayerJoinEvent(p, "Respawn of " + p.getDisplayName());
+						PlayerJoinListener.i.onPlayerJoin(e);
+						
+					}
+					
+				}, 2);
 				
 			}
-			
-			PlayerManager.resetPlayer(eventPlayer);
 			
 		}
 		
 	}
-	
-	
-	
-	
-	private CraftZ plugin;
 	
 }

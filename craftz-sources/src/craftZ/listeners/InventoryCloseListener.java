@@ -1,10 +1,6 @@
 package craftZ.listeners;
 
-
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
@@ -15,49 +11,24 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import craftZ.ChestRefiller;
 import craftZ.CraftZ;
 
+
 public class InventoryCloseListener implements Listener {
-	
-	public InventoryCloseListener(CraftZ plugin) {
-		
-		this.plugin = plugin;
-		plugin.getServer().getPluginManager().registerEvents(this, plugin);
-		
-	}
-	
-	
-	
-	
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onInventoryClose(InventoryCloseEvent event) {
 		
-		String value_world_name = plugin.getConfig().getString("Config.world.name");
-		World eventWorld = event.getPlayer().getWorld();
-		if (eventWorld.getName().equalsIgnoreCase(value_world_name)) {
+		if (event.getPlayer().getWorld().getName().equals(CraftZ.worldName())) {
 			
 			if (event.getInventory().getHolder() instanceof Chest) {
 				
 				Chest chest = (Chest) event.getInventory().getHolder();
+				int y = chest.getLocation().getBlockY();
 				
 				for (int i=0; i<256; i++) {
 					
-					Block iBlock = new Location(eventWorld, chest.getLocation().getBlockX(), 
-							i, chest.getLocation().getBlockZ()).getBlock();
-					
-					if (iBlock.getType() == Material.SIGN_POST || iBlock.getType() == Material.WALL_SIGN) {
-						
-						if (iBlock.getState() instanceof Sign) {
-							
-							if (((Sign) iBlock.getState()).getLine(2).equals("" + chest.getLocation().getBlockY())) {
-								
-								ChestRefiller.resetChestAndStartRefill("x" + iBlock.getLocation().getBlockX()
-										+ "y" + i + "z" + iBlock.getLocation().getBlockZ(), true);
-								
-							}
-							
-						}
-						
-					}
+					Location loc = new Location(chest.getWorld(), chest.getLocation().getBlockX(), i, chest.getLocation().getBlockZ());
+					if (loc.getBlock().getState() instanceof Sign && ((Sign) loc.getBlock().getState()).getLine(2).equals("" + y))
+						ChestRefiller.resetChestAndStartRefill("x" + loc.getBlockX() + "y" + i + "z" + loc.getBlockZ(), true);
 					
 				}
 				
@@ -66,10 +37,5 @@ public class InventoryCloseListener implements Listener {
 		}
 		
 	}
-	
-	
-	
-	
-	private CraftZ plugin;
 	
 }

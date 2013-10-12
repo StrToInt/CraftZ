@@ -18,7 +18,7 @@ public class Time {
 	    double tmin = min * 16.666699999999999D;
 	    totalTime += (int) tmin;
 		
-	    CraftZ.i.getWorld().setFullTime(totalTime);
+	    CraftZ.world().setFullTime(totalTime);
 		
 	}
 	

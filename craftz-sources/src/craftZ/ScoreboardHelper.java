@@ -92,8 +92,14 @@ public class ScoreboardHelper {
 	
 	
 	
-	public static void removePlayer(String p) {
-		boards.remove(p);
+	public static void removePlayer(String pn) {
+		
+		Player p = Bukkit.getPlayer(pn);
+		if (p != null && boards.containsKey(pn))
+			boards.get(pn).clearSlot(DisplaySlot.SIDEBAR);
+		
+		boards.remove(pn);
+			
 	}
 	
 }
