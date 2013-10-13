@@ -36,7 +36,7 @@ public class PlayerVisibilityBar {
 		}
 		
 		
-		if (!CraftZ.i.movingPlayers.containsKey(p)) {
+		if (!CraftZ.movingPlayers.containsKey(p)) {
 			if (visibility - 0.2F > 0.0F)
 				visibility = visibility - 0.2F;
 			else

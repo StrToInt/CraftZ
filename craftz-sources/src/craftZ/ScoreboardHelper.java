@@ -72,12 +72,8 @@ public class ScoreboardHelper {
 				if (p.getScoreboard() != board)
 					p.setScoreboard(board);
 				
-			} else {
-				
-				if (board.getObjective(DisplaySlot.SIDEBAR) == stats)
-					board.clearSlot(DisplaySlot.SIDEBAR);
-				
-			}
+			} else if (board.getObjective(DisplaySlot.SIDEBAR) == stats)
+				board.clearSlot(DisplaySlot.SIDEBAR);
 			
 		}
 		

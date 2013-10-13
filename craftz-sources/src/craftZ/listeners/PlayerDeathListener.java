@@ -1,19 +1,13 @@
 package craftZ.listeners;
 
-import java.util.Random;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import craftZ.CraftZ;
 import craftZ.DeadPlayer;
@@ -56,6 +50,7 @@ public class PlayerDeathListener implements Listener {
 //					new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
 			
 			DeadPlayer.create(p);
+			event.getDrops().clear();
 			
 			final String kickMsg = ("[CraftZ] " + CraftZ.getLangConfig().getString("Messages.died"))
 					.replaceAll("%z", "" + PlayerManager.getData(p.getName()).zombiesKilled)
