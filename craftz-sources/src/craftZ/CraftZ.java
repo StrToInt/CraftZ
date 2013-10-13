@@ -2,9 +2,9 @@ package craftZ;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
@@ -30,7 +30,8 @@ import craftZ.util.Time;
 public class CraftZ extends JavaPlugin {
 	
 	public static long tickID = 0;
-	public Map<Player, Integer> movingPlayers = new HashMap<Player, Integer>();
+	public static HashMap<Player, Integer> movingPlayers = new HashMap<Player, Integer>();
+	public static ArrayList<DeadPlayer> deadPlayers = new ArrayList<DeadPlayer>();
 	
 	public static CraftZ i;
 	
@@ -81,6 +82,7 @@ public class CraftZ extends JavaPlugin {
 				ScoreboardHelper.setup();
 				ChestRefiller.resetAllChestsAndStartRefill();
 				ZombieSpawner.addSpawns();
+				DeadPlayer.loadDeadPlayers();
 				
 			}
 			
@@ -687,6 +689,7 @@ public class CraftZ extends JavaPlugin {
 	public static void reloadConfigs() {
 		i.reloadConfig();
 		loadConfig();
+		DeadPlayer.loadDeadPlayers();
 	}
 	
 	

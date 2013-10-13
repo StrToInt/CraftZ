@@ -44,6 +44,7 @@ public class PlayerManager {
 			getConfig().set("Data.players." + p.getName() + ".minsSurvived", getData(p.getName()).minutesSurvived);
 			getConfig().set("Data.players." + p.getName() + ".bleeding", getData(p.getName()).bleeding);
 			getConfig().set("Data.players." + p.getName() + ".poisoned", getData(p.getName()).poisoned);
+			getConfig().set("Data.players." + p.getName() + ".bonesBroken", getData(p.getName()).bonesBroken);
 			
 			WorldData.save();
 			

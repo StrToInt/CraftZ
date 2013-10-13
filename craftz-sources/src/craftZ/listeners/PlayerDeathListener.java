@@ -11,11 +11,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import craftZ.CraftZ;
+import craftZ.DeadPlayer;
 import craftZ.PlayerManager;
 
 public class PlayerDeathListener implements Listener {
@@ -54,18 +55,7 @@ public class PlayerDeathListener implements Listener {
 //					new ItemStack(Material.AIR), new ItemStack(Material.AIR),
 //					new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
 			
-			Zombie spawnedZombie = (Zombie) p.getWorld().spawnEntity(p.getLocation(), EntityType.ZOMBIE);
-			
-			spawnedZombie.setVillager(true);
-			
-			if (new Random().nextInt(7) > 0) {
-				spawnedZombie.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, (new Random().nextInt(3) + 1)), false);
-				spawnedZombie.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, 1, false));
-			} else {
-				spawnedZombie.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, Integer.MAX_VALUE, 1, false));
-				spawnedZombie.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, 1, false));
-				spawnedZombie.setBaby(true);
-			}
+			DeadPlayer.create(p);
 			
 			final String kickMsg = ("[CraftZ] " + CraftZ.getLangConfig().getString("Messages.died"))
 					.replaceAll("%z", "" + PlayerManager.getData(p.getName()).zombiesKilled)
@@ -85,8 +75,12 @@ public class PlayerDeathListener implements Listener {
 						
 						p.sendMessage(ChatColor.GREEN + kickMsg);
 						
-						PlayerJoinEvent e = new PlayerJoinEvent(p, "Respawn of " + p.getDisplayName());
-						PlayerJoinListener.i.onPlayerJoin(e);
+						p.setHealth(20);
+						p.setFoodLevel(20);
+						p.getInventory().clear();
+						p.getInventory().setArmorContents(new ItemStack[] { null, null, null, null });
+						
+						p.teleport(PlayerManager.getLobby());
 						
 					}
 					

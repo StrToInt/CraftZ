@@ -13,9 +13,8 @@ public class ConfigData {
 	@Override
 	public boolean equals(Object anObject) {
 		
-		if (!(anObject instanceof ConfigData)) {
+		if (!(anObject instanceof ConfigData))
 			return false;
-		}
 		
 		return configFile.equals(((ConfigData) anObject).configFile);
 		

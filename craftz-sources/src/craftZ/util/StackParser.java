@@ -42,4 +42,18 @@ public class StackParser {
 		
 	}
 	
+	
+	
+	
+	
+	public static String toString(ItemStack stack, boolean withAmount) {
+		
+		if (stack == null)
+			return withAmount ? "0x0" : "0";
+		
+		return (withAmount && stack.getAmount() > 1 ? stack.getAmount() + "x" : "") + stack.getTypeId()
+				+ (stack.getDurability() != 0 ? ":" + stack.getDurability() : "");
+		
+	}
+	
 }

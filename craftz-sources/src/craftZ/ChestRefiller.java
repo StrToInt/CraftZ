@@ -18,6 +18,7 @@ import org.bukkit.block.Chest;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
+import craftZ.util.ItemRenamer;
 import craftZ.util.StackParser;
 
 public class ChestRefiller {
@@ -116,6 +117,8 @@ public class ChestRefiller {
 				ItemStack itemStack = StackParser.fromString(itemString, false);
 				chest.getInventory().addItem(itemStack);
 			}
+			
+			ItemRenamer.convertInventoryItemNames(chest.getInventory(), CraftZ.i.getConfig().getStringList("Config.change-item-names.names"));
 			
 		}
 		

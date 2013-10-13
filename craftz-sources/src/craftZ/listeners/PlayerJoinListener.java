@@ -13,18 +13,6 @@ import craftZ.PlayerManager;
 
 public class PlayerJoinListener implements Listener {
 	
-	public static PlayerJoinListener i;
-	
-	
-	
-	public PlayerJoinListener() {
-		i = this;
-	}
-	
-	
-	
-	
-	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		

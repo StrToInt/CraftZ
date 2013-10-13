@@ -35,11 +35,9 @@ public class EntityDamageListener implements Listener {
 						return;
 					}
 					
-					if (CraftZ.i.getConfig().getBoolean("Config.players.medical.bleeding.enable")
-							&& p.getGameMode() != GameMode.CREATIVE) {
+					if (CraftZ.i.getConfig().getBoolean("Config.players.medical.bleeding.enable") && p.getGameMode() != GameMode.CREATIVE) {
 						
-						double value_bleeding_chance = 1D - CraftZ.i.getConfig().getDouble("Config.players.medical.bleeding.chance");
-						if (Math.random() >= value_bleeding_chance) {
+						if (Math.random() >= 1 - CraftZ.i.getConfig().getDouble("Config.players.medical.bleeding.chance")) {
 							PlayerManager.getData(p.getName()).bleeding = true;
 							p.sendMessage(ChatColor.DARK_RED + CraftZ.getLangConfig().getString("Messages.bleeding"));
 						}

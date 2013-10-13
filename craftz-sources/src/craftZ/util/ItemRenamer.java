@@ -60,9 +60,8 @@ public class ItemRenamer {
 					continue;
 				}
 				
-				if (input.getTypeId() == id && input.getData().getData() == meta) {
+				if (input.getTypeId() == id && input.getData().getData() == meta)
 					return entry.split("=")[1];
-				}
 				
 			}
 			
@@ -78,13 +77,9 @@ public class ItemRenamer {
 	
 	public static void convertInventoryItemNames(Inventory inv, List<String> entries) {
 		
-		for (int i=0; i<inv.getSize(); i++) {
-			
-			if (inv.getItem(i) != null) {
+		for (int i=0; i<inv.getSize(); i++)
+			if (inv.getItem(i) != null)
 				renameWithList(inv.getItem(i), entries);
-			}
-			
-		}
 		
 	}
 	

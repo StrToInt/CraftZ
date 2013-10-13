@@ -25,15 +25,15 @@ public class PlayerMoveListener implements Listener {
 			Player p = event.getPlayer();
 			
 			if (event.getFrom().distance(event.getTo()) > 0) {
-				CraftZ.i.movingPlayers.put(p, 0);
+				CraftZ.movingPlayers.put(p, 0);
 			} else {
 				
-				if (CraftZ.i.movingPlayers.containsKey(p)) {
+				if (CraftZ.movingPlayers.containsKey(p)) {
 					
-					if (CraftZ.i.movingPlayers.get(p) < 20)
-						CraftZ.i.movingPlayers.put(p, CraftZ.i.movingPlayers.get(p) + 1);
+					if (CraftZ.movingPlayers.get(p) < 20)
+						CraftZ.movingPlayers.put(p, CraftZ.movingPlayers.get(p) + 1);
 					else
-						CraftZ.i.movingPlayers.remove(p);
+						CraftZ.movingPlayers.remove(p);
 					
 				}
 				
