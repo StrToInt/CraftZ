@@ -7,7 +7,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerKickEvent;
 
 import craftZ.CraftZ;
-import craftZ.PlayerManager;
+import craftZ.util.ConfigManager;
+import craftZ.util.PlayerManager;
 
 
 public class PlayerKickListener implements Listener {
@@ -17,13 +18,10 @@ public class PlayerKickListener implements Listener {
 		
 		if (event.getPlayer().getWorld().getName().equals(CraftZ.worldName())) {
 			
-			if (!event.getReason().startsWith("[CraftZ] ")) {
-				
+			if (!event.getReason().startsWith("[CraftZ]")) {
 				PlayerManager.savePlayerToConfig(event.getPlayer());
-				
-				if (CraftZ.i.getConfig().getBoolean("Config.chat.modify-join-and-quit-messages"))
+				if (ConfigManager.getConfig("config").getBoolean("Config.chat.modify-join-and-quit-messages"))
 					event.setLeaveMessage(ChatColor.RED + "Player " + event.getPlayer().getDisplayName() + " disconnected.");
-				
 			}
 			
 		}

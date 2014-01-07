@@ -6,6 +6,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 
 import craftZ.CraftZ;
+import craftZ.util.ConfigManager;
 
 
 public class ShearEntityListener implements Listener {
@@ -15,7 +16,7 @@ public class ShearEntityListener implements Listener {
 		
 		if (event.getEntity().getWorld().getName().equals(CraftZ.worldName())) {
 			
-			if (!CraftZ.i.getConfig().getBoolean("Config.animals.shearing") && !event.getPlayer().hasPermission("craftz.admin"))
+			if (!ConfigManager.getConfig("config").getBoolean("Config.animals.shearing") && !event.getPlayer().hasPermission("craftz.admin"))
 				event.setCancelled(true);
 		
 		}

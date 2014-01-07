@@ -10,8 +10,9 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
 import craftZ.CraftZ;
-import craftZ.DeadPlayer;
-import craftZ.PlayerManager;
+import craftZ.util.ConfigManager;
+import craftZ.util.DeadPlayer;
+import craftZ.util.PlayerManager;
 
 public class PlayerDeathListener implements Listener {
 	
@@ -22,14 +23,13 @@ public class PlayerDeathListener implements Listener {
 			
 			final Player p = event.getEntity();
 			
-			if (CraftZ.i.getConfig().getBoolean("Config.chat.modify-death-messages"))
+			if (ConfigManager.getConfig("config").getBoolean("Config.chat.modify-death-messages"))
 				event.setDeathMessage(p.getDisplayName() + " was killed.");
 			
 			if (p.getKiller() != null) {
 				
 				PlayerManager.getData(p.getKiller().getName()).playersKilled++;
-				p.getKiller().sendMessage(ChatColor.GOLD + CraftZ.getLangConfig()
-						.getString("Messages.killed.player").replaceAll("%p", p.getDisplayName())
+				p.getKiller().sendMessage(ChatColor.GOLD + CraftZ.getMsg("Messages.killed.player").replaceAll("%p", p.getDisplayName())
 						.replaceAll("%k", "" + PlayerManager.getData(p.getKiller().getName()).playersKilled));
 				
 			}
@@ -52,14 +52,14 @@ public class PlayerDeathListener implements Listener {
 			DeadPlayer.create(p);
 			event.getDrops().clear();
 			
-			final String kickMsg = ("[CraftZ] " + CraftZ.getLangConfig().getString("Messages.died"))
+			final String kickMsg = ("[CraftZ] " + CraftZ.getMsg("Messages.died"))
 					.replaceAll("%z", "" + PlayerManager.getData(p.getName()).zombiesKilled)
 					.replaceAll("%p", "" + PlayerManager.getData(p.getName()).playersKilled)
 					.replaceAll("%m", "" + PlayerManager.getData(p.getName()).minutesSurvived);
 			
 			PlayerManager.resetPlayer(p);
 			
-			if (CraftZ.i.getConfig().getBoolean("Config.players.kick-on-death")) {
+			if (ConfigManager.getConfig("config").getBoolean("Config.players.kick-on-death")) {
 				p.kickPlayer(kickMsg);
 			} else {
 				

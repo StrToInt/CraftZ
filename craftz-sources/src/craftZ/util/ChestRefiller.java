@@ -1,4 +1,4 @@
-package craftZ;
+package craftZ.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,8 +18,7 @@ import org.bukkit.block.Chest;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
-import craftZ.util.ItemRenamer;
-import craftZ.util.StackParser;
+import craftZ.CraftZ;
 
 public class ChestRefiller {
 	
@@ -52,7 +51,7 @@ public class ChestRefiller {
 		int rflLocX = chestSec.getInt("coords.x");
 		int rflLocY = chestSec.getInt("coords.y");
 		int rflLocZ = chestSec.getInt("coords.z");
-		World rflWorld = Bukkit.getWorld(CraftZ.i.getConfig().getString("Config.world.name"));
+		World rflWorld = Bukkit.getWorld(ConfigManager.getConfig("config").getString("Config.world.name"));
 		Location rflLoc = new Location(rflWorld, rflLocX, rflLocY, rflLocZ);
 		
 		Block block = rflLoc.getBlock();
@@ -75,7 +74,7 @@ public class ChestRefiller {
 		int rflLocX = chestSec.getInt("coords.x");
 		int rflLocY = chestSec.getInt("coords.y");
 		int rflLocZ = chestSec.getInt("coords.z");
-		World rflWorld = Bukkit.getWorld(CraftZ.i.getConfig().getString("Config.world.name"));
+		World rflWorld = Bukkit.getWorld(ConfigManager.getConfig("config").getString("Config.world.name"));
 		Location rflLoc = new Location(rflWorld, rflLocX, rflLocY, rflLocZ);
 		
 		String lootList = chestSec.getString("list");
@@ -86,7 +85,7 @@ public class ChestRefiller {
 			block.setType(Material.CHEST);
 			Chest chest = (Chest) block.getState();
 			
-			List<String> bItems = CraftZ.getLootConfig().getStringList("Loot.lists." + lootList);
+			List<String> bItems = ConfigManager.getConfig("loot").getStringList("Loot.lists." + lootList);
 			if (bItems == null || bItems.isEmpty()) return;
 			List<String> items = new ArrayList<String>();
 			
@@ -109,8 +108,8 @@ public class ChestRefiller {
 				
 			}
 			
-			int min = CraftZ.getLootConfig().getInt("Loot.settings.min-stacks-filled");
-			int max = CraftZ.getLootConfig().getInt("Loot.settings.max-stacks-filled");
+			int min = ConfigManager.getConfig("loot").getInt("Loot.settings.min-stacks-filled");
+			int max = ConfigManager.getConfig("loot").getInt("Loot.settings.max-stacks-filled");
 			
 			for (int i=0; i<(1 + min + new Random().nextInt(max - min)); i++) {
 				String itemString = items.get(new Random().nextInt(items.size()));
@@ -118,7 +117,7 @@ public class ChestRefiller {
 				chest.getInventory().addItem(itemStack);
 			}
 			
-			ItemRenamer.convertInventoryItemNames(chest.getInventory(), CraftZ.i.getConfig().getStringList("Config.change-item-names.names"));
+			ItemRenamer.convertInventoryItemNames(chest.getInventory(), ConfigManager.getConfig("config").getStringList("Config.change-item-names.names"));
 			
 		}
 		
@@ -138,7 +137,7 @@ public class ChestRefiller {
 			Map.Entry<String, Integer> entry = it.next();
 			
 			entry.setValue(entry.getValue() + 1);
-			if (entry.getValue() >= (CraftZ.getLootConfig().getInt("Loot.settings.time-before-refill") * 20)) {
+			if (entry.getValue() >= (ConfigManager.getConfig("loot").getInt("Loot.settings.time-before-refill") * 20)) {
 				
 				toRemove.add(entry.getKey());
 				ConfigurationSection chestSec = WorldData.get().getConfigurationSection("Data.lootchests." + entry.getKey());

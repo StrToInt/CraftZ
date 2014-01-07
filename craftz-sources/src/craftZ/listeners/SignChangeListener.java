@@ -10,10 +10,11 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
 
-import craftZ.ChestRefiller;
 import craftZ.CraftZ;
-import craftZ.WorldData;
-import craftZ.ZombieSpawner;
+import craftZ.util.ChestRefiller;
+import craftZ.util.ConfigManager;
+import craftZ.util.WorldData;
+import craftZ.util.ZombieSpawner;
 
 
 public class SignChangeListener implements Listener {
@@ -32,7 +33,7 @@ public class SignChangeListener implements Listener {
 			Sign sign = (Sign) block.getState();
 			Player p = event.getPlayer();
 			
-			String signNotComplete = ChatColor.RED + CraftZ.getLangConfig().getString("Messages.errors.sign-not-complete");
+			String signNotComplete = ChatColor.RED + CraftZ.getMsg("Messages.errors.sign-not-complete");
 			
 			if (line1.equalsIgnoreCase("[CraftZ]")) {
 				
@@ -91,12 +92,12 @@ public class SignChangeListener implements Listener {
 						
 						WorldData.save();
 						
-						p.sendMessage(ChatColor.RED + CraftZ.getLangConfig().getString("Messages.successfully-created"));
+						p.sendMessage(ChatColor.RED + CraftZ.getMsg("Messages.successfully-created"));
 						
 						ZombieSpawner.addSpawn(name);
 						
 					} else {
-						p.sendMessage(ChatColor.DARK_RED + CraftZ.getLangConfig().getString("Messages.errors.not-enough-permissions"));
+						p.sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.errors.not-enough-permissions"));
 					}
 					
 				}
@@ -132,10 +133,10 @@ public class SignChangeListener implements Listener {
 						
 						WorldData.save();
 						
-						p.sendMessage(ChatColor.RED + CraftZ.getLangConfig().getString("Messages.successfully-created"));
+						p.sendMessage(ChatColor.RED + CraftZ.getMsg("Messages.successfully-created"));
 						
 					} else {
-						p.sendMessage(ChatColor.DARK_RED + CraftZ.getLangConfig().getString("Messages.errors.not-enough-permissions"));
+						p.sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.errors.not-enough-permissions"));
 					}
 					
 				}
@@ -165,7 +166,7 @@ public class SignChangeListener implements Listener {
 						}
 						
 						String lootList = line4;
-						if (CraftZ.getLootConfig().getList("Loot.lists." + lootList) == null) {
+						if (ConfigManager.getConfig("loot").getList("Loot.lists." + lootList) == null) {
 							p.sendMessage(signNotComplete);
 							block.breakNaturally();
 							return;
@@ -188,12 +189,12 @@ public class SignChangeListener implements Listener {
 						
 						WorldData.save();
 						
-						p.sendMessage(ChatColor.RED + CraftZ.getLangConfig().getString("Messages.successfully-created"));
+						p.sendMessage(ChatColor.RED + CraftZ.getMsg("Messages.successfully-created"));
 						
 						ChestRefiller.resetChestAndStartRefill(name, false);
 						
 					} else {
-						p.sendMessage(ChatColor.DARK_RED + CraftZ.getLangConfig().getString("Messages.errors.not-enough-permissions"));
+						p.sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.errors.not-enough-permissions"));
 					}
 					
 				}

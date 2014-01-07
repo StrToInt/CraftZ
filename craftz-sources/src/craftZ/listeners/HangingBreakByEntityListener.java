@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 
 import craftZ.CraftZ;
+import craftZ.util.ConfigManager;
 
 
 public class HangingBreakByEntityListener implements Listener {
@@ -20,7 +21,7 @@ public class HangingBreakByEntityListener implements Listener {
 			if (event.getRemover().getType() == EntityType.PLAYER) {
 				
 				Player p = (Player) event.getRemover();
-				if (!CraftZ.i.getConfig().getBoolean("Config.players.interact.block-breaking") && !p.hasPermission("craftz.interact.blockBreak"))
+				if (!ConfigManager.getConfig("config").getBoolean("Config.players.interact.block-breaking") && !p.hasPermission("craftz.interact.blockBreak"))
 					event.setCancelled(true);
 				
 			}

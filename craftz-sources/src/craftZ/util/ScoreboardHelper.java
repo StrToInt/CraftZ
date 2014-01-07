@@ -1,4 +1,4 @@
-package craftZ;
+package craftZ.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,7 +64,7 @@ public class ScoreboardHelper {
 			stats.getScore(Bukkit.getOfflinePlayer("Players killed")).setScore(PlayerManager.getData(pn).playersKilled);
 			stats.getScore(Bukkit.getOfflinePlayer("Minutes survived")).setScore(PlayerManager.getData(pn).minutesSurvived);
 			
-			if (CraftZ.i.getConfig().getBoolean("Config.players.use-scoreboard-for-stats")) {
+			if (ConfigManager.getConfig("config").getBoolean("Config.players.use-scoreboard-for-stats")) {
 				
 				if (stats.getDisplaySlot() != DisplaySlot.SIDEBAR)
 					stats.setDisplaySlot(DisplaySlot.SIDEBAR);

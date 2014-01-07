@@ -16,9 +16,8 @@ public class PlayerDropItemListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerDropItem(PlayerDropItemEvent event) {
 		
-		String value_world_name = CraftZ.i.getConfig().getString("Config.world.name");
 		World eventWorld = event.getPlayer().getWorld();
-		if (eventWorld.getName().equalsIgnoreCase(value_world_name)) {
+		if (eventWorld.getName().equalsIgnoreCase(CraftZ.worldName())) {
 			
 			ItemStack eventItem = event.getItemDrop().getItemStack();
 			if (eventItem.getType() == Material.EYE_OF_ENDER)

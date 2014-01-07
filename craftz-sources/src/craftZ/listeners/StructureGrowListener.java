@@ -7,6 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.world.StructureGrowEvent;
 
 import craftZ.CraftZ;
+import craftZ.util.ConfigManager;
 
 
 public class StructureGrowListener implements Listener {
@@ -16,14 +17,14 @@ public class StructureGrowListener implements Listener {
 		
 		if (event.getWorld().getName().equals(CraftZ.worldName())) {
 			
-			if (!CraftZ.i.getConfig().getBoolean("Config.world.world-changing.allow-tree-grow")) {
+			if (!ConfigManager.getConfig("config").getBoolean("Config.world.world-changing.allow-tree-grow")) {
 				
 				if (!event.isFromBonemeal()) {
 					event.setCancelled(true);
 				} else {
 					
 					Player p = event.getPlayer();
-					if (!CraftZ.i.getConfig().getBoolean("Config.players.interact.block-placing") && !p.hasPermission("craftz.interact.blockPlace"))
+					if (!ConfigManager.getConfig("config").getBoolean("Config.players.interact.block-placing") && !p.hasPermission("craftz.interact.blockPlace"))
 						event.setCancelled(true);
 					
 				}

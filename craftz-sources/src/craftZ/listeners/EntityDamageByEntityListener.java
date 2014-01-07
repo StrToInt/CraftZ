@@ -15,7 +15,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import craftZ.CraftZ;
-import craftZ.PlayerManager;
+import craftZ.util.ConfigManager;
+import craftZ.util.PlayerManager;
 
 
 public class EntityDamageByEntityListener implements Listener {
@@ -39,7 +40,7 @@ public class EntityDamageByEntityListener implements Listener {
 				
 				if (damager.getItemInHand().getType() == Material.PAPER) {
 					
-					if (CraftZ.i.getConfig().getBoolean("Config.players.medical.bleeding.heal-with-paper")) {
+					if (ConfigManager.getConfig("config").getBoolean("Config.players.medical.bleeding.heal-with-paper")) {
 						
 						event.setCancelled(true);
 						event.setDamage(0);
@@ -54,7 +55,7 @@ public class EntityDamageByEntityListener implements Listener {
 						
 						PlayerManager.getData(eventPlayer.getName()).bleeding = false;
 						
-						eventPlayer.sendMessage(ChatColor.DARK_RED + CraftZ.getLangConfig().getString("Messages.bandaged"));
+						eventPlayer.sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.bandaged"));
 						
 					}
 					
@@ -64,13 +65,13 @@ public class EntityDamageByEntityListener implements Listener {
 				
 				if (damager.getItemInHand().getType() == Material.INK_SACK && damager.getItemInHand().getDurability() == 1) {
 					
-					if (CraftZ.i.getConfig().getBoolean("Config.players.medical.healing.heal-with-rosered")) {
+					if (ConfigManager.getConfig("config").getBoolean("Config.players.medical.healing.heal-with-rosered")) {
 						
 						event.setCancelled(true);
 						event.setDamage(0);
 						
-						eventPlayer.playSound(eventPlayer.getLocation(), Sound.BREATH, 1, 1);
-						damager.playSound(eventPlayer.getLocation(), Sound.BREATH, 1, 1);
+						//eventPlayer.playSound(eventPlayer.getLocation(), Sound.BREATH, 1, 1);
+						//damager.playSound(eventPlayer.getLocation(), Sound.BREATH, 1, 1);
 						
 						if (damager.getItemInHand().getAmount() < 2)
 							damager.setItemInHand(new ItemStack(Material.AIR, 0));
@@ -79,7 +80,7 @@ public class EntityDamageByEntityListener implements Listener {
 						
 						eventPlayer.setHealth(20);
 						
-						eventPlayer.sendMessage(ChatColor.DARK_RED + CraftZ.getLangConfig().getString("Messages.bloodbag"));
+						eventPlayer.sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.bloodbag"));
 						
 					}
 					
@@ -89,7 +90,7 @@ public class EntityDamageByEntityListener implements Listener {
 				
 				if (damager.getItemInHand().getType() == Material.INK_SACK && damager.getItemInHand().getDurability() == 10) {
 					
-					if (CraftZ.i.getConfig().getBoolean("Config.players.medical.poisoning.cure-with-limegreen")) {
+					if (ConfigManager.getConfig("config").getBoolean("Config.players.medical.poisoning.cure-with-limegreen")) {
 						
 						event.setCancelled(true);
 						event.setDamage(0);
@@ -104,7 +105,7 @@ public class EntityDamageByEntityListener implements Listener {
 						
 						PlayerManager.getData(eventPlayer.getName()).poisoned = false;
 						
-						eventPlayer.sendMessage(ChatColor.DARK_RED + CraftZ.getLangConfig().getString("Messages.unpoisoned"));
+						eventPlayer.sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.unpoisoned"));
 						
 					}
 					
@@ -142,13 +143,13 @@ public class EntityDamageByEntityListener implements Listener {
 			
 			if (event.getDamager() instanceof Zombie && event.getEntity() instanceof Player) {
 				
-				if (CraftZ.i.getConfig().getBoolean("Config.players.medical.poisoning.enable")) {
+				if (ConfigManager.getConfig("config").getBoolean("Config.players.medical.poisoning.enable")) {
 					
-					if (Math.random() >= 1 - CraftZ.i.getConfig().getDouble("Config.players.medical.poisoning.chance")) {
+					if (Math.random() >= 1 - ConfigManager.getConfig("config").getDouble("Config.players.medical.poisoning.chance")) {
 						
 						PlayerManager.getData(((Player) event.getEntity()).getName()).poisoned = true;
 						((Player) event.getEntity()).playSound(event.getEntity().getLocation(), Sound.ZOMBIE_INFECT, 1, 1);
-						((Player) event.getEntity()).sendMessage(ChatColor.DARK_RED + CraftZ.getLangConfig().getString("Messages.poisoned"));
+						((Player) event.getEntity()).sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.poisoned"));
 						
 					}
 					

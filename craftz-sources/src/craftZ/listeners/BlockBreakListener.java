@@ -12,9 +12,10 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 
-import craftZ.ChestRefiller;
 import craftZ.CraftZ;
-import craftZ.WorldData;
+import craftZ.util.ChestRefiller;
+import craftZ.util.ConfigManager;
+import craftZ.util.WorldData;
 
 public class BlockBreakListener implements Listener {
 	
@@ -25,7 +26,7 @@ public class BlockBreakListener implements Listener {
 			
 			Player p = event.getPlayer();
 			
-			if (!CraftZ.i.getConfig().getBoolean("Config.players.interact.block-breaking")) {
+			if (!ConfigManager.getConfig("config").getBoolean("Config.players.interact.block-breaking")) {
 				
 				if (!p.hasPermission("craftz.build")) {
 					event.setCancelled(true);
@@ -59,10 +60,10 @@ public class BlockBreakListener implements Listener {
 						WorldData.get().set("Data.zombiespawns.x" + signLocX + "y" + signLocY + "z" + signLocZ, null);
 						WorldData.save();
 						
-						p.sendMessage(ChatColor.RED + CraftZ.getLangConfig().getString("Messages.destroyed-sign"));
+						p.sendMessage(ChatColor.RED + CraftZ.getMsg("Messages.destroyed-sign"));
 						
 					} else {
-						event.getPlayer().sendMessage(ChatColor.DARK_RED + CraftZ.getLangConfig().getString("Messages.errors.not-enough-permissions"));
+						event.getPlayer().sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.errors.not-enough-permissions"));
 					}
 					
 				}
@@ -76,10 +77,10 @@ public class BlockBreakListener implements Listener {
 						WorldData.get().set("Data.playerspawns.x" + signLocX + "y" + signLocY + "z" + signLocZ, null);
 						WorldData.save();
 						
-						event.getPlayer().sendMessage(ChatColor.RED + CraftZ.getLangConfig().getString("Messages.destroyed-sign"));
+						event.getPlayer().sendMessage(ChatColor.RED + CraftZ.getMsg("Messages.destroyed-sign"));
 						
 					} else {
-						event.getPlayer().sendMessage(ChatColor.DARK_RED + CraftZ.getLangConfig().getString("Messages.errors.not-enough-permissions"));
+						event.getPlayer().sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.errors.not-enough-permissions"));
 					}
 					
 				}
@@ -93,10 +94,10 @@ public class BlockBreakListener implements Listener {
 						WorldData.get().set("Data.lootchests.x" + signLocX + "y" + signLocY + "z" + signLocZ, null);
 						WorldData.save();
 						
-						event.getPlayer().sendMessage(ChatColor.RED + CraftZ.getLangConfig().getString("Messages.destroyed-sign"));
+						event.getPlayer().sendMessage(ChatColor.RED + CraftZ.getMsg("Messages.destroyed-sign"));
 						
 					} else {
-						event.getPlayer().sendMessage(ChatColor.DARK_RED + CraftZ.getLangConfig().getString("Messages.errors.not-enough-permissions"));
+						event.getPlayer().sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.errors.not-enough-permissions"));
 					}
 					
 				}

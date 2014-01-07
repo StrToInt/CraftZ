@@ -9,7 +9,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 
 import craftZ.CraftZ;
-import craftZ.PlayerManager;
+import craftZ.util.ConfigManager;
+import craftZ.util.PlayerManager;
 
 public class PlayerJoinListener implements Listener {
 	
@@ -18,7 +19,7 @@ public class PlayerJoinListener implements Listener {
 		
 		if (event.getPlayer().getWorld().getName().equals(CraftZ.worldName())) {
 			
-			if (CraftZ.i.getConfig().getBoolean("Config.chat.modify-join-and-quit-messages"))
+			if (ConfigManager.getConfig("config").getBoolean("Config.chat.modify-join-and-quit-messages"))
 				event.setJoinMessage(ChatColor.RED + "Player " + event.getPlayer().getDisplayName() + " connected.");
 			
 			if (PlayerManager.isAlreadyInWorld(event.getPlayer())) {

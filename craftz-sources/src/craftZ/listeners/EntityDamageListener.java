@@ -11,7 +11,8 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import craftZ.CraftZ;
-import craftZ.PlayerManager;
+import craftZ.util.ConfigManager;
+import craftZ.util.PlayerManager;
 
 
 public class EntityDamageListener implements Listener {
@@ -35,25 +36,25 @@ public class EntityDamageListener implements Listener {
 						return;
 					}
 					
-					if (CraftZ.i.getConfig().getBoolean("Config.players.medical.bleeding.enable") && p.getGameMode() != GameMode.CREATIVE) {
+					if (ConfigManager.getConfig("config").getBoolean("Config.players.medical.bleeding.enable") && p.getGameMode() != GameMode.CREATIVE) {
 						
-						if (Math.random() >= 1 - CraftZ.i.getConfig().getDouble("Config.players.medical.bleeding.chance")) {
+						if (Math.random() >= 1 - ConfigManager.getConfig("config").getDouble("Config.players.medical.bleeding.chance")) {
 							PlayerManager.getData(p.getName()).bleeding = true;
-							p.sendMessage(ChatColor.DARK_RED + CraftZ.getLangConfig().getString("Messages.bleeding"));
+							p.sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.bleeding"));
 						}
 						
 					}
 					
 					int height = (int) (event.getDamage() + 3);
-					if (event.getCause() == DamageCause.FALL && CraftZ.i.getConfig().getBoolean("Config.players.medical.bonebreak.enable")
-							&& height >= CraftZ.i.getConfig().getInt("Config.players.medical.bonebreak.height")) {
+					if (event.getCause() == DamageCause.FALL && ConfigManager.getConfig("config").getBoolean("Config.players.medical.bonebreak.enable")
+							&& height >= ConfigManager.getConfig("config").getInt("Config.players.medical.bonebreak.height")) {
 						PlayerManager.getData(p.getName()).bonesBroken = true;
-						p.sendMessage(ChatColor.DARK_RED + CraftZ.getLangConfig().getString("Messages.bones-broken"));
+						p.sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.bones-broken"));
 					}
 					
 				}
 				
-//				boolean value_mobs_blood = false;//plugin.getConfig().getBoolean("Config.mobs.blood-particles-when-damaged");
+//				boolean value_mobs_blood = false;//ConfigManager.getConfig("config").getBoolean("Config.mobs.blood-particles-when-damaged");
 //				if (!event.isCancelled() && value_mobs_blood) {
 //					
 //					if (!eventEntityType.isAlive() || (eventEntityType == EntityType.PLAYER

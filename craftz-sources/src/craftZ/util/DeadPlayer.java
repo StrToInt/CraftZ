@@ -1,4 +1,4 @@
-package craftZ;
+package craftZ.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,7 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import craftZ.util.StackParser;
+import craftZ.CraftZ;
 
 
 public class DeadPlayer {

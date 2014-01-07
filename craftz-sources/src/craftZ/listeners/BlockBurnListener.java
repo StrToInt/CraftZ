@@ -6,6 +6,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBurnEvent;
 
 import craftZ.CraftZ;
+import craftZ.util.ConfigManager;
 
 
 public class BlockBurnListener implements Listener {
@@ -14,11 +15,8 @@ public class BlockBurnListener implements Listener {
 	public void onBlockBurn(BlockBurnEvent event) {
 		
 		if (event.getBlock().getWorld().getName().equals(CraftZ.worldName())) {
-			
-			boolean value_allowBlockBurning = CraftZ.i.getConfig().getBoolean("Config.world.world-changing.allow-burning");
-			if (value_allowBlockBurning != true)
+			if (!ConfigManager.getConfig("config").getBoolean("Config.world.world-changing.allow-burning"))
 				event.setCancelled(true);
-		
 		}
 	    
 	}

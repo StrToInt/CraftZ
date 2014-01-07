@@ -89,7 +89,7 @@ public class ItemRenamer {
 	
 	public static void convertPlayerInventory(Player p, List<String> entries) {
 		
-		if (p.getWorld().getName().equalsIgnoreCase(CraftZ.i.getConfig().getString("Config.world.name")))
+		if (p.getWorld().getName().equalsIgnoreCase(ConfigManager.getConfig("config").getString("Config.world.name")))
 			convertInventoryItemNames(p.getInventory(), entries);
 		
 	}

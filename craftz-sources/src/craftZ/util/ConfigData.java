@@ -1,4 +1,4 @@
-package craftZ;
+package craftZ.util;
 
 import java.io.File;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -7,6 +7,12 @@ public class ConfigData {
 	
 	public FileConfiguration config;
 	public File configFile;
+	
+	
+	
+	public ConfigData(File configFile) {
+		this.configFile = configFile;
+	}
 	
 	
 	

@@ -1,4 +1,4 @@
-package craftZ;
+package craftZ.util;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,8 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import craftZ.util.BlockChecker;
-import craftZ.util.ItemRenamer;
+import craftZ.CraftZ;
 
 
 public class PlayerManager {
@@ -131,7 +130,7 @@ public class PlayerManager {
 			
 			p.teleport(BlockChecker.getSafeSpawnLocationOver(spnLoc, true));
 			
-			p.sendMessage(ChatColor.YELLOW + CraftZ.getLangConfig().getString("Messages.spawned")
+			p.sendMessage(ChatColor.YELLOW + CraftZ.getMsg("Messages.spawned")
 					.replaceAll("%s", configSec.getString("name")));
 			
 		}
@@ -211,7 +210,7 @@ public class PlayerManager {
 			
 			
 			if (tickID % 10 == 0) {
-				ItemRenamer.convertPlayerInventory(p, CraftZ.i.getConfig().getStringList("Config.change-item-names.names"));
+				ItemRenamer.convertPlayerInventory(p, ConfigManager.getConfig("config").getStringList("Config.change-item-names.names"));
 				ScoreboardHelper.update();
 			}
 			
@@ -228,14 +227,14 @@ public class PlayerManager {
 					p.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 30, 1));
 				}
 				
-				if (CraftZ.i.getConfig().getBoolean("Config.world.world-border.enable")
-						&& isOutsideOfWorldRim(p, CraftZ.i.getConfig().getInt("Config.world.world-border.radius"), getLobby())) {
+				if (ConfigManager.getConfig("config").getBoolean("Config.world.world-border.enable")
+						&& isOutsideOfWorldRim(p, ConfigManager.getConfig("config").getInt("Config.world.world-border.radius"), getLobby())) {
 					
 					p.damage(2);
 					p.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 20, 1));
 					p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 10, 1));
 					p.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 30, 1));
-					p.sendMessage("[CraftZ] " + CraftZ.getLangConfig().getString("Messages.out-of-world"));
+					p.sendMessage("[CraftZ] " + CraftZ.getMsg("Messages.out-of-world"));
 					
 				}
 				
@@ -268,7 +267,7 @@ public class PlayerManager {
 	
 	public static boolean isInsideOfLobby(Player p) {
 		Location lobby = getLobby();
-		int radius = CraftZ.i.getConfig().getInt("Config.world.lobby.radius");
+		int radius = ConfigManager.getConfig("config").getInt("Config.world.lobby.radius");
 		return lobby.distance(p.getLocation()) <= radius;
 	}
 	
@@ -279,9 +278,9 @@ public class PlayerManager {
 	public static Location getLobby() {
 		
 		Location lobby = CraftZ.world().getSpawnLocation();
-		lobby.setX(CraftZ.i.getConfig().getDouble("Config.world.lobby.x"));
-		lobby.setY(CraftZ.i.getConfig().getDouble("Config.world.lobby.y"));
-		lobby.setZ(CraftZ.i.getConfig().getDouble("Config.world.lobby.z"));
+		lobby.setX(ConfigManager.getConfig("config").getDouble("Config.world.lobby.x"));
+		lobby.setY(ConfigManager.getConfig("config").getDouble("Config.world.lobby.y"));
+		lobby.setZ(ConfigManager.getConfig("config").getDouble("Config.world.lobby.z"));
 		
 		return lobby;
 		

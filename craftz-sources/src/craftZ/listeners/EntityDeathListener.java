@@ -1,6 +1,5 @@
 package craftZ.listeners;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -14,8 +13,9 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
 import craftZ.CraftZ;
-import craftZ.DeadPlayer;
-import craftZ.PlayerManager;
+import craftZ.util.ConfigManager;
+import craftZ.util.DeadPlayer;
+import craftZ.util.PlayerManager;
 import craftZ.util.StackParser;
 
 
@@ -49,14 +49,14 @@ public class EntityDeathListener implements Listener {
 					dp.remove();
 					DeadPlayer.saveDeadPlayers();
 					
-				} else if (CraftZ.i.getConfig().getBoolean("Config.mobs.zombies.enable-drops")) {
+				} else if (ConfigManager.getConfig("config").getBoolean("Config.mobs.zombies.enable-drops")) {
 					
-					ArrayList<String> items = (ArrayList<String>) CraftZ.i.getConfig().getStringList("Config.mobs.zombies.drops.items");
+					List<String> items = ConfigManager.getConfig("config").getStringList("Config.mobs.zombies.drops.items");
 					
 					for (String itemString : items) {
 						
 						ItemStack item = StackParser.fromString(itemString, true);
-						if (Math.random() >= 1 - CraftZ.i.getConfig().getDouble("Config.mobs.zombies.drops.chance"))
+						if (Math.random() >= 1 - ConfigManager.getConfig("config").getDouble("Config.mobs.zombies.drops.chance"))
 							drops.add(item);
 						
 					}
@@ -68,7 +68,7 @@ public class EntityDeathListener implements Listener {
 				if (eventEntity.getKiller() != null && !PlayerManager.isInsideOfLobby(eventEntity.getKiller())) {
 					
 					PlayerManager.getData(event.getEntity().getKiller().getName()).zombiesKilled++;
-					eventEntity.getKiller().sendMessage(ChatColor.GOLD + CraftZ.getLangConfig().getString("Messages.killed.zombie")
+					eventEntity.getKiller().sendMessage(ChatColor.GOLD + CraftZ.getMsg("Messages.killed.zombie")
 							.replaceAll("%k", "" + PlayerManager.getData(eventEntity.getKiller().getName()).zombiesKilled));
 					
 				}

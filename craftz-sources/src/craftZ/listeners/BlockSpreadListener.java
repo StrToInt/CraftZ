@@ -7,6 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockSpreadEvent;
 
 import craftZ.CraftZ;
+import craftZ.util.ConfigManager;
 
 
 public class BlockSpreadListener implements Listener {
@@ -16,7 +17,7 @@ public class BlockSpreadListener implements Listener {
 		
 		if (event.getBlock().getWorld().getName().equals(CraftZ.worldName())) {
 			
-			if (event.getBlock().getType() == Material.DIRT && !CraftZ.i.getConfig().getBoolean("Config.world.world-changing.allow-grass-grow"))
+			if (event.getBlock().getType() == Material.DIRT && !ConfigManager.getConfig("config").getBoolean("Config.world.world-changing.allow-grass-grow"))
 				event.setCancelled(true);
 			
 		}

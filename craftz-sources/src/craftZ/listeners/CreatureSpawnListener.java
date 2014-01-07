@@ -8,6 +8,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 
 import craftZ.CraftZ;
+import craftZ.util.ConfigManager;
 
 
 public class CreatureSpawnListener implements Listener {
@@ -39,9 +40,9 @@ public class CreatureSpawnListener implements Listener {
 			
 			
 			
-			boolean value_animalspawns_allow = CraftZ.i.getConfig().getBoolean("Config.mobs.animals.spawning.enable");
+			boolean allowAnimalSpawns = ConfigManager.getConfig("config").getBoolean("Config.mobs.animals.spawning.enable");
 			for (EntityType at : animals)
-				if (eventCreatureType.equals(at) && !value_animalspawns_allow)
+				if (eventCreatureType.equals(at) && !allowAnimalSpawns)
 					event.setCancelled(true);
 			
 			

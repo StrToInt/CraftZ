@@ -6,7 +6,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -29,15 +28,15 @@ public class EntityExplodeListener implements Listener {
 				Location eventLocation = event.getLocation();
 				event.getLocation().getWorld().createExplosion(eventLocation, 0);
 				
-				List<Entity> tnt_nearbyEnts = event.getEntity().getNearbyEntities(40, 40, 40);
+				List<Entity> tnt_nearbyEnts = event.getEntity().getNearbyEntities(20, 20, 20);
 				for (Entity targetEntity : tnt_nearbyEnts) {
 					
-					if (targetEntity instanceof LivingEntity || targetEntity instanceof Player) {
+					if (targetEntity instanceof LivingEntity) {
 						
 						LivingEntity targetLiving = (LivingEntity) targetEntity;
 						Location targetMobLoc = targetLiving.getLocation();
 						double targetDistance = eventLocation.distance(targetMobLoc) / 2;
-						targetLiving.damage(40 / targetDistance * 2);
+						targetLiving.damage(20 / targetDistance * 2);
 						
 					}
 					

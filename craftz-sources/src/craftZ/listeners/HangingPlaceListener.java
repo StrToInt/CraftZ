@@ -7,6 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 
 import craftZ.CraftZ;
+import craftZ.util.ConfigManager;
 
 
 public class HangingPlaceListener implements Listener {
@@ -16,9 +17,9 @@ public class HangingPlaceListener implements Listener {
 		
 		if (event.getEntity().getWorld().getName().equals(CraftZ.worldName())) {
 			
-			if (!CraftZ.i.getConfig().getBoolean("Config.players.interact.block-placing") && !event.getPlayer().hasPermission("craftz.build")) {
+			if (!ConfigManager.getConfig("config").getBoolean("Config.players.interact.block-placing") && !event.getPlayer().hasPermission("craftz.build")) {
 				event.setCancelled(true);
-				event.getPlayer().sendMessage(ChatColor.DARK_RED + CraftZ.getLangConfig().getString("Messages.errors.not-enough-permissions"));
+				event.getPlayer().sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.errors.not-enough-permissions"));
 			}
 		
 		}

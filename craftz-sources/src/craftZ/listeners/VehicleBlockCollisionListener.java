@@ -15,6 +15,7 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.vehicle.VehicleBlockCollisionEvent;
 
 import craftZ.CraftZ;
+import craftZ.util.ConfigManager;
 
 
 public class VehicleBlockCollisionListener implements Listener {
@@ -24,7 +25,7 @@ public class VehicleBlockCollisionListener implements Listener {
 		
 		if (event.getVehicle().getWorld().getName().equals(CraftZ.worldName())) {
 			
-			if (CraftZ.i.getConfig().getBoolean("Config.vehicles.enable")) {
+			if (ConfigManager.getConfig("config").getBoolean("Config.vehicles.enable")) {
 				
 				Vehicle vehicle = event.getVehicle();
 				Entity passenger = vehicle.getPassenger();

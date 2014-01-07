@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityCreatePortalEvent;
 
 import craftZ.CraftZ;
+import craftZ.util.ConfigManager;
 
 
 public class EntityCreatePortalListener implements Listener {
@@ -17,13 +18,13 @@ public class EntityCreatePortalListener implements Listener {
 		
 		if (event.getEntity().getWorld().getName().equals(CraftZ.worldName())) {
 			
-			if (!CraftZ.i.getConfig().getBoolean("Config.players.interact.block-placing")) {
+			if (!ConfigManager.getConfig("config").getBoolean("Config.players.interact.block-placing")) {
 				
 				Player eventPlayer = (Player) event.getEntity();
 				
 				if (!eventPlayer.hasPermission("craftz.build")) {
 					event.setCancelled(true);
-					eventPlayer.sendMessage(ChatColor.DARK_RED + CraftZ.getLangConfig().getString("Messages.errors.not-enough-permissions"));
+					eventPlayer.sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.errors.not-enough-permissions"));
 				}
 				
 			}

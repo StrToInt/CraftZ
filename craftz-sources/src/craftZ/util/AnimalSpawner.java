@@ -1,4 +1,4 @@
-package craftZ;
+package craftZ.util;
 
 import java.util.Random;
 
@@ -8,14 +8,15 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 
-import craftZ.util.BlockChecker;
+import craftZ.CraftZ;
+
 
 public class AnimalSpawner {
 	
 	public static void onServerTick(long tickID) {
 		
-		if (tickID % 120 == 0 && CraftZ.i.getConfig().getBoolean("Config.mobs.animals.spawning.enable")) {
-			spawnRandomAnimalsInWorld(Bukkit.getWorld(CraftZ.i.getConfig().getString("Config.world.name")));
+		if (tickID % 120 == 0 && ConfigManager.getConfig("config").getBoolean("Config.mobs.animals.spawning.enable")) {
+			spawnRandomAnimalsInWorld(Bukkit.getWorld(ConfigManager.getConfig("config").getString("Config.world.name")));
 		}
 		
 	}
@@ -31,7 +32,7 @@ public class AnimalSpawner {
 		
 		for (int i=0; i<animals.length; i++) {
 			
-			double chance = 1D - CraftZ.i.getConfig().getDouble("Config.mobs.animals.spawning.chance." + configNames[i]);
+			double chance = 1D - ConfigManager.getConfig("config").getDouble("Config.mobs.animals.spawning.chance." + configNames[i]);
 			
 			if (Math.random() > chance) {
 				

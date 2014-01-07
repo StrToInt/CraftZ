@@ -1,8 +1,9 @@
-package craftZ;
+package craftZ.util;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 
 import org.bukkit.configuration.file.FileConfiguration;
@@ -10,9 +11,11 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.google.common.io.Files;
 
+import craftZ.CraftZ;
+
 public class WorldData {
 	
-	private static HashMap<String, ConfigData> configs = new HashMap<String, ConfigData>();
+	private static Map<String, ConfigData> configs = new HashMap<String, ConfigData>();
 	
 	
 	
@@ -38,10 +41,9 @@ public class WorldData {
 		File old = new File(CraftZ.i.getDataFolder(), "data.yml");
 		if (!old.exists()) return;
 		
-		String wname = CraftZ.i.getConfig().getString("Config.world.name");
 		try {
 			
-			File newFile = new File(CraftZ.i.getDataFolder(), "worlds/" + wname + ".yml");
+			File newFile = new File(CraftZ.i.getDataFolder(), "worlds/" + CraftZ.worldName() + ".yml");
 			if (newFile.exists()) return;
 			
 			newFile.getParentFile().mkdirs();
@@ -75,8 +77,7 @@ public class WorldData {
 	
 	public static void reload(String world) {
 		
-		ConfigData data = new ConfigData();
-		data.configFile = new File(CraftZ.i.getDataFolder(), "worlds/" + world + ".yml");
+		ConfigData data = new ConfigData(new File(CraftZ.i.getDataFolder(), "worlds/" + world + ".yml"));
 		data.config = YamlConfiguration.loadConfiguration(data.configFile);
 		
 		if (!configs.containsKey(world))
@@ -87,7 +88,7 @@ public class WorldData {
 	}
 	
 	public static void reload() {
-		reload(CraftZ.i.getConfig().getString("Config.world.name"));
+		reload(CraftZ.worldName());
 	}
 	
 	
@@ -105,7 +106,7 @@ public class WorldData {
 	}
 	
 	public static FileConfiguration get() {
-		return get(CraftZ.i.getConfig().getString("Config.world.name"));
+		return get(CraftZ.worldName());
 	}
 	
 	
@@ -128,7 +129,7 @@ public class WorldData {
 	}
 	
 	public static void save() {
-		save(CraftZ.i.getConfig().getString("Config.world.name"));
+		save(CraftZ.worldName());
 	}
 	
 }

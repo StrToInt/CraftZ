@@ -1,4 +1,4 @@
-package craftZ;
+package craftZ.util;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,8 +15,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import craftZ.util.BlockChecker;
-import craftZ.util.EntityChecker;
+import craftZ.CraftZ;
 
 public class ZombieSpawner implements Listener {
 	
@@ -63,7 +62,7 @@ public class ZombieSpawner implements Listener {
 		if (!EntityChecker.areEntitiesNearby(locToSpawn, maxZombiesRadius, EntityType.ZOMBIE, maxZombiesInRadius)) {
 			
 			int zombies = 0;
-			int maxZombies = CraftZ.i.getConfig().getInt("Config.mobs.zombies.spawning.maxzombies");
+			int maxZombies = ConfigManager.getConfig("config").getInt("Config.mobs.zombies.spawning.maxzombies");
 			
 			for (Entity ent : CraftZ.world().getEntities()) {
 				
@@ -96,7 +95,7 @@ public class ZombieSpawner implements Listener {
 			
 			cooldowns.put(str, cooldowns.get(str) + 1);
 			
-			if (cooldowns.get(str) >= CraftZ.i.getConfig().getInt("Config.mobs.zombies.spawning.interval") * 20) {
+			if (cooldowns.get(str) >= ConfigManager.getConfig("config").getInt("Config.mobs.zombies.spawning.interval") * 20) {
 				
 				cooldowns.put(str, 0);
 				
@@ -125,10 +124,10 @@ public class ZombieSpawner implements Listener {
 		
 		
 		
-		if (CraftZ.i.getConfig().getBoolean("Config.mobs.zombies.spawning.enable-auto-spawn")) {
+		if (ConfigManager.getConfig("config").getBoolean("Config.mobs.zombies.spawning.enable-auto-spawn")) {
 			
 			ticksForAutoSpawn++;
-			if (PlayerManager.getPlayCount() > 0 && ticksForAutoSpawn >= CraftZ.i.getConfig()
+			if (PlayerManager.getPlayCount() > 0 && ticksForAutoSpawn >= ConfigManager.getConfig("config")
 					.getInt("Config.mobs.zombies.spawning.auto-spawning-interval") * 20 / PlayerManager.getPlayCount()) {
 				
 				ticksForAutoSpawn = 0;
@@ -142,7 +141,7 @@ public class ZombieSpawner implements Listener {
 				
 				Location locToSpawn = BlockChecker.getSafeSpawnLocationOver(randLoc, true);
 				int zombies = 0;
-				int maxZombies = CraftZ.i.getConfig().getInt("Config.mobs.zombies.spawning.maxzombies");
+				int maxZombies = ConfigManager.getConfig("config").getInt("Config.mobs.zombies.spawning.maxzombies");
 				
 				for (Entity ent : p.getWorld().getEntities()) {
 					

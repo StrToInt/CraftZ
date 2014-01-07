@@ -6,6 +6,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockGrowEvent;
 
 import craftZ.CraftZ;
+import craftZ.util.ConfigManager;
 
 
 public class BlockGrowListener implements Listener {
@@ -14,11 +15,8 @@ public class BlockGrowListener implements Listener {
 	public void onBlockGrow(BlockGrowEvent event) {
 		
 		if (event.getBlock().getWorld().getName().equals(CraftZ.worldName())) {
-			
-			boolean value_allowBlockGrow = CraftZ.i.getConfig().getBoolean("Config.world.world-changing.allow-block-grow");
-			if (value_allowBlockGrow != true)
+			if (!ConfigManager.getConfig("config").getBoolean("Config.world.world-changing.allow-block-grow"))
 				event.setCancelled(true);
-			
 		}
 	    
 	}

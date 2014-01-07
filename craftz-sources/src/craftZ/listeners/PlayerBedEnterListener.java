@@ -7,6 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 
 import craftZ.CraftZ;
+import craftZ.util.ConfigManager;
 
 
 public class PlayerBedEnterListener implements Listener {
@@ -14,13 +15,10 @@ public class PlayerBedEnterListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerBedEnter(PlayerBedEnterEvent event) {
 		
-		String value_world_name = CraftZ.i.getConfig().getString("Config.world.name");
 		World eventWorld = event.getBed().getWorld();
-		if (eventWorld.getName().equalsIgnoreCase(value_world_name)) {
-			
-			if (!CraftZ.i.getConfig().getBoolean("Config.players.interact.sleeping") && !event.getPlayer().hasPermission("craftz.sleep"))
+		if (eventWorld.getName().equalsIgnoreCase(CraftZ.worldName())) {
+			if (!ConfigManager.getConfig("config").getBoolean("Config.players.interact.sleeping") && !event.getPlayer().hasPermission("craftz.sleep"))
 				event.setCancelled(true);
-		
 		}
 		
 	}

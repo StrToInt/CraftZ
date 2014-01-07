@@ -1,4 +1,4 @@
-package craftZ;
+package craftZ.util;
 
 public class AdditionalCraftZData {
 	

@@ -6,6 +6,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.weather.WeatherChangeEvent;
 
 import craftZ.CraftZ;
+import craftZ.util.ConfigManager;
 
 
 public class WeatherChangeListener implements Listener {
@@ -15,7 +16,7 @@ public class WeatherChangeListener implements Listener {
 		
 		if (event.getWorld().getName().equals(CraftZ.worldName())) {
 			
-			if (!CraftZ.i.getConfig().getBoolean("Config.world.weather.allowWeatherChanging"))
+			if (!ConfigManager.getConfig("config").getBoolean("Config.world.weather.allowWeatherChanging"))
 				event.setCancelled(true);
 		
 		}

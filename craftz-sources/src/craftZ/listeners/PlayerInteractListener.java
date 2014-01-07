@@ -20,8 +20,9 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import craftZ.CraftZ;
-import craftZ.PlayerManager;
 import craftZ.util.BlockChecker;
+import craftZ.util.ConfigManager;
+import craftZ.util.PlayerManager;
 
 public class PlayerInteractListener implements Listener {
 	
@@ -40,7 +41,7 @@ public class PlayerInteractListener implements Listener {
 				
 				if (itemType == Material.SUGAR) {
 					
-					if (CraftZ.i.getConfig().getBoolean("Config.players.medical.enable-sugar-speed-effect") == true) {
+					if (ConfigManager.getConfig("config").getBoolean("Config.players.medical.enable-sugar-speed-effect") == true) {
 						
 						if (p.getItemInHand().getAmount() < 2)
 							p.setItemInHand(new ItemStack(Material.AIR, 0));
@@ -58,7 +59,7 @@ public class PlayerInteractListener implements Listener {
 				
 				if (itemType == Material.PAPER) {
 					
-					if (CraftZ.i.getConfig().getBoolean("Config.players.medical.bleeding.heal-with-paper")) {
+					if (ConfigManager.getConfig("config").getBoolean("Config.players.medical.bleeding.heal-with-paper")) {
 						
 						if (p.getItemInHand().getAmount() < 2)
 							p.setItemInHand(new ItemStack(Material.AIR, 0));
@@ -67,7 +68,7 @@ public class PlayerInteractListener implements Listener {
 						
 						PlayerManager.getData(p.getName()).bleeding = false;
 						p.playSound(p.getLocation(), Sound.ENDERDRAGON_WINGS, 1, 1);
-						p.sendMessage(ChatColor.DARK_RED + CraftZ.getLangConfig().getString("Messages.bandaged"));
+						p.sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.bandaged"));
 						
 					}
 					
@@ -77,8 +78,8 @@ public class PlayerInteractListener implements Listener {
 				
 				if (itemType == Material.INK_SACK && item.getDurability() == 1) {
 					
-					if (CraftZ.i.getConfig().getBoolean("Config.players.medical.healing.heal-with-rosered")
-							&& !CraftZ.i.getConfig().getBoolean("Config.players.medical.healing.only-healing-others")) {
+					if (ConfigManager.getConfig("config").getBoolean("Config.players.medical.healing.heal-with-rosered")
+							&& !ConfigManager.getConfig("config").getBoolean("Config.players.medical.healing.only-healing-others")) {
 						
 						if (p.getItemInHand().getAmount() < 2)
 							p.setItemInHand(new ItemStack(Material.AIR, 0));
@@ -86,8 +87,8 @@ public class PlayerInteractListener implements Listener {
 							p.getItemInHand().setAmount(p.getItemInHand().getAmount() - 1);
 						
 						p.setHealth(20);
-						p.playSound(p.getLocation(), Sound.BREATH, 1, 1);
-						p.sendMessage(ChatColor.DARK_RED + CraftZ.getLangConfig().getString("Messages.bloodbag"));
+						//p.playSound(p.getLocation(), Sound.BREATH, 1, 1);
+						p.sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.bloodbag"));
 						
 					}
 					
@@ -97,7 +98,7 @@ public class PlayerInteractListener implements Listener {
 				
 				if (itemType == Material.INK_SACK && item.getDurability() == 10) {
 					
-					if (CraftZ.i.getConfig().getBoolean("Config.players.medical.poisoning.cure-with-limegreen")) {
+					if (ConfigManager.getConfig("config").getBoolean("Config.players.medical.poisoning.cure-with-limegreen")) {
 						
 						if (p.getItemInHand().getAmount() < 2)
 							p.setItemInHand(new ItemStack(Material.AIR, 0));
@@ -106,7 +107,7 @@ public class PlayerInteractListener implements Listener {
 						
 						PlayerManager.getData(p.getName()).poisoned = false;
 						p.playSound(p.getLocation(), Sound.ZOMBIE_UNFECT, 1, 1);
-						p.sendMessage(ChatColor.DARK_RED + CraftZ.getLangConfig().getString("Messages.unpoisoned"));
+						p.sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.unpoisoned"));
 						
 					}
 					
@@ -116,7 +117,7 @@ public class PlayerInteractListener implements Listener {
 				
 				if (itemType == Material.BLAZE_ROD) {
 					
-					if (CraftZ.i.getConfig().getBoolean("Config.players.medical.bonebreak.heal-with-blazerod")) {
+					if (ConfigManager.getConfig("config").getBoolean("Config.players.medical.bonebreak.heal-with-blazerod")) {
 						
 						if (p.getItemInHand().getAmount() < 2)
 							p.setItemInHand(new ItemStack(Material.AIR, 0));
@@ -125,8 +126,8 @@ public class PlayerInteractListener implements Listener {
 						
 						PlayerManager.getData(p.getName()).bonesBroken = false;
 						p.removePotionEffect(PotionEffectType.SLOW);
-						p.playSound(p.getLocation(), Sound.BREATH, 1, 1);
-						p.sendMessage(ChatColor.DARK_RED + CraftZ.getLangConfig().getString("Messages.bones-healed"));
+						//p.playSound(p.getLocation(), Sound.BREATH, 1, 1);
+						p.sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.bones-healed"));
 						
 					}
 					
@@ -146,14 +147,14 @@ public class PlayerInteractListener implements Listener {
 							
 							Item itm = p.getWorld().dropItem(p.getLocation(), new ItemStack(Material.LOG, 1));
 							itm.setPickupDelay(0);
-							p.sendMessage(CraftZ.getLangConfig().getString("Messages.harvested-tree"));
+							p.sendMessage(CraftZ.getMsg("Messages.harvested-tree"));
 							
 						} else {
-							p.sendMessage(CraftZ.getLangConfig().getString("Messages.already-have-wood"));
+							p.sendMessage(CraftZ.getMsg("Messages.already-have-wood"));
 						}
 						
 					} else {
-						p.sendMessage(CraftZ.getLangConfig().getString("Messages.isnt-a-tree"));
+						p.sendMessage(CraftZ.getMsg("Messages.isnt-a-tree"));
 					}
 					
 				}
@@ -162,7 +163,7 @@ public class PlayerInteractListener implements Listener {
 				
 				if (itemType == Material.MINECART) {
 					
-					if (CraftZ.i.getConfig().getBoolean("Config.vehicles.enable")) {
+					if (ConfigManager.getConfig("config").getBoolean("Config.vehicles.enable")) {
 						
 						Location locForMinecart = block.getLocation();
 						locForMinecart.add(new Vector(0, 1, 0));
@@ -178,7 +179,7 @@ public class PlayerInteractListener implements Listener {
 				
 				
 				if (block.getType() == Material.FIRE)
-					p.sendMessage(CraftZ.getLangConfig().getString("Messages.already-have-wood"));
+					p.sendMessage(CraftZ.getMsg("Messages.already-have-wood"));
 				
 			}
 		

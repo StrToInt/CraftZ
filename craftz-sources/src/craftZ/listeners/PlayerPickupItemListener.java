@@ -6,6 +6,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 
 import craftZ.CraftZ;
+import craftZ.util.ConfigManager;
 import craftZ.util.ItemRenamer;
 
 
@@ -16,7 +17,7 @@ public class PlayerPickupItemListener implements Listener {
 		
 		if (event.getPlayer().getWorld().getName().equals(CraftZ.worldName())) {
 			ItemRenamer.convertPlayerInventory(event.getPlayer(),
-					CraftZ.i.getConfig().getStringList("Config.change-item-names.names"));
+					ConfigManager.getConfig("config").getStringList("Config.change-item-names.names"));
 		}
 		
 	}

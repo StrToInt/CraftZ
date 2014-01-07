@@ -17,6 +17,7 @@ import org.bukkit.event.vehicle.VehicleUpdateEvent;
 import org.bukkit.util.Vector;
 
 import craftZ.CraftZ;
+import craftZ.util.ConfigManager;
 
 
 public class VehicleUpdateListener implements Listener {
@@ -26,7 +27,7 @@ public class VehicleUpdateListener implements Listener {
 		
 		if (event.getVehicle().getWorld().getName().equals(CraftZ.worldName())) {
 			
-			if (CraftZ.i.getConfig().getBoolean("Config.vehicles.enable")) {
+			if (ConfigManager.getConfig("config").getBoolean("Config.vehicles.enable")) {
 				
 				Vehicle vehicle = event.getVehicle();
 				Entity passenger = vehicle.getPassenger();
@@ -55,10 +56,10 @@ public class VehicleUpdateListener implements Listener {
 							groundID = "" + groundMaterial.getId() + ":" + groundData;
 						}
 						
-						List<String> value_vehicles_speed_streetBlocks = CraftZ.i.getConfig().getStringList("Config.vehicles.speed-street-blocks");
+						List<String> value_vehicles_speed_streetBlocks = ConfigManager.getConfig("config").getStringList("Config.vehicles.speed-street-blocks");
 						if (!value_vehicles_speed_streetBlocks.contains(groundID)) {
 							plvelocity.multiply(2);
-							double value_vehicles_speed = CraftZ.i.getConfig().getDouble("Config.vehicles.speed");
+							double value_vehicles_speed = ConfigManager.getConfig("config").getDouble("Config.vehicles.speed");
 							newLoc.add(new Vector(plvelocity.getX() * value_vehicles_speed, 0.0D, plvelocity.getZ() * value_vehicles_speed));
 							cart.teleport(newLoc);
 							
@@ -68,8 +69,8 @@ public class VehicleUpdateListener implements Listener {
 							cart.setVelocity(dirVel);
 						} else {
 							
-							double value_vehicles_speed_streetMulti = CraftZ.i.getConfig().getDouble("Config.vehicles.speed-street-multiplier");
-							double value_vehicles_speed = CraftZ.i.getConfig().getDouble("Config.vehicles.speed");
+							double value_vehicles_speed_streetMulti = ConfigManager.getConfig("config").getDouble("Config.vehicles.speed-street-multiplier");
+							double value_vehicles_speed = ConfigManager.getConfig("config").getDouble("Config.vehicles.speed");
 							double speedMulti = value_vehicles_speed * value_vehicles_speed_streetMulti;
 							
 							plvelocity.multiply(2);
