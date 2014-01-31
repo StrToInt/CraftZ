@@ -550,6 +550,10 @@ public class CraftZ extends JavaPlugin {
 			def_config.put("Config.chat.modify-player-messages", false);
 			def_config.put("Config.chat.modify-death-messages", true);
 			
+				// RANGE
+				def_config.put("Config.chat.ranged.enable", false);
+				def_config.put("Config.chat.ranged.range", 80);
+			
 			// VEHICLES
 			def_config.put("Config.vehicles.enable", false);
 			def_config.put("Config.vehicles.speed", 5.0);
