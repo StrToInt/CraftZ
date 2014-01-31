@@ -167,13 +167,25 @@ public class ZombieSpawner implements Listener {
 	
 	public static void equipZombie(Zombie zombie) {
 		
-		if (new Random().nextInt(7) > 0) {
-			zombie.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, new Random().nextInt(3) + 1));
-			zombie.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, 0));
-		} else {
-			zombie.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, Integer.MAX_VALUE, 1, false));
-			zombie.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, 0));
+		int speed = ConfigManager.getConfig("config").getInt("Config.mobs.zombies.properties.speed-boost");
+		int damage = ConfigManager.getConfig("config").getInt("Config.mobs.zombies.properties.damage-boost");
+		
+		if (speed > 0)
+			zombie.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, speed - 1));
+		if (damage > 0)
+			zombie.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, damage - 1));
+		
+		
+		
+		if (new Random().nextInt(7) < 1) {
 			zombie.setBaby(true);
+		}
+		
+		
+		
+		int health = ConfigManager.getConfig("config").getInt("Config.mobs.zombies.properties.health");
+		if (health > 0) {
+			zombie.setHealth(health);
 		}
 		
 	}

@@ -7,7 +7,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
 
 import craftZ.CraftZ;
 import craftZ.util.ConfigManager;
@@ -63,23 +65,15 @@ public class PlayerDeathListener implements Listener {
 				p.kickPlayer(kickMsg);
 			} else {
 				
-				Bukkit.getScheduler().runTaskLater(CraftZ.i, new Runnable() {
-					
-					@Override
-					public void run() {
-						
-						p.sendMessage(ChatColor.GREEN + kickMsg);
-						
-						p.setHealth(20);
-						p.setFoodLevel(20);
-						p.getInventory().clear();
-						p.getInventory().setArmorContents(new ItemStack[] { null, null, null, null });
-						
-						p.teleport(PlayerManager.getLobby());
-						
-					}
-					
-				}, 2);
+				p.sendMessage(ChatColor.GREEN + kickMsg);
+				
+				p.setHealth(20);
+				p.setFoodLevel(20);
+				p.setVelocity(new Vector());
+				p.getInventory().clear();
+				p.getInventory().setArmorContents(new ItemStack[] { null, null, null, null });
+				
+				p.teleport(PlayerManager.getLobby());
 				
 			}
 			

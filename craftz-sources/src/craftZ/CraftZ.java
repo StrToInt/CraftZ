@@ -517,7 +517,7 @@ public class CraftZ extends JavaPlugin {
 			def_config.put("Config.mobs.blood-particles-when-damaged", true);
 			
 				// ZOMBIES
-				
+					
 					// DROPS
 					def_config.put("Config.mobs.zombies.enable-drops", true);
 					def_config.put("Config.mobs.zombies.drops.chance", 0.3);
@@ -528,7 +528,12 @@ public class CraftZ extends JavaPlugin {
 					def_config.put("Config.mobs.zombies.spawning.maxzombies", 200);
 					def_config.put("Config.mobs.zombies.spawning.enable-auto-spawn", false);
 					def_config.put("Config.mobs.zombies.spawning.auto-spawning-interval", 40);
-				
+					
+					// EFFECTS
+					def_config.put("Config.mobs.zombies.properties.speed-boost", 1);
+					def_config.put("Config.mobs.zombies.properties.damage-boost", 0);
+					def_config.put("Config.mobs.zombies.properties.health", 16);
+					
 //						// ANIMALS
 //						
 //							// SPAWNS
