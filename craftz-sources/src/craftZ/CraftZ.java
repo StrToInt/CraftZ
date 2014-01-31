@@ -1,5 +1,8 @@
 package craftZ;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,53 +18,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import craftZ.listeners.AsyncPlayerChatListener;
-import craftZ.listeners.BlockBreakListener;
-import craftZ.listeners.BlockBurnListener;
-import craftZ.listeners.BlockGrowListener;
-import craftZ.listeners.BlockIgniteListener;
-import craftZ.listeners.BlockPlaceListener;
-import craftZ.listeners.BlockSpreadListener;
-import craftZ.listeners.ChunkLoadListener;
-import craftZ.listeners.CreatureSpawnListener;
-import craftZ.listeners.EntityCreatePortalListener;
-import craftZ.listeners.EntityDamageByEntityListener;
-import craftZ.listeners.EntityDamageListener;
-import craftZ.listeners.EntityDeathListener;
-import craftZ.listeners.EntityExplodeListener;
-import craftZ.listeners.EntityRegainHealthListener;
-import craftZ.listeners.EntityShootBowListener;
-import craftZ.listeners.FoodLevelChangeListener;
-import craftZ.listeners.HangingBreakByEntityListener;
-import craftZ.listeners.HangingBreakListener;
-import craftZ.listeners.HangingPlaceListener;
-import craftZ.listeners.InventoryClickListener;
-import craftZ.listeners.InventoryCloseListener;
-import craftZ.listeners.PlayerBedEnterListener;
-import craftZ.listeners.PlayerChangedWorldListener;
-import craftZ.listeners.PlayerDeathListener;
-import craftZ.listeners.PlayerDropItemListener;
-import craftZ.listeners.PlayerInteractListener;
-import craftZ.listeners.PlayerItemConsumeListener;
-import craftZ.listeners.PlayerJoinListener;
-import craftZ.listeners.PlayerMoveListener;
-import craftZ.listeners.PlayerPickupItemListener;
-import craftZ.listeners.PlayerQuitListener;
-import craftZ.listeners.PlayerTeleportListener;
-import craftZ.listeners.ProjectileHitListener;
-import craftZ.listeners.ShearEntityListener;
-import craftZ.listeners.SheepDyeWoolListener;
-import craftZ.listeners.SignChangeListener;
-import craftZ.listeners.StructureGrowListener;
-import craftZ.listeners.VehicleBlockCollisionListener;
-import craftZ.listeners.VehicleMoveListener;
-import craftZ.listeners.VehicleUpdateListener;
-import craftZ.listeners.WeatherChangeListener;
+import craftZ.listeners.*;
 import craftZ.util.AnimalSpawner;
 import craftZ.util.ChestRefiller;
 import craftZ.util.ConfigManager;
@@ -77,6 +40,30 @@ public class CraftZ extends JavaPlugin {
 	public static long tickID = 0;
 	public static HashMap<Player, Integer> movingPlayers = new HashMap<Player, Integer>();
 	public static ArrayList<DeadPlayer> deadPlayers = new ArrayList<DeadPlayer>();
+	public static boolean firstRun, failedWorldLoad = false;
+	
+	public static String[] firstRunMessages = {
+		"CraftZ -- It seems that this is the first time you run CraftZ. There are a few important things on first-time use:",
+		"* It is likely that CraftZ will not be able to load up because the default world might not exist.",
+		"* The whole world which is used by CraftZ (defaults to 'world') will be changed. This includes:",
+		"* - Ingame daytime will be the same as reallife daytime.",
+		"* - Only zombies will spawn, even during the day.",
+		"* - The world is protected from most changes (by players AND other things). " +
+				"In addition, players without special permissions are restricted in their actions.",
+		"* Please modify the configuration file located at '/plugins/CraftZ/config.yml' to suit your needs. " +
+				"Help can be found at http://bit.ly/1baXddU (Bukkit).",
+		"* You should setup your world for CraftZ: place chests and spawns, make a lobby and so on. " +
+				"Help can be found at http://bit.ly/1ejXhsU (Bukkit).",
+		"Have fun!"
+	};
+	public static String[] firstRunPlayerMessages = {
+		"CraftZ -- It seems that this is the first time you run CraftZ. There are a few important things on first-time use:",
+		"* It is likely that CraftZ will not be able to load up because the default world does not exist.",
+		"* The whole world which is used by CraftZ (defaults to 'world') will be changed.",
+		"* Please modify the configuration file to suit your needs. See http://bit.ly/1baXddU",
+		"* You should setup your world for CraftZ. See http://bit.ly/1ejXhsU",
+		"More info can be found in the console or at '/plugins/CraftZ/README.txt'."
+	};
 	
 	public static CraftZ i;
 	
@@ -90,6 +77,86 @@ public class CraftZ extends JavaPlugin {
 		loadConfigs();
 		registerEvents();
 		
+		firstRun = ConfigManager.getConfig("config").getBoolean("Config.never-ever-modify.first-run");
+		if (firstRun) {
+			ConfigManager.getConfig("config").set("Config.never-ever-modify.first-run", false);
+			ConfigManager.saveConfig("config");
+		}
+		
+		
+		
+		File readme = new File(getDataFolder(), "README.txt");
+		readme.getParentFile().mkdirs();
+		
+		if (!readme.exists()) {
+			
+			try {
+				
+				BufferedWriter wr = new BufferedWriter(new FileWriter(readme));
+				
+				for (String s : firstRunMessages) {
+					wr.write(s);
+					wr.newLine();
+				}
+				
+				wr.flush();
+				wr.close();
+				
+			} catch (Exception ex) {
+				System.out.println();
+				System.err.println("[CraftZ] Could not write the README.txt file to disk!");
+			}
+			
+		}
+		
+		
+		
+		this.getServer().getScheduler().runTask(this, new Runnable() {
+			
+			@Override
+			public void run() {
+				
+				if (world() == null) {
+					
+					getLogger().log(Level.SEVERE, "World '" + worldName() + "' not found! Please check config.yml. CraftZ will not work.");
+					failedWorldLoad = true;
+					
+					HandlerList.unregisterAll(CraftZ.this);
+					
+				}
+				
+				
+				
+				if (firstRun) {
+					
+					System.out.println("");
+					
+					for (String s : firstRunMessages)
+						System.out.println(s);
+					
+					System.out.println("");
+					System.out.println("You can also find this message at any time in '/plugins/CraftZ/README.txt'.");
+					System.out.println("");
+					
+					rl(new PlayerJoinListener.FirstTimeUse());
+					
+				}
+				
+				
+				
+				if (!failedWorldLoad) {
+					
+					ScoreboardHelper.setup();
+					ChestRefiller.resetAllChestsAndStartRefill();
+					ZombieSpawner.addSpawns();
+					DeadPlayer.loadDeadPlayers();
+					
+				}
+				
+			}
+			
+		});
+		
 		
 		
 		this.getServer().getScheduler().runTaskTimer(this, new Runnable() {
@@ -99,39 +166,21 @@ public class CraftZ extends JavaPlugin {
 				
 				tickID++;
 				
-				ZombieSpawner.onServerTick();
-				AnimalSpawner.onServerTick(tickID);
-				ChestRefiller.onServerTick();
-				PlayerManager.onServerTick(tickID);
-				
-				if (ConfigManager.getConfig("config").getBoolean("Config.world.real-time"))
-					Time.setToServerTime();
+				if (!failedWorldLoad) {
+					
+					ZombieSpawner.onServerTick();
+					AnimalSpawner.onServerTick(tickID);
+					ChestRefiller.onServerTick();
+					PlayerManager.onServerTick(tickID);
+					
+					if (ConfigManager.getConfig("config").getBoolean("Config.world.real-time"))
+						Time.setToServerTime();
+					
+				}
 				
 			}
 			
 		}, 1L, 1L);
-		
-		
-		
-		this.getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
-			
-			@Override
-			public void run() {
-				
-				if (world() == null) {
-					getLogger().log(Level.SEVERE, "World not found! Please check config.yml. CraftZ will shutdown now.");
-					getPluginLoader().disablePlugin(i);
-					return;
-				}
-				
-				ScoreboardHelper.setup();
-				ChestRefiller.resetAllChestsAndStartRefill();
-				ZombieSpawner.addSpawns();
-				DeadPlayer.loadDeadPlayers();
-				
-			}
-			
-		});
 		
 	
 		
@@ -214,6 +263,8 @@ public class CraftZ extends JavaPlugin {
 						sender.sendMessage(noPerms);
 					}
 					
+					return true;
+					
 				}
 				
 				
@@ -242,6 +293,8 @@ public class CraftZ extends JavaPlugin {
 						sender.sendMessage(noPerms);
 					}
 					
+					return true;
+					
 				}
 				
 				
@@ -257,6 +310,8 @@ public class CraftZ extends JavaPlugin {
 					else
 						p.sendMessage(noPerms);
 					
+					return true;
+					
 				}
 				
 				
@@ -269,22 +324,24 @@ public class CraftZ extends JavaPlugin {
 					
 					if (p.hasPermission("craftz.setlobby")) {
 						
+						String world = p.getWorld().getName();
 						int x = p.getLocation().getBlockX();
 						int y = p.getLocation().getBlockY();
 						int z = p.getLocation().getBlockZ();
 						
+						ConfigManager.getConfig("config").set("Config.world.lobby.world", world);
 						ConfigManager.getConfig("config").set("Config.world.lobby.x", x);
 						ConfigManager.getConfig("config").set("Config.world.lobby.y", y);
 						ConfigManager.getConfig("config").set("Config.world.lobby.z", z);
-						
 						saveConfig();
 						
-						String value_lobbySet = ChatColor.AQUA + getMsg("Messages.cmd.setlobby");
-						p.sendMessage(value_lobbySet);
+						p.sendMessage(ChatColor.AQUA + getMsg("Messages.cmd.setlobby"));
 						
 					} else {
 						p.sendMessage(noPerms);
 					}
+					
+					return true;
 					
 				}
 				
@@ -311,8 +368,11 @@ public class CraftZ extends JavaPlugin {
 						p.sendMessage(noPerms);
 					}
 					
+					return true;
+					
 				}
 				
+				sender.sendMessage(ChatColor.RED + "This command does not exist. Use '/craftz' to display the help.");
 				return true;
 					
 			}
@@ -403,6 +463,8 @@ public class CraftZ extends JavaPlugin {
 		
 		// CONFIG
 		Map<String, Object> def_config = new HashMap<>();
+		
+		def_config.put("Config.never-ever-modify.first-run", true);
 			
 			// WORLD
 			def_config.put("Config.world.name", "world");

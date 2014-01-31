@@ -2,6 +2,7 @@ package craftZ.listeners;
 
 
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -22,7 +23,7 @@ public class PlayerJoinListener implements Listener {
 			if (ConfigManager.getConfig("config").getBoolean("Config.chat.modify-join-and-quit-messages"))
 				event.setJoinMessage(ChatColor.RED + "Player " + event.getPlayer().getDisplayName() + " connected.");
 			
-			if (PlayerManager.isAlreadyInWorld(event.getPlayer())) {
+			if (PlayerManager.wasAlreadyInWorld(event.getPlayer())) {
 				PlayerManager.loadPlayer(event.getPlayer());
 			} else {
 				
@@ -33,6 +34,35 @@ public class PlayerJoinListener implements Listener {
 				
 				event.getPlayer().teleport(PlayerManager.getLobby());
 				
+			}
+			
+		}
+		
+	}
+	
+	
+	
+	
+	
+	public static class FirstTimeUse extends PlayerJoinListener {
+		
+		@EventHandler(priority = EventPriority.HIGHEST)
+		public void onPlayerJoin(PlayerJoinEvent event) {
+			
+			Player p = event.getPlayer();
+			
+			if (p.isOp()) {
+				
+				p.sendMessage("");
+				
+				for (String s : CraftZ.firstRunPlayerMessages) {
+					p.sendMessage(s);
+				}
+				
+				p.sendMessage("");
+				
+			} else {
+				p.sendMessage("Thanks for installing CraftZ! Please take a look at the console for some important information on how to get started.");
 			}
 			
 		}

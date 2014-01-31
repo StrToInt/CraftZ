@@ -59,7 +59,7 @@ public class PlayerManager {
 		
 		p.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 60, 1000));
 		
-		if (isAlreadyInWorld(p)) {
+		if (wasAlreadyInWorld(p)) {
 			
 			try {
 				putPlayer(p, false);
@@ -242,7 +242,7 @@ public class PlayerManager {
 			
 			
 			
-			if (data.bonesBroken && !p.hasPotionEffect(PotionEffectType.SLOW))
+			if (data.bonesBroken)
 				p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 40, 2), true);
 			
 		}
@@ -266,9 +266,12 @@ public class PlayerManager {
 	
 	
 	public static boolean isInsideOfLobby(Player p) {
+		
 		Location lobby = getLobby();
 		int radius = ConfigManager.getConfig("config").getInt("Config.world.lobby.radius");
-		return lobby.distance(p.getLocation()) <= radius;
+		
+		return p.getWorld().getName().equals(CraftZ.worldName()) && lobby.distance(p.getLocation()) <= radius;
+		
 	}
 	
 	
@@ -278,6 +281,8 @@ public class PlayerManager {
 	public static Location getLobby() {
 		
 		Location lobby = CraftZ.world().getSpawnLocation();
+		String w = ConfigManager.getConfig("config").getString("Config.world.lobby.world");
+		if (w != null) lobby.setWorld(Bukkit.getWorld(w));
 		lobby.setX(ConfigManager.getConfig("config").getDouble("Config.world.lobby.x"));
 		lobby.setY(ConfigManager.getConfig("config").getDouble("Config.world.lobby.y"));
 		lobby.setZ(ConfigManager.getConfig("config").getDouble("Config.world.lobby.z"));
@@ -290,7 +295,7 @@ public class PlayerManager {
 	
 	
 	
-	public static boolean isAlreadyInWorld(Player p) {
+	public static boolean wasAlreadyInWorld(Player p) {
 		return getConfig().contains("Data.players." + p.getName());
 	}
 	

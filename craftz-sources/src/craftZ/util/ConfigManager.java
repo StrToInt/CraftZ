@@ -31,7 +31,7 @@ public class ConfigManager {
 	}
 	
 	public static void newConfig(String name, JavaPlugin plugin, Map<String, Object> defaults) {
-		newConfig(name, new ConfigData(new File(plugin.getDataFolder(), name)), defaults);
+		newConfig(name, new ConfigData(new File(plugin.getDataFolder(), name + ".yml")), defaults);
 	}
 	
 	
