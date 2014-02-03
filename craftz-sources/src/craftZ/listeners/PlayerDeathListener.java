@@ -1,13 +1,11 @@
 package craftZ.listeners;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
@@ -71,7 +69,7 @@ public class PlayerDeathListener implements Listener {
 				p.setFoodLevel(20);
 				p.setVelocity(new Vector());
 				p.getInventory().clear();
-				p.getInventory().setArmorContents(new ItemStack[] { null, null, null, null });
+				p.getInventory().setArmorContents(null);
 				
 				p.teleport(PlayerManager.getLobby());
 				

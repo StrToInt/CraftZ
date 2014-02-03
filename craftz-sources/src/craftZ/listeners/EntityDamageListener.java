@@ -20,6 +20,13 @@ public class EntityDamageListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onEntityDamage(EntityDamageEvent event) {
 		
+		if (event.getEntityType() == EntityType.PLAYER && PlayerManager.isInsideOfLobby((Player) event.getEntity())) {
+			event.setCancelled(true);
+			return;
+		}
+		
+		
+		
 		if (event.getEntity().getWorld().getName().equals(CraftZ.worldName())) {
 			
 			if (event.getEntityType() == EntityType.ZOMBIE && event.getCause() == DamageCause.FIRE_TICK) {

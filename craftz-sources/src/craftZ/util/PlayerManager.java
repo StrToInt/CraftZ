@@ -57,6 +57,12 @@ public class PlayerManager {
 	
 	public static void loadPlayer(Player p) {
 		
+		if (players.containsKey(p.getName())) {
+			return;
+		}
+		
+		
+		
 		p.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 60, 1000));
 		
 		if (wasAlreadyInWorld(p)) {
@@ -249,7 +255,16 @@ public class PlayerManager {
 		
 		
 		
-		for (String pn : toRemove) players.remove(pn);
+		for (String pn : toRemove) {
+			
+			Player p = Bukkit.getPlayer(pn);
+			if (p != null) savePlayerToConfig(p);
+			
+			ScoreboardHelper.removePlayer(pn);
+			
+			players.remove(pn);
+			
+		}
 		
 	}
 	
@@ -270,7 +285,7 @@ public class PlayerManager {
 		Location lobby = getLobby();
 		int radius = ConfigManager.getConfig("config").getInt("Config.world.lobby.radius");
 		
-		return p.getWorld().getName().equals(CraftZ.worldName()) && lobby.distance(p.getLocation()) <= radius;
+		return p.getWorld().getName().equals(lobby.getWorld().getName()) && lobby.distance(p.getLocation()) <= radius;
 		
 	}
 	

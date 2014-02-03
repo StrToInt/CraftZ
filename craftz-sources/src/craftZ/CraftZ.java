@@ -305,10 +305,17 @@ public class CraftZ extends JavaPlugin {
 					
 					Player p = (Player) sender;
 					
-					if (p.hasPermission("craftz.spawn"))
-						if (PlayerManager.isInsideOfLobby(p)) PlayerManager.loadPlayer(p);
-					else
+					if (p.hasPermission("craftz.spawn")) {
+						
+						if (PlayerManager.isInsideOfLobby(p)) {
+							PlayerManager.loadPlayer(p);
+						} else {
+							p.sendMessage(ChatColor.DARK_RED + getMsg("Messages.errors.not-in-lobby"));
+						}
+						
+					} else {
 						p.sendMessage(noPerms);
+					}
 					
 					return true;
 					
@@ -333,7 +340,7 @@ public class CraftZ extends JavaPlugin {
 						ConfigManager.getConfig("config").set("Config.world.lobby.x", x);
 						ConfigManager.getConfig("config").set("Config.world.lobby.y", y);
 						ConfigManager.getConfig("config").set("Config.world.lobby.z", z);
-						saveConfig();
+						ConfigManager.saveConfig("config");
 						
 						p.sendMessage(ChatColor.AQUA + getMsg("Messages.cmd.setlobby"));
 						
@@ -472,6 +479,7 @@ public class CraftZ extends JavaPlugin {
 			def_config.put("Config.world.lobby.x", 0);
 			def_config.put("Config.world.lobby.y", 64);
 			def_config.put("Config.world.lobby.z", 0);
+			def_config.put("Config.world.lobby.world", "world");
 			def_config.put("Config.world.real-time", true);
 			def_config.put("Config.world.world-border.enable", true);
 			def_config.put("Config.world.world-border.radius", 400);
@@ -617,6 +625,7 @@ public class CraftZ extends JavaPlugin {
 			def_messages.put("Messages.errors.tooFewArguments", "Too few arguments given.");
 			def_messages.put("Messages.errors.sign-not-complete", "The sign is not complete.");
 			def_messages.put("Messages.errors.not-enough-permissions", "You don't have the required permission to do this.");
+			def_messages.put("Messages.errors.not-in-lobby", "You are too far away from the lobby.");
 			
 		ConfigManager.newConfig("messages", i, def_messages);
 		ConfigManager.getConfig("messages").options().header(
