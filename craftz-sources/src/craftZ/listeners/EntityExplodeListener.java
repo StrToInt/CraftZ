@@ -21,7 +21,7 @@ public class EntityExplodeListener implements Listener {
 		
 		if (event.getLocation().getWorld().getName().equals(CraftZ.worldName())) {
 			
-			if (event.getEntityType() == EntityType.PRIMED_TNT) {
+			if (event.getEntity() != null && event.getEntityType() == EntityType.PRIMED_TNT) {
 				
 				event.setCancelled(true);
 				

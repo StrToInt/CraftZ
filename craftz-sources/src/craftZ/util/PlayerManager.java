@@ -11,6 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.Biome;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -200,16 +201,24 @@ public class PlayerManager {
 			
 			
 			
-			if (tickID % 1200 == 0) {
+			if (ConfigManager.getConfig("config").getBoolean("Config.players.medical.thirst.enable")) {
 				
-				if (data.thirst > 0) {
-					data.thirst--;
-					p.setLevel(data.thirst);
-				} else {
-					p.damage(2);
+				Biome biome = p.getLocation().getBlock().getBiome();
+				boolean desert = biome == Biome.DESERT || biome == Biome.DESERT_HILLS || biome == Biome.DESERT_MOUNTAINS;
+				
+				if (tickID % (desert ? ConfigManager.getConfig("config").getInt("Config.players.medical.thirst.ticks-desert")
+						: ConfigManager.getConfig("config").getInt("Config.players.medical.thirst.ticks-normal")) == 0) {
+					
+					if (data.thirst > 0) {
+						data.thirst--;
+						p.setLevel(data.thirst);
+					} else {
+						p.damage(2);
+					}
+					
+					data.minutesSurvived++;
+					
 				}
-				
-				data.minutesSurvived++;
 				
 			}
 			

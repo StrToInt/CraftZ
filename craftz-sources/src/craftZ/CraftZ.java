@@ -520,6 +520,9 @@ public class CraftZ extends JavaPlugin {
 				def_config.put("Config.players.medical.bonebreak.enable", true);
 				def_config.put("Config.players.medical.bonebreak.height", 6);
 				def_config.put("Config.players.medical.bonebreak.heal-with-blazerod", true);
+				def_config.put("Config.players.medical.thirst.enable", true);
+				def_config.put("Config.players.medical.thirst.ticks-normal", 1200);
+				def_config.put("Config.players.medical.thirst.ticks-desert", 800);
 			
 			// MOBS
 			def_config.put("Config.mobs.blood-particles-when-damaged", true);
@@ -708,7 +711,7 @@ public class CraftZ extends JavaPlugin {
 			};
 			def_loot.put("Loot.lists.medical", value_lists_medical);
 			
-		ConfigManager.newConfig("loot", i, def_messages);
+		ConfigManager.newConfig("loot", i, def_loot);
 		ConfigManager.getConfig("loot").options().header(
 				  "++================================================++\n"
 		 		+ "|| Loot setup for the CraftZ plugin by JangoBrick ||\n"
