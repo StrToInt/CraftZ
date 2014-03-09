@@ -2,14 +2,12 @@ package craftZ.util;
 
 import java.util.List;
 
-
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import craftZ.CraftZ;
 
 public class ItemRenamer {
 	

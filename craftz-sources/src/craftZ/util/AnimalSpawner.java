@@ -8,8 +8,6 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 
-import craftZ.CraftZ;
-
 
 public class AnimalSpawner {
 	

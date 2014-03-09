@@ -156,9 +156,17 @@ public class SignChangeListener implements Listener {
 						}
 						
 						int chestLocY = 0;
+						String[] l3spl = line3.split(":");
+						String l3y = l3spl[0];
+						String l3f = l3spl.length > 1 ? l3spl[1] : "n";
+						if (!l3f.equalsIgnoreCase("n") && !l3f.equalsIgnoreCase("s") && !l3f.equalsIgnoreCase("e") && !l3f.equalsIgnoreCase("w")) {
+							p.sendMessage(ChatColor.RED + CraftZ.getMsg("Messages.errors.sign-facing-wrong"));
+							block.breakNaturally();
+							return;
+						}
 						
 						try {
-							chestLocY = Integer.valueOf(line3);
+							chestLocY = Integer.valueOf(l3y);
 						} catch(NumberFormatException ex) {
 							p.sendMessage(signNotComplete);
 							block.breakNaturally();
@@ -184,6 +192,7 @@ public class SignChangeListener implements Listener {
 						WorldData.get().set(path + ".coords.x", signLocX);
 						WorldData.get().set(path + ".coords.y", chestLocY);
 						WorldData.get().set(path + ".coords.z", signLocZ);
+						WorldData.get().set(path + ".face", l3f);
 						
 						WorldData.get().set(path + ".list", lootList);
 						

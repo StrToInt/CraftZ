@@ -1,6 +1,7 @@
 package craftZ.listeners;
 
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -9,6 +10,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 
 import craftZ.CraftZ;
 import craftZ.util.ConfigManager;
+import craftZ.util.ZombieSpawner;
 
 
 public class CreatureSpawnListener implements Listener {
@@ -47,9 +49,13 @@ public class CreatureSpawnListener implements Listener {
 			
 			
 			
-			if (eventCreatureType == EntityType.ZOMBIE)
-				if (spawnReason != SpawnReason.CUSTOM && spawnReason != SpawnReason.SPAWNER_EGG)
+			if (eventCreatureType == EntityType.ZOMBIE) {
+				if (spawnReason != SpawnReason.CUSTOM && spawnReason != SpawnReason.SPAWNER_EGG) {
 					event.setCancelled(true);
+				} else {
+					ZombieSpawner.equipZombie((Zombie) event.getEntity());
+				}
+			}
 		
 		}
 		

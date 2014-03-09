@@ -1,7 +1,10 @@
 package craftZ.util;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Zombie;
 
 import craftZ.CraftZ;
 
@@ -32,7 +35,7 @@ public class PlayerVisibilityBar {
 		}
 		
 		if (p.isSleeping()) {
-			visibility = 0.0F;
+			visibility /= 4;
 		}
 		
 		
@@ -42,10 +45,21 @@ public class PlayerVisibilityBar {
 			else
 				visibility = 0.0F;
 		}
-			
-			
-			
+		
+		
+		
 		p.setExp(visibility);
+		
+		
+		// TODO Get this to work, Bukkit!
+//		int radius = (int) (visibility * 50);
+//		for (Entity ent : p.getNearbyEntities(radius, radius, radius)) {
+//			
+//			if (ent instanceof Zombie && !(((Zombie) ent).getTarget() instanceof Player)) {
+//				((Zombie) ent).setTarget(p);
+//			}
+//			
+//		}
 		
 	}
 	

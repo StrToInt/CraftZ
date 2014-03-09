@@ -6,13 +6,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import craftZ.CraftZ;
 import craftZ.util.ConfigManager;
 import craftZ.util.DeadPlayer;
 import craftZ.util.PlayerManager;
+
 
 public class PlayerDeathListener implements Listener {
 	

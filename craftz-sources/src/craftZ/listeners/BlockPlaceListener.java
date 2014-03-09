@@ -1,6 +1,5 @@
 package craftZ.listeners;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -25,9 +24,6 @@ public class BlockPlaceListener implements Listener {
 				event.setCancelled(false);
 				return;
 			}
-			
-			if (event.isCancelled())
-				event.getPlayer().sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.errors.not-enough-permissions"));
 		
 		}
 		

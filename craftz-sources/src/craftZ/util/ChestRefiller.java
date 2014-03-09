@@ -14,11 +14,13 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
 import craftZ.CraftZ;
+
 
 public class ChestRefiller {
 	
@@ -56,7 +58,7 @@ public class ChestRefiller {
 		
 		Block block = rflLoc.getBlock();
 		
-		if (block.getType() == Material.CHEST && !drop)
+		if (block.getState() instanceof Chest && !drop)
 			((Chest) block.getState()).getBlockInventory().clear();
 		
 		block.setType(Material.AIR);
@@ -74,7 +76,8 @@ public class ChestRefiller {
 		int rflLocX = chestSec.getInt("coords.x");
 		int rflLocY = chestSec.getInt("coords.y");
 		int rflLocZ = chestSec.getInt("coords.z");
-		World rflWorld = Bukkit.getWorld(ConfigManager.getConfig("config").getString("Config.world.name"));
+		String sface = chestSec.getString("face", "n");
+		World rflWorld = CraftZ.world();
 		Location rflLoc = new Location(rflWorld, rflLocX, rflLocY, rflLocZ);
 		
 		String lootList = chestSec.getString("list");
@@ -84,6 +87,10 @@ public class ChestRefiller {
 			Block block = rflLoc.getBlock();
 			block.setType(Material.CHEST);
 			Chest chest = (Chest) block.getState();
+			
+			BlockFace face = sface.equalsIgnoreCase("s") ? BlockFace.SOUTH : (sface.equalsIgnoreCase("e") ? BlockFace.EAST
+					: (sface.equalsIgnoreCase("w") ? BlockFace.WEST : BlockFace.NORTH));
+			((org.bukkit.material.Chest) chest.getData()).setFacingDirection(face);
 			
 			List<String> bItems = ConfigManager.getConfig("loot").getStringList("Loot.lists." + lootList);
 			if (bItems == null || bItems.isEmpty()) return;

@@ -575,7 +575,7 @@ public class CraftZ extends JavaPlugin {
 			// ITEMNAMES
 			def_config.put("Config.change-item-names.enable", true);
 			def_config.put("Config.change-item-names.names",
-					new String[] { "339=Bandage", "351:1=Blood Bag", "351:10=Antibiotics", "368=Grenade", "369=Morphine Auto Injector" });
+					new String[] { "339=Bandage", "351:1=Blood Bag", "351:10=Antibiotics", "359=Toolbox", "368=Grenade", "369=Morphine Auto Injector" });
 			
 		ConfigManager.newConfig("config", i, def_config);
 		ConfigManager.getConfig("config").options().header(

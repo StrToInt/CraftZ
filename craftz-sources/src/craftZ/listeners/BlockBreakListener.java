@@ -29,8 +29,14 @@ public class BlockBreakListener implements Listener {
 			if (!ConfigManager.getConfig("config").getBoolean("Config.players.interact.block-breaking")) {
 				
 				if (!p.hasPermission("craftz.build")) {
-					event.setCancelled(true);
-					return;
+					
+					if (!ConfigManager.getConfig("config").getBoolean("Config.players.interact.allow-spiderweb-placing")
+							|| event.getBlock().getType() != Material.WEB || p.getItemInHand() == null
+							|| p.getItemInHand().getType() != Material.SHEARS) {
+						event.setCancelled(true);
+						return;
+					}
+					
 				} else {
 					event.setExpToDrop(0);
 				}
