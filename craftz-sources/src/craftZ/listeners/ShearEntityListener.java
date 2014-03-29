@@ -14,7 +14,7 @@ public class ShearEntityListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerShearEntity(PlayerShearEntityEvent event) {
 		
-		if (event.getEntity().getWorld().getName().equals(CraftZ.worldName())) {
+		if (CraftZ.isWorld(event.getEntity().getWorld())) {
 			
 			if (!ConfigManager.getConfig("config").getBoolean("Config.animals.shearing") && !event.getPlayer().hasPermission("craftz.admin"))
 				event.setCancelled(true);

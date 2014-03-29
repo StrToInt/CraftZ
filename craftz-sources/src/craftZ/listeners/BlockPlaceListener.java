@@ -15,7 +15,7 @@ public class BlockPlaceListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockPlace(BlockPlaceEvent event) {
 		
-		if (event.getPlayer().getWorld().getName().equals(CraftZ.worldName())) {
+		if (CraftZ.isWorld(event.getPlayer().getWorld())) {
 			
 			if (!ConfigManager.getConfig("config").getBoolean("Config.players.interact.block-placing") && !event.getPlayer().hasPermission("craftz.build"))
 				event.setCancelled(true);

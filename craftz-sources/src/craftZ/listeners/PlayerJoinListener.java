@@ -18,7 +18,7 @@ public class PlayerJoinListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		
-		if (event.getPlayer().getWorld().getName().equals(CraftZ.worldName())) {
+		if (CraftZ.isWorld(event.getPlayer().getWorld())) {
 			
 			if (ConfigManager.getConfig("config").getBoolean("Config.chat.modify-join-and-quit-messages"))
 				event.setJoinMessage(ChatColor.RED + "Player " + event.getPlayer().getDisplayName() + " connected.");

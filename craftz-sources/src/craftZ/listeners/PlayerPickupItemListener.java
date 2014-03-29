@@ -15,7 +15,7 @@ public class PlayerPickupItemListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerPickupItem(PlayerPickupItemEvent event) {
 		
-		if (event.getPlayer().getWorld().getName().equals(CraftZ.worldName())) {
+		if (CraftZ.isWorld(event.getPlayer().getWorld())) {
 			ItemRenamer.convertPlayerInventory(event.getPlayer(),
 					ConfigManager.getConfig("config").getStringList("Config.change-item-names.names"));
 		}

@@ -24,7 +24,7 @@ public class EntityDamageByEntityListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
 		
-		if (event.getEntity().getWorld().getName().equals(CraftZ.worldName())) {
+		if (CraftZ.isWorld(event.getEntity().getWorld())) {
 			
 			if (event.getEntity() instanceof Player && PlayerManager.isInsideOfLobby((Player) event.getEntity())) {
 				event.setCancelled(true);

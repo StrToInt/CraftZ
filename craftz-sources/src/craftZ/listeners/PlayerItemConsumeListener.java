@@ -17,7 +17,7 @@ public class PlayerItemConsumeListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerItemConsume(PlayerItemConsumeEvent event) {
 		
-		if (event.getPlayer().getWorld().getName().equals(CraftZ.worldName())) {
+		if (CraftZ.isWorld(event.getPlayer().getWorld())) {
 			
 			Player p = event.getPlayer();
 			ItemStack item = event.getItem();

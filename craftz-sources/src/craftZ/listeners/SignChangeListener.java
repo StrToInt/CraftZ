@@ -22,7 +22,7 @@ public class SignChangeListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onSignChange(SignChangeEvent event) {
 		
-		if (event.getBlock().getWorld().getName().equals(CraftZ.worldName())) {
+		if (CraftZ.isWorld(event.getBlock().getWorld())) {
 			
 			String line1 = event.getLine(0);
 			String line2 = event.getLine(1);

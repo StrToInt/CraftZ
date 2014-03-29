@@ -19,7 +19,7 @@ public class PlayerDeathListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerDeath(PlayerDeathEvent event) {
 		
-		if (event.getEntity().getWorld().getName().equals(CraftZ.worldName())) {
+		if (CraftZ.isWorld(event.getEntity().getWorld())) {
 			
 			final Player p = event.getEntity();
 			

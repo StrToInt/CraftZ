@@ -19,7 +19,7 @@ public class EntityExplodeListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onEntityExplode(EntityExplodeEvent event) {
 		
-		if (event.getLocation().getWorld().getName().equals(CraftZ.worldName())) {
+		if (CraftZ.isWorld(event.getLocation().getWorld())) {
 			
 			if (event.getEntity() != null && event.getEntityType() == EntityType.PRIMED_TNT) {
 				

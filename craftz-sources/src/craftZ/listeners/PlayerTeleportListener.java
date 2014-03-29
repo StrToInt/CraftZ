@@ -14,7 +14,7 @@ public class PlayerTeleportListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerTeleport(PlayerTeleportEvent event) {
 		
-		if (event.getTo().getWorld().getName().equals(CraftZ.worldName())) {
+		if (CraftZ.isWorld(event.getTo().getWorld())) {
 			
 			if (event.getCause() == TeleportCause.ENDER_PEARL)
 				event.setCancelled(true);

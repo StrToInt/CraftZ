@@ -27,7 +27,7 @@ public class EntityDamageListener implements Listener {
 		
 		
 		
-		if (event.getEntity().getWorld().getName().equals(CraftZ.worldName())) {
+		if (CraftZ.isWorld(event.getEntity().getWorld())) {
 			
 			if (event.getEntityType() == EntityType.ZOMBIE && event.getCause() == DamageCause.FIRE_TICK) {
 				event.setCancelled(true);

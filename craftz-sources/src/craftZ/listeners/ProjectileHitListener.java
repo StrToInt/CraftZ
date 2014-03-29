@@ -20,7 +20,7 @@ public class ProjectileHitListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onProjectileHit(ProjectileHitEvent event) {
 		
-		if (event.getEntity().getWorld().getName().equals(CraftZ.worldName())) {
+		if (CraftZ.isWorld(event.getEntity().getWorld())) {
 			
 			event.getEntity().remove();
 			

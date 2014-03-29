@@ -13,7 +13,7 @@ public class SheepDyeWoolListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onSheepDyeWool(SheepDyeWoolEvent event) {
 		
-		if (event.getEntity().getWorld().getName().equals(CraftZ.worldName())) {
+		if (CraftZ.isWorld(event.getEntity().getWorld())) {
 			event.setCancelled(true);
 		}
 		

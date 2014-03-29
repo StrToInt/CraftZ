@@ -20,7 +20,7 @@ public class PlayerMoveListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerMove(PlayerMoveEvent event) {
 		
-		if (event.getPlayer().getWorld().getName().equals(CraftZ.worldName())) {
+		if (CraftZ.isWorld(event.getPlayer().getWorld())) {
 			
 			Player p = event.getPlayer();
 			

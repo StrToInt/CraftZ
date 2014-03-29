@@ -13,7 +13,7 @@ public class InventoryClickListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onInventoryClick(InventoryClickEvent event) {
 		
-		if (event.getWhoClicked().getWorld().getName().equals(CraftZ.worldName())) {
+		if (CraftZ.isWorld(event.getWhoClicked().getWorld())) {
 			
 			
 			

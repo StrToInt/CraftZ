@@ -15,7 +15,7 @@ public class BlockSpreadListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockSpread(BlockSpreadEvent event) {
 		
-		if (event.getBlock().getWorld().getName().equals(CraftZ.worldName())) {
+		if (CraftZ.isWorld(event.getBlock().getWorld())) {
 			
 			if (event.getBlock().getType() == Material.DIRT && !ConfigManager.getConfig("config").getBoolean("Config.world.world-changing.allow-grass-grow"))
 				event.setCancelled(true);

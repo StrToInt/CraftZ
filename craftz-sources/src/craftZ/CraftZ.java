@@ -560,6 +560,7 @@ public class CraftZ extends JavaPlugin {
 			def_config.put("Config.chat.modify-join-and-quit-messages", true);
 			def_config.put("Config.chat.modify-player-messages", false);
 			def_config.put("Config.chat.modify-death-messages", true);
+			def_config.put("Config.chat.separate-craftz-chat", true);
 			
 				// RANGE
 				def_config.put("Config.chat.ranged.enable", false);
@@ -747,6 +748,14 @@ public class CraftZ extends JavaPlugin {
 	
 	public static World world() {
 		return Bukkit.getWorld(worldName());
+	}
+	
+	public static boolean isWorld(String worldName) {
+		return worldName.equals(worldName());
+	}
+	
+	public static boolean isWorld(World world) {
+		return world.getName().equals(worldName());
 	}
 	
 }

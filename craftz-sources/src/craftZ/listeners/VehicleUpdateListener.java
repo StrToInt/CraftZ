@@ -25,7 +25,7 @@ public class VehicleUpdateListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onVehicleUpdate(VehicleUpdateEvent event) {
 		
-		if (event.getVehicle().getWorld().getName().equals(CraftZ.worldName())) {
+		if (CraftZ.isWorld(event.getVehicle().getWorld())) {
 			
 			if (ConfigManager.getConfig("config").getBoolean("Config.vehicles.enable")) {
 				

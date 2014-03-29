@@ -366,7 +366,7 @@ public class PlayerManager {
 	
 	
 	public static boolean isNotPlaying(String p) {
-		return Bukkit.getPlayer(p) == null || !Bukkit.getPlayer(p).getWorld().getName().equals(CraftZ.worldName())
+		return Bukkit.getPlayer(p) == null || !CraftZ.isWorld(Bukkit.getPlayer(p).getWorld())
 				|| isInsideOfLobby(Bukkit.getPlayer(p)) || !players.containsKey(p);
 	}
 	

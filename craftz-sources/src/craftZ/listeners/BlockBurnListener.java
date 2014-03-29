@@ -14,7 +14,7 @@ public class BlockBurnListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockBurn(BlockBurnEvent event) {
 		
-		if (event.getBlock().getWorld().getName().equals(CraftZ.worldName())) {
+		if (CraftZ.isWorld(event.getBlock().getWorld())) {
 			if (!ConfigManager.getConfig("config").getBoolean("Config.world.world-changing.allow-burning"))
 				event.setCancelled(true);
 		}

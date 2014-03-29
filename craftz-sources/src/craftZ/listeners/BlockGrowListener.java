@@ -14,7 +14,7 @@ public class BlockGrowListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockGrow(BlockGrowEvent event) {
 		
-		if (event.getBlock().getWorld().getName().equals(CraftZ.worldName())) {
+		if (CraftZ.isWorld(event.getBlock().getWorld())) {
 			if (!ConfigManager.getConfig("config").getBoolean("Config.world.world-changing.allow-block-grow"))
 				event.setCancelled(true);
 		}

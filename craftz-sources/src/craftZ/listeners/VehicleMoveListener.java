@@ -13,7 +13,7 @@ public class VehicleMoveListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onVehicleBlockCollide(VehicleMoveEvent event) {
 		
-		if (event.getFrom().getWorld().getName().equals(CraftZ.worldName())) {
+		if (CraftZ.isWorld(event.getFrom().getWorld())) {
 			
 			
 		

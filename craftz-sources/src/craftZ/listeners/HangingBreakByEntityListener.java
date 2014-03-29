@@ -16,7 +16,7 @@ public class HangingBreakByEntityListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onHangingBreakByEntity(HangingBreakByEntityEvent event) {
 		
-		if (event.getEntity().getWorld().getName().equals(CraftZ.worldName())) {
+		if (CraftZ.isWorld(event.getEntity().getWorld())) {
 			
 			if (event.getRemover().getType() == EntityType.PLAYER) {
 				

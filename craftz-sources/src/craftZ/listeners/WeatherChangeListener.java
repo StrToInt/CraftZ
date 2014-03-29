@@ -14,7 +14,7 @@ public class WeatherChangeListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onWeatherChange(WeatherChangeEvent event) {
 		
-		if (event.getWorld().getName().equals(CraftZ.worldName())) {
+		if (CraftZ.isWorld(event.getWorld())) {
 			
 			if (!ConfigManager.getConfig("config").getBoolean("Config.world.weather.allowWeatherChanging"))
 				event.setCancelled(true);

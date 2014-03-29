@@ -31,7 +31,7 @@ public class CreatureSpawnListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onCreatureSpawn(CreatureSpawnEvent event) {
 		
-		if (event.getLocation().getWorld().getName().equals(CraftZ.worldName())) {
+		if (CraftZ.isWorld(event.getLocation().getWorld())) {
 			
 			EntityType eventCreatureType = event.getEntityType();
 			SpawnReason spawnReason = event.getSpawnReason();

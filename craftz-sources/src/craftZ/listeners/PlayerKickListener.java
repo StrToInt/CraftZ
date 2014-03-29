@@ -16,7 +16,7 @@ public class PlayerKickListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerKick(PlayerKickEvent event) {
 		
-		if (event.getPlayer().getWorld().getName().equals(CraftZ.worldName())) {
+		if (CraftZ.isWorld(event.getPlayer().getWorld())) {
 			
 			if (!event.getReason().startsWith("[CraftZ]")) {
 				PlayerManager.savePlayerToConfig(event.getPlayer());

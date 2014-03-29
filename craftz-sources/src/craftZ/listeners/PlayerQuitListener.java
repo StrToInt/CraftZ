@@ -16,7 +16,7 @@ public class PlayerQuitListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		
-		if (event.getPlayer().getWorld().getName().equals(CraftZ.worldName())) {
+		if (CraftZ.isWorld(event.getPlayer().getWorld())) {
 			
 			if (ConfigManager.getConfig("config").getBoolean("Config.chat.modify-join-and-quit-messages"))
 				event.setQuitMessage(ChatColor.RED + "Player " + event.getPlayer().getDisplayName() + " disconnected.");

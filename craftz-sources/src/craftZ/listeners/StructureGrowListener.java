@@ -15,7 +15,7 @@ public class StructureGrowListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onStructureGrow(StructureGrowEvent event) {
 		
-		if (event.getWorld().getName().equals(CraftZ.worldName())) {
+		if (CraftZ.isWorld(event.getWorld())) {
 			
 			if (!ConfigManager.getConfig("config").getBoolean("Config.world.world-changing.allow-tree-grow")) {
 				

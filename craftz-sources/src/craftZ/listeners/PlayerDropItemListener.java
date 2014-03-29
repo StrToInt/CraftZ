@@ -1,7 +1,6 @@
 package craftZ.listeners;
 
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -16,8 +15,7 @@ public class PlayerDropItemListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerDropItem(PlayerDropItemEvent event) {
 		
-		World eventWorld = event.getPlayer().getWorld();
-		if (eventWorld.getName().equalsIgnoreCase(CraftZ.worldName())) {
+		if (CraftZ.isWorld(event.getPlayer().getWorld())) {
 			
 			ItemStack eventItem = event.getItemDrop().getItemStack();
 			if (eventItem.getType() == Material.EYE_OF_ENDER)

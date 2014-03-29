@@ -24,7 +24,7 @@ public class EntityDeathListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onEntityDeath(EntityDeathEvent event) {
 		
-		if (event.getEntity().getWorld().getName().equals(CraftZ.worldName())) {
+		if (CraftZ.isWorld(event.getEntity().getWorld())) {
 		
 			LivingEntity eventEntity = event.getEntity();
 			EntityType eventEntityType = eventEntity.getType();

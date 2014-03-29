@@ -16,7 +16,7 @@ public class BlockIgniteListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onBlockIgnite(BlockIgniteEvent event) {
 		
-		if (event.getBlock().getWorld().getName().equalsIgnoreCase(CraftZ.worldName())) {
+		if (CraftZ.isWorld(event.getBlock().getWorld())) {
 			
 			if (!ConfigManager.getConfig("config").getBoolean("Config.world.world-changing.allow-burning")) {
 				

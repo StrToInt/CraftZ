@@ -17,7 +17,7 @@ public class InventoryCloseListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onInventoryClose(InventoryCloseEvent event) {
 		
-		if (event.getPlayer().getWorld().getName().equals(CraftZ.worldName())) {
+		if (CraftZ.isWorld(event.getPlayer().getWorld())) {
 			
 			if (event.getInventory().getHolder() instanceof Chest) {
 				
