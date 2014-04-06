@@ -38,6 +38,7 @@ public class ItemRenamer {
 	
 	
 	
+	@SuppressWarnings("deprecation")
 	public static String getNameFromList(ItemStack input, List<String> entries) {
 		
 		for (String entry : entries) {
@@ -45,23 +46,25 @@ public class ItemRenamer {
 			if (entry.contains("=")) {
 				
 				String idStr = entry.split("=")[0];
-				int id = 0;
-				byte meta = 0;
+				Material mat = Material.AIR;
+				short data = 0;
 				
 				try {
 					
 					if (idStr.contains(":")) {
-						id = new Integer(idStr.split(":")[0]);
-						meta = new Byte(idStr.split(":")[1]);
+						Material mat1 = Material.matchMaterial(idStr.split(":")[0]);
+						mat = mat1 != null ? mat1 : Material.getMaterial(Integer.parseInt(idStr.split(":")[0]));
+						data = Short.parseShort(idStr.split(":")[1]);
 					} else {
-						id = new Integer(idStr);
+						Material mat1 = Material.matchMaterial(idStr);
+						mat = mat1 != null ? mat1 : Material.getMaterial(Integer.parseInt(idStr));
 					}
 					
 				} catch (NumberFormatException ex) {
 					continue;
 				}
 				
-				if (input.getTypeId() == id && input.getData().getData() == meta)
+				if (input.getType() == mat && input.getDurability() == data)
 					return entry.split("=")[1];
 				
 			}

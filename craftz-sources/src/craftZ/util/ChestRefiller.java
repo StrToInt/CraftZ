@@ -100,11 +100,11 @@ public class ChestRefiller {
 				
 				String str = bItems.get(e);
 				
-				if (str.contains("x")) {
+				if (str.contains("*")) {
 					
 					try {
-						for (int i=0; i<=Integer.parseInt(str.split("x")[0]); i++)
-							items.add(str.split("x")[1]);
+						for (int i=0; i<=Integer.parseInt(str.split("*")[0]); i++)
+							items.add(str.split("*")[1]);
 					} catch(NumberFormatException ex) {
 						return;
 					}

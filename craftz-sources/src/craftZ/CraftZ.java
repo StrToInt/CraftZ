@@ -476,10 +476,10 @@ public class CraftZ extends JavaPlugin {
 			// WORLD
 			def_config.put("Config.world.name", "world");
 			def_config.put("Config.world.lobby.radius", 20);
+			def_config.put("Config.world.lobby.world", "world");
 			def_config.put("Config.world.lobby.x", 0);
 			def_config.put("Config.world.lobby.y", 64);
 			def_config.put("Config.world.lobby.z", 0);
-			def_config.put("Config.world.lobby.world", "world");
 			def_config.put("Config.world.real-time", true);
 			def_config.put("Config.world.world-border.enable", true);
 			def_config.put("Config.world.world-border.radius", 400);
@@ -532,7 +532,7 @@ public class CraftZ extends JavaPlugin {
 					// DROPS
 					def_config.put("Config.mobs.zombies.enable-drops", true);
 					def_config.put("Config.mobs.zombies.drops.chance", 0.3);
-					def_config.put("Config.mobs.zombies.drops.items", new String[] { "262", "2x367" });
+					def_config.put("Config.mobs.zombies.drops.items", new String[] { "arrow", "2*rotten_flesh" }); // new String[] { "262", "2*367" }
 					
 					// SPAWNING
 					def_config.put("Config.mobs.zombies.spawning.interval", 40);
@@ -570,13 +570,15 @@ public class CraftZ extends JavaPlugin {
 			def_config.put("Config.vehicles.enable", false);
 			def_config.put("Config.vehicles.speed", 5.0);
 			def_config.put("Config.vehicles.speed-street-multiplier", 1.6);
-			def_config.put("Config.vehicles.speed-street-blocks", new String[] { "35:7", "35", "35:15" });
-			def_config.put("Config.vehicles.street-border-blocks", new String[] { "43", "44" });
+			def_config.put("Config.vehicles.speed-street-blocks", new String[] { "wool:7", "wool", "wool:15" });
+			def_config.put("Config.vehicles.street-border-blocks", new String[] { "double_step", "step" });
 			
 			// ITEMNAMES
 			def_config.put("Config.change-item-names.enable", true);
-			def_config.put("Config.change-item-names.names",
-					new String[] { "339=Bandage", "351:1=Blood Bag", "351:10=Antibiotics", "359=Toolbox", "368=Grenade", "369=Morphine Auto Injector" });
+			def_config.put("Config.change-item-names.names", new String[] {
+					"paper=Bandage", "ink_sack:1=Blood Bag", "ink_sack:10=Antibiotics", "shears=Toolbox", "ender_pearl=Grenade",
+					"blaze_rod=Morphine Auto Injector"
+			});
 			
 		ConfigManager.newConfig("config", i, def_config);
 		ConfigManager.getConfig("config").options().header(
@@ -653,71 +655,100 @@ public class CraftZ extends JavaPlugin {
 			// LISTS
 			
 			String[] value_lists_all = {
-				"30", "46", "2x39", "2x40", "258", "259", "2x260", "261", "4x262", "267", "2x268", "272", "3x281", "2x282",
-				"2x296", "297",	"298", "299", "300", "301", "302", "303", "304", "305", "306", "307", "308", "309", "339",
-				"346", "353", "357", "360", "368", "369", "374", "391", "393", "400", "373:5", "373:16389"
+//				"30", "46", "2x39", "2x40", "258", "259", "2x260", "261", "4x262", "267", "2x268", "272", "3x281", "2x282",
+//				"2x296", "297",	"298", "299", "300", "301", "302", "303", "304", "305", "306", "307", "308", "309", "339",
+//				"346", "353", "357", "360", "368", "369", "374", "391", "393", "400", "373:5", "373:16389"
+				"web", "tnt", "2*brown_mushroom", "2*red_mushroom", "iron_axe", "flint_and_steel", "2*apple", "bow",
+				"4*arrow", "iron_sword", "2*wood_sword", "stone_sword", "3*bowl", "2*mushroom_soup",
+				"2*wheat", "bread",	"leather_helmet", "leather_chestplate", "leather_leggings", "leather_boots", "chainmail_helmet",
+				"chainmail_chestplate", "chainmail_leggings", "chainmail_boots", "iron_helmet", "iron_chestplate", "iron_leggings", "iron_boots",
+				"paper", "sugar", "cookie", "melon", "ender_pearl", "blaze_rod", "glass_bottle", "carrot_item", "baked_potato",
+				"pumpkin_pie", "potion:5", "potion:16389"
 			};
 			def_loot.put("Loot.lists.all", value_lists_all);
 			
 			
 			
 			String[] value_lists_military = {
-				"30", "258", "261", "4x262", "2x268", "2x281", "2x282", "3x298", "3x299", "3x300", "3x301"
+//				"30", "258", "261", "4x262", "2x268", "2x281", "2x282", "3x298", "3x299", "3x300", "3x301"
+				"web", "iron_axe", "bow", "4*arrow", "2*wood_sword", "2*bowl", "2*mushroom_soup", "3*leather_helmet",
+				"3*leather_chestplate", "3*leather_leggings", "3*leather_boots"
 			};
 			def_loot.put("Loot.lists.military", value_lists_military);
 			
 			
 			
 			String[] value_lists_militaryEpic = {
-				"30", "46", "258", "261", "4x262", "267", "2x268", "272", "2x281", "282", "2x298", "2x299", "2x300",
-				"2x301", "302", "303", "304", "305", "306", "307", "308", "309", "368"
+//				"30", "46", "258", "261", "4x262", "267", "2x268", "272", "2x281", "282", "2x298", "2x299", "2x300",
+//				"2x301", "302", "303", "304", "305", "306", "307", "308", "309", "368"
+				"web", "tnt", "iron_axe", "bow", "4*arrow", "iron_sword", "2*wood_sword", "stone_sword", "2*bowl", "mushroom_soup",
+				"2*leather_helmet", "2*leather_chestplate", "2*leather_leggings", "2*leather_boots",
+				"chainmail_helmet", "chainmail_chestplate", "chainmail_leggings", "chainmail_boots",
+				"iron_helmet", "iron_chestplate", "iron_leggings", "iron_boots", "ender_pearl"
 			};
 			def_loot.put("Loot.lists.military-epic", value_lists_militaryEpic);
 			
 			
 			
 			String[] value_lists_civilian = {
-				"2x39", "2x40", "258", "259", "2x260", "2x262", "268", "2x281", "282", "296", "297", "298", "299",
-				"300", "301", "346", "357", "360", "369", "391", "393", "400"
+//				"2x39", "2x40", "258", "259", "2x260", "2x262", "268", "2x281", "282", "296", "297", "298", "299",
+//				"300", "301", "346", "357", "360", "369", "391", "393", "400"
+				"2*brown_mushroom", "2*red_mushroom", "iron_axe", "flint_and_steel", "2*apple", "2*arrow", "wood_sword", "2*bowl",
+				"mushroom_soup", "wheat", "bread", "leather_helmet", "leather_chestplate",
+				"leather_leggings", "leather_boots", "cookie", "melon", "blaze_rod", "carrot_item", "baked_potato", "pumpkin_pie"
 			};
 			def_loot.put("Loot.lists.civilian", value_lists_civilian);
 			
 			
 			
 			String[] value_lists_farms = {
-				"3x39", "3x40", "258", "259", "4x260", "261", "4x262", "2x268", "4x281", "2x282", "2x296", "2x297",
-				"298", "299", "300", "301", "346", "353", "357", "360", "374", "391", "393", "400"
+//				"3x39", "3x40", "258", "259", "4x260", "261", "4x262", "2x268", "4x281", "2x282", "2x296", "2x297",
+//				"298", "299", "300", "301", "346", "353", "357", "360", "374", "391", "393", "400"
+				"3*brown_mushroom", "3*red_mushroom", "iron_axe", "flint_and_steel", "4*apple", "bow", "4*arrow", "2*wood_sword",
+				"4*bowl", "2*mushroom_soup", "2*wheat", "2*bread", "leather_helmet", "leather_chestplate", "leather_leggings", "leather_boots",
+				"sugar", "cookie", "melon", "glass_bottle", "carrot_item", "baked_potato", "pumpkin_pie"
 			};
 			def_loot.put("Loot.lists.farms", value_lists_farms);
 			
 			
 			
 			String[] value_lists_industrial = {
-				"30", "4x262", "2x268", "296"
+//				"30", "4x262", "2x268", "296"
+				"web", "4*arrow", "2*wood_sword", "wheat"
 			};
 			def_loot.put("Loot.lists.industrial", value_lists_industrial);
 			
 			
 			
 			String[] value_lists_barracks = {
-				"2x39", "2x40", "260", "262", "268", "281"
+//				"2x39", "2x40", "260", "262", "268", "281"
+				"2*brown_mushroom", "2*red_mushroom", "apple", "arrow", "wood_sword", "bowl"
 			};
 			def_loot.put("Loot.lists.barracks", value_lists_barracks);
 			
 			
 			
 			String[] value_lists_medical = {
-				"2x260", "2x281", "2x282", "339", "2x351:1", "351:10", "2x353", "357", "2x369", "360", "374", "391",
-				"2x373:5", "373:16389"
+//				"2x260", "2x281", "2x282", "339", "2x351:1", "351:10", "2x353", "357", "2x369", "360", "374", "391",
+//				"2x373:5", "373:16389"
+				"2*apple", "2*bowl", "2*mushroom_soup", "paper", "2*ink_sack:1", "ink_sack:10", "2*sugar", "cookie", "2*blaze_rod", "melon",
+				"glass_bottle", "carrot_item", "2*potion:5", "potion:16389"
 			};
 			def_loot.put("Loot.lists.medical", value_lists_medical);
-			
+		
+		
+		
 		ConfigManager.newConfig("loot", i, def_loot);
 		ConfigManager.getConfig("loot").options().header(
 				  "++================================================++\n"
 		 		+ "|| Loot setup for the CraftZ plugin by JangoBrick ||\n"
 		 		+ "++================================================++"
 		);
+		
+		if (ConfigManager.getConfig("loot").contains("Messages")) {
+			ConfigManager.getConfig("loot").set("Messages", null);
+			ConfigManager.saveConfig("loot");
+		}
 		
 	}
 	

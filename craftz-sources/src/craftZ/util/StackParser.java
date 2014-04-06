@@ -1,16 +1,18 @@
 package craftZ.util;
 
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 public class StackParser {
 	
+	@SuppressWarnings("deprecation")
 	public static ItemStack fromString(String string, boolean withAmount) {
 		
-		int id = 0;
+		Material mat = Material.AIR;
 		short data = 0;
 		int amount = 1;
 		
-		String[] split = string.split("x");
+		String[] split = string.split("*");
 		String itemName;
 		if (split.length > 1) {
 			
@@ -23,22 +25,26 @@ public class StackParser {
 			itemName = split[0];
 		}
 		
+		
+		
 		if (itemName.contains(":")) {
 			
 			try {
-				id = Integer.parseInt(itemName.split(":")[0]);
+				Material mat1 = Material.matchMaterial(itemName.split(":")[0]);
+				mat = mat1 != null ? mat1 : Material.getMaterial(Integer.parseInt(itemName.split(":")[0]));
 				data = Short.parseShort(itemName.split(":")[1]);
-			} catch(NumberFormatException ex) { }
+			} catch(Exception ex) { }
 			
 		} else {
 			
 			try {
-				id = Integer.parseInt(itemName);
-			} catch(NumberFormatException ex) { }
+				Material mat1 = Material.matchMaterial(itemName);
+				mat = mat1 != null ? mat1 : Material.getMaterial(Integer.parseInt(itemName));
+			} catch(Exception ex) { }
 			
 		}
 		
-		return new ItemStack(id, amount, data);
+		return new ItemStack(mat, amount, data);
 		
 	}
 	
@@ -49,9 +55,9 @@ public class StackParser {
 	public static String toString(ItemStack stack, boolean withAmount) {
 		
 		if (stack == null)
-			return withAmount ? "0x0" : "0";
+			return "air";
 		
-		return (withAmount && stack.getAmount() > 1 ? stack.getAmount() + "x" : "") + stack.getTypeId()
+		return (withAmount && stack.getAmount() > 1 ? stack.getAmount() + "*" : "") + stack.getType().name().toLowerCase()
 				+ (stack.getDurability() != 0 ? ":" + stack.getDurability() : "");
 		
 	}
