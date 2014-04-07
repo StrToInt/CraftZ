@@ -12,18 +12,26 @@ public class StackParser {
 		short data = 0;
 		int amount = 1;
 		
-		String[] split = string.split("*");
+		String[] split = string.split("x", 2);
 		String itemName;
 		if (split.length > 1) {
 			
+			itemName = split[1];
+			
 			try {
 				amount = withAmount ? Integer.parseInt(split[0]) : 1;
-			} catch(NumberFormatException ex) { }
-			itemName = split[1];
+			} catch(NumberFormatException ex) {
+				itemName = split[0] + "x" + split[1];
+			}
 			
 		} else {
 			itemName = split[0];
 		}
+		
+		if (itemName.startsWith("'"))
+			itemName = itemName.substring(1);
+		if (itemName.endsWith("'"))
+			itemName = itemName.substring(0, itemName.length() - 1);
 		
 		
 		
@@ -44,6 +52,8 @@ public class StackParser {
 			
 		}
 		
+		
+		
 		return new ItemStack(mat, amount, data);
 		
 	}
@@ -57,7 +67,8 @@ public class StackParser {
 		if (stack == null)
 			return "air";
 		
-		return (withAmount && stack.getAmount() > 1 ? stack.getAmount() + "*" : "") + stack.getType().name().toLowerCase()
+		boolean a = withAmount && stack.getAmount() > 1;
+		return (a ? stack.getAmount() + "x" : "") + (a ? "'" : "") + stack.getType().name().toLowerCase() + (a ? "'" : "")
 				+ (stack.getDurability() != 0 ? ":" + stack.getDurability() : "");
 		
 	}
