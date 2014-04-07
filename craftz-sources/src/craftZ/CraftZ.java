@@ -561,6 +561,7 @@ public class CraftZ extends JavaPlugin {
 			def_config.put("Config.chat.modify-player-messages", false);
 			def_config.put("Config.chat.modify-death-messages", true);
 			def_config.put("Config.chat.separate-craftz-chat", true);
+			def_config.put("Config.chat.extended-error-messages", true);
 			
 				// RANGE
 				def_config.put("Config.chat.ranged.enable", false);
@@ -630,6 +631,7 @@ public class CraftZ extends JavaPlugin {
 			def_messages.put("Messages.errors.mustBePlayer", "You must be a player to use this command.");
 			def_messages.put("Messages.errors.tooFewArguments", "Too few arguments given.");
 			def_messages.put("Messages.errors.sign-not-complete", "The sign is not complete.");
+			def_messages.put("Messages.errors.sign-facing-wrong", "The facing direction you defined is wrong. It may be n, s, e or w.");
 			def_messages.put("Messages.errors.not-enough-permissions", "You don't have the required permission to do this.");
 			def_messages.put("Messages.errors.not-in-lobby", "You are too far away from the lobby.");
 			

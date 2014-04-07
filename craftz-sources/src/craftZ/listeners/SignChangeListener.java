@@ -34,11 +34,15 @@ public class SignChangeListener implements Listener {
 			Player p = event.getPlayer();
 			
 			String signNotComplete = ChatColor.RED + CraftZ.getMsg("Messages.errors.sign-not-complete");
+			boolean extended = ConfigManager.getConfig("config").getBoolean("Config.chat.extended-error-messages");
 			
 			if (line1.equalsIgnoreCase("[CraftZ]")) {
 				
 				if (line2.equals("")) {
 					p.sendMessage(signNotComplete);
+					if (extended) {
+						p.sendMessage(ChatColor.RED + "You have to define the sign type!");
+					}
 					block.breakNaturally();
 					return;
 				}
@@ -51,12 +55,18 @@ public class SignChangeListener implements Listener {
 						
 						if (line3.equals("")) {
 							p.sendMessage(signNotComplete);
+							if (extended) {
+								p.sendMessage(ChatColor.RED + "Line 3 cannot be empty.");
+							}
 							block.breakNaturally();
 							return;
 						}
 						
-						if (line3.replaceAll(":", "") == line3) {
+						if (!line3.contains(":")) {
 							p.sendMessage(signNotComplete);
+							if (extended) {
+								p.sendMessage(ChatColor.RED + "Line 3 must contain 2 values separated by a semicolon!");
+							}
 							block.breakNaturally();
 							return;
 						}
@@ -66,10 +76,13 @@ public class SignChangeListener implements Listener {
 						int maxZombiesInRadiusI = 0;
 						int maxZombiesRadiusI = 0;
 						try {
-							maxZombiesInRadiusI = new Integer(Integer.parseInt(maxZombiesInRadius));
-							maxZombiesRadiusI = new Integer(Integer.parseInt(maxZombiesRadius));
-						} catch(NumberFormatException e) {
+							maxZombiesInRadiusI = Integer.parseInt(maxZombiesInRadius);
+							maxZombiesRadiusI = Integer.parseInt(maxZombiesRadius);
+						} catch(NumberFormatException ex) {
 							p.sendMessage(signNotComplete);
+							if (extended) {
+								p.sendMessage(ChatColor.RED + "One or both of the two values in line 3 are no valid integers.");
+							}
 							block.breakNaturally();
 							return;
 						}
@@ -112,6 +125,9 @@ public class SignChangeListener implements Listener {
 						
 						if (line3.equals("")) {
 							p.sendMessage(signNotComplete);
+							if (extended) {
+								p.sendMessage(ChatColor.RED + "Line 3 cannot be empty: you have to give the spawn point a name.");
+							}
 							block.breakNaturally();
 							return;
 						}
@@ -151,13 +167,25 @@ public class SignChangeListener implements Listener {
 						
 						if (line3.equals("")) {
 							p.sendMessage(signNotComplete);
+							if (extended) {
+								p.sendMessage(ChatColor.RED + "Line 3 cannot be empty: please put the y-coordinate (and possibly the facing) of the lootchest there.");
+							}
 							block.breakNaturally();
 							return;
 						}
 						
 						int chestLocY = 0;
 						String[] l3spl = line3.split(":");
+						
 						String l3y = l3spl[0];
+						try {
+							chestLocY = Integer.parseInt(l3y);
+						} catch(NumberFormatException ex) {
+							p.sendMessage(signNotComplete);
+							block.breakNaturally();
+							return;
+						}
+						
 						String l3f = l3spl.length > 1 ? l3spl[1] : "n";
 						if (!l3f.equalsIgnoreCase("n") && !l3f.equalsIgnoreCase("s") && !l3f.equalsIgnoreCase("e") && !l3f.equalsIgnoreCase("w")) {
 							p.sendMessage(ChatColor.RED + CraftZ.getMsg("Messages.errors.sign-facing-wrong"));
@@ -165,17 +193,12 @@ public class SignChangeListener implements Listener {
 							return;
 						}
 						
-						try {
-							chestLocY = Integer.valueOf(l3y);
-						} catch(NumberFormatException ex) {
-							p.sendMessage(signNotComplete);
-							block.breakNaturally();
-							return;
-						}
-						
 						String lootList = line4;
 						if (ConfigManager.getConfig("loot").getList("Loot.lists." + lootList) == null) {
 							p.sendMessage(signNotComplete);
+							if (extended) {
+								p.sendMessage(ChatColor.RED + "The loot list '" + lootList + "' is not defined.");
+							}
 							block.breakNaturally();
 							return;
 						}
@@ -197,10 +220,9 @@ public class SignChangeListener implements Listener {
 						WorldData.get().set(path + ".list", lootList);
 						
 						WorldData.save();
+						ChestRefiller.resetChestAndStartRefill(name, false);
 						
 						p.sendMessage(ChatColor.RED + CraftZ.getMsg("Messages.successfully-created"));
-						
-						ChestRefiller.resetChestAndStartRefill(name, false);
 						
 					} else {
 						p.sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.errors.not-enough-permissions"));
