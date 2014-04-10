@@ -46,6 +46,7 @@ public class PlayerJoinListener implements Listener {
 	
 	public static class FirstTimeUse extends PlayerJoinListener {
 		
+		@Override
 		@EventHandler(priority = EventPriority.HIGHEST)
 		public void onPlayerJoin(PlayerJoinEvent event) {
 			

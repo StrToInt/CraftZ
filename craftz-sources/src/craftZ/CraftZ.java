@@ -46,9 +46,9 @@ public class CraftZ extends JavaPlugin {
 		"CraftZ -- It seems that this is the first time you run CraftZ. There are a few important things on first-time use:",
 		"* It is likely that CraftZ will not be able to load up because the default world might not exist.",
 		"* The whole world which is used by CraftZ (defaults to 'world') will be changed. This includes:",
-		"* - Ingame daytime will be the same as reallife daytime.",
-		"* - Only zombies will spawn, even during the day.",
-		"* - The world is protected from most changes (by players AND other things). " +
+		"   - Ingame daytime will be the same as reallife daytime.",
+		"   - Only zombies will spawn, even during the day. http://youtube.com/ ",
+		"   - The world is protected from most changes (by players AND other things). " +
 				"In addition, players without special permissions are restricted in their actions.",
 		"* Please modify the configuration file located at '/plugins/CraftZ/config.yml' to suit your needs. " +
 				"Help can be found at http://bit.ly/1baXddU (Bukkit).",
@@ -58,7 +58,7 @@ public class CraftZ extends JavaPlugin {
 	};
 	public static String[] firstRunPlayerMessages = {
 		"CraftZ -- It seems that this is the first time you run CraftZ. There are a few important things on first-time use:",
-		"* It is likely that CraftZ will not be able to load up because the default world does not exist.",
+		"* It is likely that CraftZ will not be able to load up because the default world might not exist.",
 		"* The whole world which is used by CraftZ (defaults to 'world') will be changed.",
 		"* Please modify the configuration file to suit your needs. See http://bit.ly/1baXddU",
 		"* You should setup your world for CraftZ. See http://bit.ly/1ejXhsU",
@@ -497,6 +497,7 @@ public class CraftZ extends JavaPlugin {
 			// PLAYERS
 			def_config.put("Config.players.use-scoreboard-for-stats", false);
 			def_config.put("Config.players.kick-on-death", true);
+			def_config.put("Config.players.spawn-death-zombie", true);
 			
 				// INTERACT
 				def_config.put("Config.players.interact.shearing", false);

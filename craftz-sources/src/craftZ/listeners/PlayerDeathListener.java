@@ -36,21 +36,11 @@ public class PlayerDeathListener implements Listener {
 			
 			event.setDroppedExp(0);
 			event.setKeepLevel(false);
-			//event.getDrops().clear();
 			
-			//for (ItemStack item : eventPlayer.getInventory().getContents()) {
-			//	if (item != null) {
-			//		eventPlayerLoc.getWorld().dropItem(eventPlayerLoc, item);
-			//	}
-			//}
-			
-//			eventPlayer.getInventory().clear();
-//			eventPlayer.getEquipment().setArmorContents(new ItemStack[] {
-//					new ItemStack(Material.AIR), new ItemStack(Material.AIR),
-//					new ItemStack(Material.AIR), new ItemStack(Material.AIR)});
-			
-			DeadPlayer.create(p);
-			event.getDrops().clear();
+			if (ConfigManager.getConfig("config").getBoolean("Config.players.spawn-death-zombie")) {
+				DeadPlayer.create(p);
+				event.getDrops().clear();
+			}
 			
 			final String kickMsg = ("[CraftZ] " + CraftZ.getMsg("Messages.died"))
 					.replaceAll("%z", "" + PlayerManager.getData(p.getName()).zombiesKilled)
