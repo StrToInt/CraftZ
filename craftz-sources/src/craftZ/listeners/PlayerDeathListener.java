@@ -1,5 +1,6 @@
 package craftZ.listeners;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -26,6 +27,8 @@ public class PlayerDeathListener implements Listener {
 			if (ConfigManager.getConfig("config").getBoolean("Config.chat.modify-death-messages"))
 				event.setDeathMessage(p.getDisplayName() + " was killed.");
 			
+			
+			
 			if (p.getKiller() != null) {
 				
 				PlayerManager.getData(p.getKiller().getName()).playersKilled++;
@@ -34,13 +37,24 @@ public class PlayerDeathListener implements Listener {
 				
 			}
 			
+			
+			
 			event.setDroppedExp(0);
 			event.setKeepLevel(false);
 			
+			
+			
 			if (ConfigManager.getConfig("config").getBoolean("Config.players.spawn-death-zombie")) {
+				
 				DeadPlayer.create(p);
 				event.getDrops().clear();
+				
+				p.getInventory().clear();
+				p.getInventory().setArmorContents(null);
+				
 			}
+			
+			
 			
 			final String kickMsg = ("[CraftZ] " + CraftZ.getMsg("Messages.died"))
 					.replaceAll("%z", "" + PlayerManager.getData(p.getName()).zombiesKilled)
@@ -48,6 +62,8 @@ public class PlayerDeathListener implements Listener {
 					.replaceAll("%m", "" + PlayerManager.getData(p.getName()).minutesSurvived);
 			
 			PlayerManager.resetPlayer(p);
+			
+			
 			
 			if (ConfigManager.getConfig("config").getBoolean("Config.players.kick-on-death")) {
 				p.kickPlayer(kickMsg);
@@ -57,11 +73,16 @@ public class PlayerDeathListener implements Listener {
 				
 				p.setHealth(20);
 				p.setFoodLevel(20);
-				p.setVelocity(new Vector());
-				p.getInventory().clear();
-				p.getInventory().setArmorContents(null);
 				
-				p.teleport(PlayerManager.getLobby());
+				Bukkit.getScheduler().runTask(CraftZ.i, new Runnable() {
+					
+					@Override
+					public void run() {
+						p.setVelocity(new Vector());
+						p.teleport(PlayerManager.getLobby());
+					}
+					
+				});
 				
 			}
 			

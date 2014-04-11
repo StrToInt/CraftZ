@@ -3,7 +3,6 @@ package craftZ.util;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 import org.bukkit.Material;
@@ -11,8 +10,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import craftZ.CraftZ;
 
@@ -51,8 +48,8 @@ public class DeadPlayer {
 		zombie.getEquipment().setArmorContents(armor);
 		zombie.getEquipment().setItemInHand(getWeaponItem());
 		zombie.getEquipment().setItemInHandDropChance(0);
-		zombie.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, new Random().nextInt(3) + 1));
-		zombie.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, 0));
+		
+		ZombieSpawner.equipZombie(zombie);
 		
 		uuid = zombie.getUniqueId();
 		

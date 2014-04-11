@@ -216,10 +216,14 @@ public class PlayerManager {
 						p.damage(2);
 					}
 					
-					data.minutesSurvived++;
-					
 				}
 				
+			}
+			
+			
+			
+			if (tickID % 1200 == 0) {
+				data.minutesSurvived++;
 			}
 			
 			
