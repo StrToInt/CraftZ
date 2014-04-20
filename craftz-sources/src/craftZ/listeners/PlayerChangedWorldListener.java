@@ -27,7 +27,7 @@ public class PlayerChangedWorldListener implements Listener {
 			
 			if (ConfigManager.getConfig("config").getBoolean("Config.chat.modify-join-and-quit-messages"))
 				Messager.broadcastToWorld((ChatColor.RED + "Player " + event.getPlayer().getDisplayName() + " connected."), event.getPlayer().getWorld());
-			PlayerManager.loadPlayer(event.getPlayer());
+			PlayerManager.loadPlayer(event.getPlayer(), false);
 			
 		}
 		

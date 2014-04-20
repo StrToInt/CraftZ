@@ -24,7 +24,7 @@ public class PlayerJoinListener implements Listener {
 				event.setJoinMessage(ChatColor.RED + "Player " + event.getPlayer().getDisplayName() + " connected.");
 			
 			if (PlayerManager.wasAlreadyInWorld(event.getPlayer())) {
-				PlayerManager.loadPlayer(event.getPlayer());
+				PlayerManager.loadPlayer(event.getPlayer(), false);
 			} else {
 				
 				event.getPlayer().setHealth(20);

@@ -194,7 +194,7 @@ public class SignChangeListener implements Listener {
 						}
 						
 						String lootList = line4;
-						if (ConfigManager.getConfig("loot").getList("Loot.lists." + lootList) == null) {
+						if (!ConfigManager.getConfig("loot").contains("Loot.lists." + lootList)) {
 							p.sendMessage(signNotComplete);
 							if (extended) {
 								p.sendMessage(ChatColor.RED + "The loot list '" + lootList + "' is not defined.");

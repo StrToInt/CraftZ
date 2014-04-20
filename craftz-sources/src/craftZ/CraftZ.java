@@ -215,7 +215,7 @@ public class CraftZ extends JavaPlugin {
 		
 		
 		
-		if (cmd.getName().equalsIgnoreCase("craftz")) {
+		if (cmd.getName().equals("craftz")) {
 			
 			if (args.length == 0) {
 				
@@ -301,14 +301,16 @@ public class CraftZ extends JavaPlugin {
 				
 				if (args[0].equalsIgnoreCase("spawn")) {
 					
-					if (!(sender instanceof Player)) return true;
+					if (!(sender instanceof Player)) {
+						return true;
+					}
 					
 					Player p = (Player) sender;
 					
 					if (p.hasPermission("craftz.spawn")) {
 						
 						if (PlayerManager.isInsideOfLobby(p)) {
-							PlayerManager.loadPlayer(p);
+							PlayerManager.loadPlayer(p, true);
 						} else {
 							p.sendMessage(ChatColor.DARK_RED + getMsg("Messages.errors.not-in-lobby"));
 						}

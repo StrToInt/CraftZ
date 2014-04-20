@@ -14,6 +14,7 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -56,24 +57,25 @@ public class PlayerManager {
 	
 	
 	
-	public static void loadPlayer(Player p) {
+	public static void loadPlayer(Player p, boolean forceRespawn) {
 		
-		if (players.containsKey(p.getName())) {
+		if (players.containsKey(p.getName()) && !forceRespawn) {
 			return;
 		}
 		
 		
 		
-		p.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 60, 1000));
+		p.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 30, 1000));
 		
-		if (wasAlreadyInWorld(p)) {
+		if (wasAlreadyInWorld(p) && !forceRespawn) {
 			
-			try {
-				putPlayer(p, false);
-				p.setLevel(players.get(p.getName()).thirst);
-			} catch(Throwable ex) { }
+			putPlayer(p, false);
+			p.setLevel(players.get(p.getName()).thirst);
 			
 		} else {
+			
+			p.getInventory().clear();
+			p.getInventory().setArmorContents(new ItemStack[4]);
 			
 			p.setHealth(20);
 			p.setFoodLevel(20);
@@ -175,7 +177,7 @@ public class PlayerManager {
 	
 	
 	public static AdditionalCraftZData getData(String p) {
-		if (!players.containsKey(p)) loadPlayer(Bukkit.getPlayer(p));
+		if (!players.containsKey(p)) loadPlayer(Bukkit.getPlayer(p), false);
 		return players.get(p);
 	}
 	
@@ -235,6 +237,27 @@ public class PlayerManager {
 			
 			
 			
+			if (tickID % 30 == 0) {
+				
+				if (ConfigManager.getConfig("config").getBoolean("Config.world.world-border.enable")) {
+					
+					double dmg = getWorldBorderDamage(p, ConfigManager.getConfig("config").getDouble("Config.world.world-border.radius"), getLobby());
+					
+					if (dmg > 0) {
+						if (tickID % 200 == 0)
+							p.sendMessage("[CraftZ] " + CraftZ.getMsg("Messages.out-of-world"));
+						p.damage(dmg);
+						p.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 20, 1));
+						p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20, 1));
+						p.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 50, 1));
+					}
+					
+				}
+				
+			}
+			
+			
+			
 			if (tickID % 200 == 0) {
 				
 				if (data.bleeding) p.damage(1);
@@ -244,17 +267,6 @@ public class PlayerManager {
 					p.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 20, 1));
 					p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 10, 1));
 					p.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 30, 1));
-				}
-				
-				if (ConfigManager.getConfig("config").getBoolean("Config.world.world-border.enable")
-						&& isOutsideOfWorldRim(p, ConfigManager.getConfig("config").getInt("Config.world.world-border.radius"), getLobby())) {
-					
-					p.damage(2);
-					p.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 20, 1));
-					p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 10, 1));
-					p.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 30, 1));
-					p.sendMessage("[CraftZ] " + CraftZ.getMsg("Messages.out-of-world"));
-					
 				}
 				
 			}
@@ -285,8 +297,21 @@ public class PlayerManager {
 	
 	
 	
-	public static boolean isOutsideOfWorldRim(Player p, int radius, Location spawn) {
-		return p != null ? p.getLocation().getBlockX() > spawn.getBlockX() + radius : false;
+	public static double getWorldBorderDamage(Player p, double radius, Location spawn) {
+		
+		//TODO: make compatible with lobby in different world.
+		//Perhaps add configurable world center?
+		
+		Location ploc = p.getLocation();
+		Location loc = new Location(ploc.getWorld(), spawn.getX(), ploc.getY(), spawn.getZ());
+		
+		double dist = ploc.distance(loc) - radius;
+		if (dist <= 0) {
+			return 0;
+		} else {
+			return dist / 60D;
+		}
+		
 	}
 	
 	
