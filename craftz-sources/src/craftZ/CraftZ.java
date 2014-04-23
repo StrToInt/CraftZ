@@ -529,6 +529,7 @@ public class CraftZ extends JavaPlugin {
 			
 			// MOBS
 			def_config.put("Config.mobs.blood-particles-when-damaged", true);
+			def_config.put("Config.mobs.allow-all-plugin-spawning", true);
 			
 				// ZOMBIES
 					

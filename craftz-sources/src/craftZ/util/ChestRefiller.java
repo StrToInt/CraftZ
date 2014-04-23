@@ -58,8 +58,10 @@ public class ChestRefiller {
 		
 		Block block = rflLoc.getBlock();
 		
-		if (block.getState() instanceof Chest && !drop)
-			((Chest) block.getState()).getBlockInventory().clear();
+		try { // Workaround for NPE when Bukkit calls CraftInventory.getSize()
+			if (block.getState() instanceof Chest && !drop)
+				((Chest) block.getState()).getBlockInventory().clear();
+		} catch (NullPointerException ex) { }
 		
 		block.setType(Material.AIR);
 		

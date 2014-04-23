@@ -33,24 +33,28 @@ public class CreatureSpawnListener implements Listener {
 		
 		if (CraftZ.isWorld(event.getLocation().getWorld())) {
 			
-			EntityType eventCreatureType = event.getEntityType();
-			SpawnReason spawnReason = event.getSpawnReason();
+			boolean plg = event.getSpawnReason() == SpawnReason.CUSTOM
+					&& ConfigManager.getConfig("config").getBoolean("Config.mobs.allow-all-plugin-spawning");
 			
-			for (EntityType bt : blocked)
-				if (eventCreatureType.equals(bt))
+			
+			
+			for (EntityType bt : blocked) {
+				if (event.getEntityType() == bt && !plg)
 					event.setCancelled(true);
+			}
 			
 			
 			
 			boolean allowAnimalSpawns = ConfigManager.getConfig("config").getBoolean("Config.mobs.animals.spawning.enable");
-			for (EntityType at : animals)
-				if (eventCreatureType.equals(at) && !allowAnimalSpawns)
+			for (EntityType at : animals) {
+				if (event.getEntityType() == at && !allowAnimalSpawns && !plg)
 					event.setCancelled(true);
+			}
 			
 			
 			
-			if (eventCreatureType == EntityType.ZOMBIE) {
-				if (spawnReason != SpawnReason.CUSTOM && spawnReason != SpawnReason.SPAWNER_EGG) {
+			if (event.getEntityType() == EntityType.ZOMBIE) {
+				if (event.getSpawnReason() != SpawnReason.CUSTOM && event.getSpawnReason() != SpawnReason.SPAWNER_EGG) {
 					event.setCancelled(true);
 				} else {
 					ZombieSpawner.equipZombie((Zombie) event.getEntity());
