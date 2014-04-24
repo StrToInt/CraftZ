@@ -43,7 +43,8 @@ public class EntityDamageListener implements Listener {
 						return;
 					}
 					
-					if (ConfigManager.getConfig("config").getBoolean("Config.players.medical.bleeding.enable") && p.getGameMode() != GameMode.CREATIVE) {
+					if (ConfigManager.getConfig("config").getBoolean("Config.players.medical.bleeding.enable")
+							&& p.getGameMode() != GameMode.CREATIVE && !event.isCancelled()) {
 						
 						if (Math.random() >= 1 - ConfigManager.getConfig("config").getDouble("Config.players.medical.bleeding.chance")) {
 							PlayerManager.getData(p.getName()).bleeding = true;
