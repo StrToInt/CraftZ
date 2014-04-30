@@ -32,7 +32,7 @@ public class PlayerItemConsumeListener implements Listener {
 				else
 					p.getItemInHand().setAmount(p.getItemInHand().getAmount() - 1);
 				
-				PlayerManager.getData(p.getName()).thirst = 20;
+				PlayerManager.getData(p).thirst = 20;
 				p.setLevel(20);
 				
 			}

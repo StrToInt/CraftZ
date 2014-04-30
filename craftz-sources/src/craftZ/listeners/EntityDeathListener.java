@@ -67,9 +67,9 @@ public class EntityDeathListener implements Listener {
 				
 				if (eventEntity.getKiller() != null && !PlayerManager.isInsideOfLobby(eventEntity.getKiller())) {
 					
-					PlayerManager.getData(event.getEntity().getKiller().getName()).zombiesKilled++;
+					PlayerManager.getData(event.getEntity().getKiller()).zombiesKilled++;
 					eventEntity.getKiller().sendMessage(ChatColor.GOLD + CraftZ.getMsg("Messages.killed.zombie")
-							.replaceAll("%k", "" + PlayerManager.getData(eventEntity.getKiller().getName()).zombiesKilled));
+							.replaceAll("%k", "" + PlayerManager.getData(eventEntity.getKiller()).zombiesKilled));
 					
 				}
 				

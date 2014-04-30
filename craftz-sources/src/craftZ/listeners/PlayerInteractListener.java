@@ -66,7 +66,7 @@ public class PlayerInteractListener implements Listener {
 						else
 							p.getItemInHand().setAmount(p.getItemInHand().getAmount() - 1);
 						
-						PlayerManager.getData(p.getName()).bleeding = false;
+						PlayerManager.getData(p).bleeding = false;
 						p.playSound(p.getLocation(), Sound.ENDERDRAGON_WINGS, 1, 1);
 						p.sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.bandaged"));
 						
@@ -105,7 +105,7 @@ public class PlayerInteractListener implements Listener {
 						else
 							p.getItemInHand().setAmount(p.getItemInHand().getAmount() - 1);
 						
-						PlayerManager.getData(p.getName()).poisoned = false;
+						PlayerManager.getData(p).poisoned = false;
 						p.playSound(p.getLocation(), Sound.ZOMBIE_UNFECT, 1, 1);
 						p.sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.unpoisoned"));
 						
@@ -124,7 +124,7 @@ public class PlayerInteractListener implements Listener {
 						else
 							p.getItemInHand().setAmount(p.getItemInHand().getAmount() - 1);
 						
-						PlayerManager.getData(p.getName()).bonesBroken = false;
+						PlayerManager.getData(p).bonesBroken = false;
 						p.removePotionEffect(PotionEffectType.SLOW);
 						//p.playSound(p.getLocation(), Sound.BREATH, 1, 1);
 						p.sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.bones-healed"));

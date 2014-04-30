@@ -38,7 +38,7 @@ public class EntityDamageListener implements Listener {
 					
 					Player p = (Player) event.getEntity();
 					
-					if (PlayerManager.isNotPlaying(p.getName())) {
+					if (PlayerManager.isNotPlaying(p.getUniqueId())) {
 						event.setCancelled(true);
 						return;
 					}
@@ -47,7 +47,7 @@ public class EntityDamageListener implements Listener {
 							&& p.getGameMode() != GameMode.CREATIVE && !event.isCancelled()) {
 						
 						if (Math.random() >= 1 - ConfigManager.getConfig("config").getDouble("Config.players.medical.bleeding.chance")) {
-							PlayerManager.getData(p.getName()).bleeding = true;
+							PlayerManager.getData(p).bleeding = true;
 							p.sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.bleeding"));
 						}
 						
@@ -56,7 +56,7 @@ public class EntityDamageListener implements Listener {
 					int height = (int) (event.getDamage() + 3);
 					if (event.getCause() == DamageCause.FALL && ConfigManager.getConfig("config").getBoolean("Config.players.medical.bonebreak.enable")
 							&& height >= ConfigManager.getConfig("config").getInt("Config.players.medical.bonebreak.height")) {
-						PlayerManager.getData(p.getName()).bonesBroken = true;
+						PlayerManager.getData(p).bonesBroken = true;
 						p.sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.bones-broken"));
 					}
 					

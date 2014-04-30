@@ -53,7 +53,7 @@ public class EntityDamageByEntityListener implements Listener {
 						else
 							damager.getItemInHand().setAmount(damager.getItemInHand().getAmount() - 1);
 						
-						PlayerManager.getData(eventPlayer.getName()).bleeding = false;
+						PlayerManager.getData(eventPlayer).bleeding = false;
 						
 						eventPlayer.sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.bandaged"));
 						
@@ -103,7 +103,7 @@ public class EntityDamageByEntityListener implements Listener {
 						else
 							damager.getItemInHand().setAmount(damager.getItemInHand().getAmount() - 1);
 						
-						PlayerManager.getData(eventPlayer.getName()).poisoned = false;
+						PlayerManager.getData(eventPlayer).poisoned = false;
 						
 						eventPlayer.sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.unpoisoned"));
 						
@@ -147,7 +147,7 @@ public class EntityDamageByEntityListener implements Listener {
 					
 					if (Math.random() >= 1 - ConfigManager.getConfig("config").getDouble("Config.players.medical.poisoning.chance")) {
 						
-						PlayerManager.getData(((Player) event.getEntity()).getName()).poisoned = true;
+						PlayerManager.getData((Player) event.getEntity()).poisoned = true;
 						((Player) event.getEntity()).playSound(event.getEntity().getLocation(), Sound.ZOMBIE_INFECT, 1, 1);
 						((Player) event.getEntity()).sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.poisoned"));
 						

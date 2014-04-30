@@ -471,7 +471,7 @@ public class CraftZ extends JavaPlugin {
 	private static void loadConfigs() {
 		
 		// CONFIG
-		Map<String, Object> def_config = new HashMap<>();
+		Map<String, Object> def_config = new HashMap<String, Object>();
 		
 		def_config.put("Config.never-ever-modify.first-run", true);
 			
@@ -597,7 +597,7 @@ public class CraftZ extends JavaPlugin {
 		
 		
 		// Messages
-		Map<String, Object> def_messages = new HashMap<>();
+		Map<String, Object> def_messages = new HashMap<String, Object>();
 		
 		def_messages.put("Messages.harvested-tree", "A pile of wood has been successfully added to your inventory.");
 		def_messages.put("Messages.already-have-wood", "You already have wood.");
@@ -651,7 +651,7 @@ public class CraftZ extends JavaPlugin {
 		
 		
 		// LOOT
-		Map<String, Object> def_loot = new HashMap<>();
+		Map<String, Object> def_loot = new HashMap<String, Object>();
 			
 			// SETTINGS
 			def_loot.put("Loot.settings.time-before-refill", 120);

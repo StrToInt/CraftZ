@@ -4,8 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Level;
 
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -26,9 +29,10 @@ public class WorldData {
 		File worldsFolder = new File(CraftZ.i.getDataFolder(), "worlds/");
 		if (!worldsFolder.exists()) return;
 		
-		for (File file : worldsFolder.listFiles())
+		for (File file : worldsFolder.listFiles()) {
 			if (file.getName().toLowerCase().endsWith(".yml"))
 				reload(file.getName().substring(0, file.getName().length() - 4));
+		}
 		
 	}
 	
@@ -36,23 +40,73 @@ public class WorldData {
 	
 	
 	
-	public static void tryUpdate() {
+	private static void tryUpdate() {
 		
 		File old = new File(CraftZ.i.getDataFolder(), "data.yml");
-		if (!old.exists()) return;
+		if (old.exists()) {
+			
+			try {
+				
+				File newFile = new File(CraftZ.i.getDataFolder(), "worlds/" + CraftZ.worldName() + ".yml");
+				if (newFile.exists()) return;
+				
+				newFile.getParentFile().mkdirs();
+				newFile.createNewFile();
+				Files.copy(old, newFile);
+				old.delete();
+				
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+			
+		}
 		
-		try {
+	}
+	
+	
+	
+	
+	
+	private static void tryUpdateConfig(String world) {
+		
+		int version = get(world).getInt("Data.never-ever-modify.configversion");
+		
+		if (version < 1) {
+			uc_1(world);
+			get(world).set("Data.never-ever-modify.configversion", 1);
+			save(world);
+		}
+		
+	}
+	
+	@SuppressWarnings("deprecation")
+	private static void uc_1(String world) {
+		
+		System.out.println("Converting world data for '" + world + "' to version 1");
+		
+		ConfigurationSection plSec = get(world).getConfigurationSection("Data.players");
+		for (String key : plSec.getKeys(false)) {
 			
-			File newFile = new File(CraftZ.i.getDataFolder(), "worlds/" + CraftZ.worldName() + ".yml");
-			if (newFile.exists()) return;
+			UUID id = Bukkit.getOfflinePlayer(key).getUniqueId();
+			if (id == null) {
+				System.err.println(" -  Not able to convert player '" + key + "', he will be deleted");
+				plSec.set(key, null);
+				continue;
+			}
 			
-			newFile.getParentFile().mkdirs();
-			newFile.createNewFile();
-			Files.copy(old, newFile);
-			old.delete();
+			int thirst = get(world).getInt("Data.players." + key + ".thirst");
+			int zombies = get(world).getInt("Data.players." + key + ".zombiesKilled");
+			int players = get(world).getInt("Data.players." + key + ".playersKilled");
+			int mins = get(world).getInt("Data.players." + key + ".minsSurvived");
+			boolean bleeding = get(world).getBoolean("Data.players." + key + ".bleeding");
+			boolean bonesBroken = get(world).getBoolean("Data.players." + key + ".bonesBroken");
+			boolean poisoned = get(world).getBoolean("Data.players." + key + ".poisoned");
 			
-		} catch (IOException ex) {
-			ex.printStackTrace();
+			String conv = thirst + "|" + zombies + "|" + players + "|" + mins + "|" + (bleeding ? "1" : "0")
+					+ "|" + (bonesBroken ? "1" : "0") + "|" + (poisoned ? "1" : "0");
+			plSec.set(id.toString(), conv);
+			plSec.set(key, null);
+			
 		}
 		
 	}
@@ -68,6 +122,8 @@ public class WorldData {
 		
 		get(world).options().copyDefaults(true);
 		save(world);
+		
+		tryUpdateConfig(world);
 		
 	}
 	

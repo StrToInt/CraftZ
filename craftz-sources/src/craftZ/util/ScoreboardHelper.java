@@ -2,8 +2,10 @@ package craftZ.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
@@ -14,7 +16,7 @@ public class ScoreboardHelper {
 	
 	private static ScoreboardManager manager;
 	
-	private static HashMap<String, Scoreboard> boards = new HashMap<String, Scoreboard>();
+	private static HashMap<UUID, Scoreboard> boards = new HashMap<UUID, Scoreboard>();
 	
 	
 	
@@ -31,12 +33,12 @@ public class ScoreboardHelper {
 		Scoreboard board = manager.getNewScoreboard();
 		Objective stats = board.registerNewObjective("stats", "dummy");
 		stats.setDisplayName("Stats");
-		stats.getScore(Bukkit.getOfflinePlayer("Blood level")).setScore(0);
-		stats.getScore(Bukkit.getOfflinePlayer("Zombies killed")).setScore(0);
-		stats.getScore(Bukkit.getOfflinePlayer("Players killed")).setScore(0);
-		stats.getScore(Bukkit.getOfflinePlayer("Minutes survived")).setScore(0);
+		stats.getScore("Blood level").setScore(0);
+		stats.getScore("Zombies killed").setScore(0);
+		stats.getScore("Players killed").setScore(0);
+		stats.getScore("Minutes survived").setScore(0);
 		
-		boards.put(p.getName(), board);
+		boards.put(p.getUniqueId(), board);
 		
 	}
 	
@@ -46,23 +48,23 @@ public class ScoreboardHelper {
 	
 	public static void update() {
 		
-		ArrayList<String> toRemove = new ArrayList<String>();
+		ArrayList<UUID> toRemove = new ArrayList<UUID>();
 		
-		for (String pn : boards.keySet()) {
+		for (UUID id : boards.keySet()) {
 			
-			if (Bukkit.getPlayer(pn) == null) {
-				toRemove.add(pn);
+			if (PlayerManager.p(id) == null) {
+				toRemove.add(id);
 				continue;
 			}
 			
-			Player p = Bukkit.getPlayer(pn);
-			Scoreboard board = boards.get(pn);
+			Player p = PlayerManager.p(id);
+			Scoreboard board = boards.get(id);
 			Objective stats = board.getObjective("stats");
 			
-			stats.getScore(Bukkit.getOfflinePlayer("Blood level")).setScore((int) (p.getHealth() * 600));
-			stats.getScore(Bukkit.getOfflinePlayer("Zombies killed")).setScore(PlayerManager.getData(pn).zombiesKilled);
-			stats.getScore(Bukkit.getOfflinePlayer("Players killed")).setScore(PlayerManager.getData(pn).playersKilled);
-			stats.getScore(Bukkit.getOfflinePlayer("Minutes survived")).setScore(PlayerManager.getData(pn).minutesSurvived);
+			stats.getScore("Blood level").setScore((int) (((Damageable) p).getHealth()  * 600));
+			stats.getScore("Zombies killed").setScore(PlayerManager.getData(id).zombiesKilled);
+			stats.getScore("Players killed").setScore(PlayerManager.getData(id).playersKilled);
+			stats.getScore("Minutes survived").setScore(PlayerManager.getData(id).minutesSurvived);
 			
 			if (ConfigManager.getConfig("config").getBoolean("Config.players.use-scoreboard-for-stats")) {
 				
@@ -79,8 +81,8 @@ public class ScoreboardHelper {
 		
 		
 		
-		for (String pn : toRemove)
-			removePlayer(pn);
+		for (UUID id : toRemove)
+			removePlayer(id);
 		
 	}
 	
@@ -88,12 +90,12 @@ public class ScoreboardHelper {
 	
 	
 	
-	public static void removePlayer(String pn) {
+	public static void removePlayer(UUID id) {
 		
-		if (boards.containsKey(pn))
-			boards.get(pn).clearSlot(DisplaySlot.SIDEBAR);
+		if (boards.containsKey(id))
+			boards.get(id).clearSlot(DisplaySlot.SIDEBAR);
 		
-		boards.remove(pn);
+		boards.remove(id);
 			
 	}
 	

@@ -31,9 +31,9 @@ public class PlayerDeathListener implements Listener {
 			
 			if (p.getKiller() != null) {
 				
-				PlayerManager.getData(p.getKiller().getName()).playersKilled++;
+				PlayerManager.getData(p.getKiller()).playersKilled++;
 				p.getKiller().sendMessage(ChatColor.GOLD + CraftZ.getMsg("Messages.killed.player").replaceAll("%p", p.getDisplayName())
-						.replaceAll("%k", "" + PlayerManager.getData(p.getKiller().getName()).playersKilled));
+						.replaceAll("%k", "" + PlayerManager.getData(p.getKiller()).playersKilled));
 				
 			}
 			
@@ -57,9 +57,9 @@ public class PlayerDeathListener implements Listener {
 			
 			
 			final String kickMsg = ("[CraftZ] " + CraftZ.getMsg("Messages.died"))
-					.replaceAll("%z", "" + PlayerManager.getData(p.getName()).zombiesKilled)
-					.replaceAll("%p", "" + PlayerManager.getData(p.getName()).playersKilled)
-					.replaceAll("%m", "" + PlayerManager.getData(p.getName()).minutesSurvived);
+					.replaceAll("%z", "" + PlayerManager.getData(p).zombiesKilled)
+					.replaceAll("%p", "" + PlayerManager.getData(p).playersKilled)
+					.replaceAll("%m", "" + PlayerManager.getData(p).minutesSurvived);
 			
 			PlayerManager.resetPlayer(p);
 			

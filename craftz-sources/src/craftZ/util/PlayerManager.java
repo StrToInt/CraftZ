@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -23,7 +24,13 @@ import craftZ.CraftZ;
 
 public class PlayerManager {
 	
-	private static HashMap<String, AdditionalCraftZData> players = new HashMap<String, AdditionalCraftZData>();
+	private static HashMap<UUID, AdditionalCraftZData> players = new HashMap<UUID, AdditionalCraftZData>();
+	
+	
+	
+	public static Player p(UUID uuid) {
+		return Bukkit.getPlayer(uuid);
+	}
 	
 	
 	
@@ -37,15 +44,15 @@ public class PlayerManager {
 	
 	public static void savePlayerToConfig(Player p) {
 		
-		if (players.containsKey(p.getName())) {
+		if (players.containsKey(p.getUniqueId())) {
 			
-			getConfig().set("Data.players." + p.getName() + ".thirst", getData(p.getName()).thirst);
-			getConfig().set("Data.players." + p.getName() + ".zombiesKilled", getData(p.getName()).zombiesKilled);
-			getConfig().set("Data.players." + p.getName() + ".playersKilled", getData(p.getName()).playersKilled);
-			getConfig().set("Data.players." + p.getName() + ".minsSurvived", getData(p.getName()).minutesSurvived);
-			getConfig().set("Data.players." + p.getName() + ".bleeding", getData(p.getName()).bleeding);
-			getConfig().set("Data.players." + p.getName() + ".poisoned", getData(p.getName()).poisoned);
-			getConfig().set("Data.players." + p.getName() + ".bonesBroken", getData(p.getName()).bonesBroken);
+			getConfig().set("Data.players." + p.getUniqueId() + ".thirst", getData(p).thirst);
+			getConfig().set("Data.players." + p.getUniqueId() + ".zombiesKilled", getData(p).zombiesKilled);
+			getConfig().set("Data.players." + p.getUniqueId() + ".playersKilled", getData(p).playersKilled);
+			getConfig().set("Data.players." + p.getUniqueId() + ".minsSurvived", getData(p).minutesSurvived);
+			getConfig().set("Data.players." + p.getUniqueId() + ".bleeding", getData(p).bleeding);
+			getConfig().set("Data.players." + p.getUniqueId() + ".poisoned", getData(p).poisoned);
+			getConfig().set("Data.players." + p.getUniqueId() + ".bonesBroken", getData(p).bonesBroken);
 			
 			WorldData.save();
 			
@@ -59,7 +66,7 @@ public class PlayerManager {
 	
 	public static void loadPlayer(Player p, boolean forceRespawn) {
 		
-		if (players.containsKey(p.getName()) && !forceRespawn) {
+		if (players.containsKey(p.getUniqueId()) && !forceRespawn) {
 			return;
 		}
 		
@@ -70,7 +77,7 @@ public class PlayerManager {
 		if (wasAlreadyInWorld(p) && !forceRespawn) {
 			
 			putPlayer(p, false);
-			p.setLevel(players.get(p.getName()).thirst);
+			p.setLevel(players.get(p.getUniqueId()).thirst);
 			
 		} else {
 			
@@ -85,7 +92,7 @@ public class PlayerManager {
 			
 			savePlayerToConfig(p);
 			
-			p.setLevel(players.get(p.getName()).thirst);
+			p.setLevel(players.get(p.getUniqueId()).thirst);
 			
 		}
 		
@@ -99,16 +106,23 @@ public class PlayerManager {
 	
 	private static void putPlayer(Player p, boolean defaults) {
 		
-		if (defaults)
-			players.put(p.getName(), new AdditionalCraftZData(20, 0, 0, 0, false, false, false));
-		else
-			players.put(p.getName(), new AdditionalCraftZData(getConfig().getInt("Data.players." + p.getName() + ".thirst"),
-					getConfig().getInt("Data.players." + p.getName() + ".zombiesKilled"),
-					getConfig().getInt("Data.players." + p.getName() + ".playersKilled"),
-					getConfig().getInt("Data.players." + p.getName() + ".minsSurvived"),
-					getConfig().getBoolean("Data.players." + p.getName() + ".bleeding"),
-					getConfig().getBoolean("Data.players." + p.getName() + ".bonesBroken"),
-					getConfig().getBoolean("Data.players." + p.getName() + ".poisoned")));
+		if (defaults) {
+			players.put(p.getUniqueId(), new AdditionalCraftZData(20, 0, 0, 0, false, false, false));
+		} else {
+			
+			String confData = getConfig().getString("Data.players." + p.getUniqueId());
+			String[] spl = confData.split("\\|");
+			int thirst = spl.length > 0 ? Integer.valueOf(spl[0]) : 20;
+			int zombies = spl.length > 1 ? Integer.valueOf(spl[1]) : 0;
+			int playersk = spl.length > 2 ? Integer.valueOf(spl[2]) : 0;
+			int minutes = spl.length > 3 ? Integer.valueOf(spl[3]) : 0;
+			boolean bleeding = spl.length > 4 ? spl[4].equals("1") : false;
+			boolean bonesBroken = spl.length > 5 ? spl[5].equals("1") : false;
+			boolean poisoned = spl.length > 6 ? spl[6].equals("1") : false;
+			
+			players.put(p.getUniqueId(), new AdditionalCraftZData(thirst, zombies, playersk, minutes, bleeding, bonesBroken, poisoned));
+			
+		}
 		
 		
 	}
@@ -163,12 +177,11 @@ public class PlayerManager {
 	
 	public static void resetPlayer(Player p) {
 		
-		getConfig().set("Data.players." + p.getName(), null);
+		getConfig().set("Data.players." + p.getUniqueId(), null);
 		WorldData.save();
-		WorldData.reload();
 		
-		ScoreboardHelper.removePlayer(p.getName());
-		players.remove(p.getName());
+		ScoreboardHelper.removePlayer(p.getUniqueId());
+		players.remove(p.getUniqueId());
 		
 	}
 	
@@ -176,9 +189,14 @@ public class PlayerManager {
 	
 	
 	
-	public static AdditionalCraftZData getData(String p) {
-		if (!players.containsKey(p)) loadPlayer(Bukkit.getPlayer(p), false);
+	public static AdditionalCraftZData getData(UUID p) {
+		if (!players.containsKey(p)) loadPlayer(p(p), false);
 		return players.get(p);
+	}
+	
+	public static AdditionalCraftZData getData(Player p) {
+		if (!players.containsKey(p.getUniqueId())) loadPlayer(p, false);
+		return players.get(p.getUniqueId());
 	}
 	
 	
@@ -187,19 +205,19 @@ public class PlayerManager {
 	
 	public static void onServerTick(long tickID) {
 		
-		ArrayList<String> toRemove = new ArrayList<String>();
+		List<UUID> toRemove = new ArrayList<UUID>();
 		
-		for (String pn : players.keySet()) {
+		for (UUID id : players.keySet()) {
 			
-			if (isNotPlaying(pn)) {
-				toRemove.add(pn);
+			if (isNotPlaying(id)) {
+				toRemove.add(id);
 				continue;
 			}
 			
 			
 			
-			Player p = Bukkit.getPlayer(pn);
-			AdditionalCraftZData data = players.get(pn);
+			Player p = p(id);
+			AdditionalCraftZData data = players.get(id);
 			
 			
 			
@@ -280,14 +298,14 @@ public class PlayerManager {
 		
 		
 		
-		for (String pn : toRemove) {
+		for (UUID id : toRemove) {
 			
-			Player p = Bukkit.getPlayer(pn);
+			Player p = p(id);
 			if (p != null) savePlayerToConfig(p);
 			
-			ScoreboardHelper.removePlayer(pn);
+			ScoreboardHelper.removePlayer(id);
 			
-			players.remove(pn);
+			players.remove(id);
 			
 		}
 		
@@ -349,7 +367,7 @@ public class PlayerManager {
 	
 	
 	public static boolean wasAlreadyInWorld(Player p) {
-		return getConfig().contains("Data.players." + p.getName());
+		return getConfig().contains("Data.players." + p.getUniqueId());
 	}
 	
 	
@@ -394,9 +412,9 @@ public class PlayerManager {
 	
 	
 	
-	public static boolean isNotPlaying(String p) {
-		return Bukkit.getPlayer(p) == null || !CraftZ.isWorld(Bukkit.getPlayer(p).getWorld())
-				|| isInsideOfLobby(Bukkit.getPlayer(p)) || !players.containsKey(p);
+	public static boolean isNotPlaying(UUID id) {
+		Player p = p(id);
+		return p == null || !CraftZ.isWorld(p.getWorld()) || isInsideOfLobby(p) || !players.containsKey(id);
 	}
 	
 }
