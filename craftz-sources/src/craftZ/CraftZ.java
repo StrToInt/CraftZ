@@ -4,9 +4,11 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
@@ -38,7 +40,7 @@ import craftZ.util.ZombieSpawner;
 public class CraftZ extends JavaPlugin {
 	
 	public static long tickID = 0;
-	public static HashMap<Player, Integer> movingPlayers = new HashMap<Player, Integer>();
+	public static Map<UUID, Integer> movingPlayers = new HashMap<UUID, Integer>();
 	public static ArrayList<DeadPlayer> deadPlayers = new ArrayList<DeadPlayer>();
 	public static boolean firstRun, failedWorldLoad = false;
 	
@@ -151,6 +153,10 @@ public class CraftZ extends JavaPlugin {
 					ZombieSpawner.addSpawns();
 					DeadPlayer.loadDeadPlayers();
 					
+					for (Player p : world().getPlayers()) {
+						PlayerJoinListener.joinPlayer(p);
+					}
+					
 				}
 				
 			}
@@ -175,6 +181,20 @@ public class CraftZ extends JavaPlugin {
 					
 					if (ConfigManager.getConfig("config").getBoolean("Config.world.real-time"))
 						Time.setToServerTime();
+					
+					
+					
+					List<UUID> toRemove = new ArrayList<UUID>();
+					
+					for (UUID id : movingPlayers.keySet()) {
+						int mt = movingPlayers.get(id);
+						movingPlayers.put(id, ++mt);
+						if (mt > 8) toRemove.add(id);
+					}
+					
+					for (int i=0; i<toRemove.size(); i++) {
+						movingPlayers.remove(toRemove.get(i));
+					}
 					
 				}
 				
@@ -240,6 +260,9 @@ public class CraftZ extends JavaPlugin {
 					
 					if (sender.hasPermission("craftz.smasher"))
 						sender.sendMessage(ChatColor.YELLOW + getMsg("Messages.help.smasher-command"));
+					
+					if (sender.hasPermission("craftz.sign"))
+						sender.sendMessage(ChatColor.YELLOW + getMsg("Messages.help.sign-command"));
 					
 				} else {
 					sender.sendMessage(noPerms);
@@ -381,7 +404,45 @@ public class CraftZ extends JavaPlugin {
 					
 				}
 				
-				sender.sendMessage(ChatColor.RED + "This command does not exist. Use '/craftz' to display the help.");
+				
+				
+				if (args[0].equalsIgnoreCase("sign")) {
+					
+					if (!(sender instanceof Player)) return true;
+					
+					Player p = (Player) sender;
+					
+					if (p.hasPermission("craftz.sign")) {
+						
+						if (args.length > 1) {
+							
+							String line2 = args[1];
+							String line3 = args.length > 2 ? args[2] : "";
+							String line4 = args.length > 3 ? args[3] : "";
+							
+							ItemStack sign = new ItemStack(Material.SIGN);
+							ItemMeta meta = sign.getItemMeta();
+							meta.setDisplayName(ChatColor.DARK_PURPLE + "Pre-written Sign");
+							meta.setLore(Arrays.asList("[CraftZ]", line2, line3, line4));
+							sign.setItemMeta(meta);
+							
+							p.getInventory().addItem(sign);
+							
+						} else {
+							sender.sendMessage(ChatColor.RED + getMsg("Messages.errors.tooFewArguments"));
+						}
+						
+					} else {
+						p.sendMessage(noPerms);
+					}
+					
+					return true;
+					
+				}
+				
+				
+				
+				sender.sendMessage(ChatColor.RED + getMsg("Messages.errors.cmd-not-existing"));
 				return true;
 					
 			}
@@ -415,6 +476,7 @@ public class CraftZ extends JavaPlugin {
 		rl(new FoodLevelChangeListener());
 		rl(new PlayerChangedWorldListener());
 		rl(new PlayerTeleportListener());
+		rl(new PlayerToggleSprintListener());
 		
 		// INVENTORY
 		rl(new PlayerDropItemListener());
@@ -433,6 +495,7 @@ public class CraftZ extends JavaPlugin {
 		// ENTITY
 		rl(new ProjectileHitListener());
 		rl(new EntityExplodeListener());
+		rl(new EntityTargetLivingEntityListener());
 		rl(new VehicleUpdateListener());
 		rl(new VehicleBlockCollisionListener());
 		rl(new VehicleMoveListener());
@@ -625,11 +688,13 @@ public class CraftZ extends JavaPlugin {
 			def_messages.put("Messages.help.spawn-command", "/craftz spawn: Spawn at a random point inside of the world.");
 			def_messages.put("Messages.help.setlobby-command", "/craftz setlobby: Set the lobby location where you're standing.");
 			def_messages.put("Messages.help.smasher-command", "/craftz smasher: Get the ultimate zombie smasher!");
+			def_messages.put("Messages.help.sign-command", "/craftz sign <line2> <line3> <line4>: Get a pre-written sign.");
 			
 			// COMMAND
 			def_messages.put("Messages.cmd.removed-items", "Removed %i items.");
 			def_messages.put("Messages.cmd.reloaded", "Reloaded the config files.");
 			def_messages.put("Messages.cmd.setlobby", "The lobby center is set at your location. For lobby radius, see configuration file.");
+			def_messages.put("Messages.cmd.sign", "A pre-written sign was given to you.");
 			
 			// ERRORS
 			def_messages.put("Messages.errors.mustBePlayer", "You must be a player to use this command.");
@@ -638,6 +703,7 @@ public class CraftZ extends JavaPlugin {
 			def_messages.put("Messages.errors.sign-facing-wrong", "The facing direction you defined is wrong. It may be n, s, e or w.");
 			def_messages.put("Messages.errors.not-enough-permissions", "You don't have the required permission to do this.");
 			def_messages.put("Messages.errors.not-in-lobby", "You are too far away from the lobby.");
+			def_messages.put("Messages.errors.cmd-not-existing", "This command does not exist. Use '/craftz' to display the help.");
 			
 		ConfigManager.newConfig("messages", i, def_messages);
 		ConfigManager.getConfig("messages").options().header(

@@ -23,18 +23,28 @@ public class PlayerJoinListener implements Listener {
 			if (ConfigManager.getConfig("config").getBoolean("Config.chat.modify-join-and-quit-messages"))
 				event.setJoinMessage(ChatColor.RED + "Player " + event.getPlayer().getDisplayName() + " connected.");
 			
-			if (PlayerManager.wasAlreadyInWorld(event.getPlayer())) {
-				PlayerManager.loadPlayer(event.getPlayer(), false);
-			} else {
-				
-				event.getPlayer().setHealth(20);
-				event.getPlayer().setFoodLevel(20);
-				event.getPlayer().getInventory().clear();
-				event.getPlayer().getInventory().setArmorContents(new ItemStack[] { null, null, null, null });
-				
-				event.getPlayer().teleport(PlayerManager.getLobby());
-				
-			}
+			joinPlayer(event.getPlayer());
+			
+		}
+		
+	}
+	
+	
+	
+	
+	
+	public static void joinPlayer(Player p) {
+		
+		if (PlayerManager.wasInWorld(p)) {
+			PlayerManager.loadPlayer(p, false);
+		} else {
+			
+			p.setHealth(20);
+			p.setFoodLevel(20);
+			p.getInventory().clear();
+			p.getInventory().setArmorContents(new ItemStack[] { null, null, null, null });
+			
+			p.teleport(PlayerManager.getLobby());
 			
 		}
 		

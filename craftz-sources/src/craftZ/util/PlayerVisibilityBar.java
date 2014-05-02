@@ -10,25 +10,31 @@ public class PlayerVisibilityBar {
 	
 	public static void updatePlayerVisibilityBar(Player p) {
 		
-		float visibility = 0.3F;
+		float visibility = 0.32F;
 		
-		if (p.isSneaking()) {
-			if (visibility > 0.1F)
-				visibility = visibility - 0.1F;
-			else
-				visibility = 0.0F;
+		
+		
+		boolean mov = CraftZ.movingPlayers.containsKey(p.getUniqueId());
+		
+		if (!mov) {
+			visibility -= 0.25f;
 		}
 		
-		if (p.isSprinting()) visibility = 0.8F;
 		
-		if (p.isInsideVehicle()) visibility = 1.0F;
+		
+		if (p.isSneaking()) {
+			visibility -= mov ? 0.15f : 0.3f;
+		}
+		
+		if (p.isSprinting()) visibility = 0.6f;
+		
+		if (p.isInsideVehicle()) visibility = mov ? 1.0f : visibility*4;
+		
+		
 		
 		Material blockTypeAtPlayerLoc = p.getLocation().getBlock().getType();
 		if (blockTypeAtPlayerLoc != Material.AIR) {
-			if (visibility > 0.2F)
-				visibility = visibility - 0.15F;
-			else
-				visibility = 0.0F;
+			visibility -= 0.15f;
 		}
 		
 		if (p.isSleeping()) {
@@ -36,27 +42,8 @@ public class PlayerVisibilityBar {
 		}
 		
 		
-		if (!CraftZ.movingPlayers.containsKey(p)) {
-			if (visibility - 0.2F > 0.0F)
-				visibility = visibility - 0.2F;
-			else
-				visibility = 0.0F;
-		}
 		
-		
-		
-		p.setExp(visibility);
-		
-		
-		// TODO Get this to work, Bukkit!
-//		int radius = (int) (visibility * 50);
-//		for (Entity ent : p.getNearbyEntities(radius, radius, radius)) {
-//			
-//			if (ent instanceof Zombie && !(((Zombie) ent).getTarget() instanceof Player)) {
-//				((Zombie) ent).setTarget(p);
-//			}
-//			
-//		}
+		p.setExp(visibility > 0f ? visibility : 0f);
 		
 	}
 	

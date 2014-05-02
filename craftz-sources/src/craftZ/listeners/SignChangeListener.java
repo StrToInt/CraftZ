@@ -9,6 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import craftZ.CraftZ;
 import craftZ.util.ChestRefiller;
@@ -35,6 +36,25 @@ public class SignChangeListener implements Listener {
 			
 			String signNotComplete = ChatColor.RED + CraftZ.getMsg("Messages.errors.sign-not-complete");
 			boolean extended = ConfigManager.getConfig("config").getBoolean("Config.chat.extended-error-messages");
+			
+			
+			
+			final ItemMeta meta = p.getItemInHand().getItemMeta();
+			if (meta.getDisplayName() != null && meta.getDisplayName().equals(ChatColor.DARK_PURPLE + "Pre-written Sign")) {
+				
+				line1 = meta.getLore().get(0);
+				line2 = meta.getLore().get(1);
+				line3 = meta.getLore().get(2);
+				line4 = meta.getLore().get(3);
+				
+				event.setLine(0, line1);
+				event.setLine(1, line2);
+				event.setLine(2, line3);
+				event.setLine(3, line4);
+				
+			}
+			
+			
 			
 			if (line1.equalsIgnoreCase("[CraftZ]")) {
 				

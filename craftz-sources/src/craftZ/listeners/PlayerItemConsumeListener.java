@@ -25,7 +25,7 @@ public class PlayerItemConsumeListener implements Listener {
 			
 			
 			
-			if (itemType == Material.POTION && item.getDurability() == 0 && PlayerManager.wasAlreadyInWorld(p)) {
+			if (itemType == Material.POTION && item.getDurability() == 0 && PlayerManager.isInWorld(p)) {
 					
 				if (p.getItemInHand().getAmount() < 2)
 					p.setItemInHand(new ItemStack(Material.AIR, 0));

@@ -46,13 +46,9 @@ public class PlayerManager {
 		
 		if (players.containsKey(p.getUniqueId())) {
 			
-			getConfig().set("Data.players." + p.getUniqueId() + ".thirst", getData(p).thirst);
-			getConfig().set("Data.players." + p.getUniqueId() + ".zombiesKilled", getData(p).zombiesKilled);
-			getConfig().set("Data.players." + p.getUniqueId() + ".playersKilled", getData(p).playersKilled);
-			getConfig().set("Data.players." + p.getUniqueId() + ".minsSurvived", getData(p).minutesSurvived);
-			getConfig().set("Data.players." + p.getUniqueId() + ".bleeding", getData(p).bleeding);
-			getConfig().set("Data.players." + p.getUniqueId() + ".poisoned", getData(p).poisoned);
-			getConfig().set("Data.players." + p.getUniqueId() + ".bonesBroken", getData(p).bonesBroken);
+			AdditionalCraftZData d = getData(p);
+			getConfig().set("Data.players." + p.getUniqueId(), d.thirst + "|" + d.zombiesKilled + "|" + d.playersKilled + "|" + d.minutesSurvived
+					+ "|" + (d.bleeding ? "1" : "0") + "|" + (d.poisoned ? "1" : "0") + "|" + (d.bonesBroken ? "1" : "0"));
 			
 			WorldData.save();
 			
@@ -74,7 +70,7 @@ public class PlayerManager {
 		
 		p.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 30, 1000));
 		
-		if (wasAlreadyInWorld(p) && !forceRespawn) {
+		if (wasInWorld(p) && !forceRespawn) {
 			
 			putPlayer(p, false);
 			p.setLevel(players.get(p.getUniqueId()).thirst);
@@ -112,6 +108,7 @@ public class PlayerManager {
 			
 			String confData = getConfig().getString("Data.players." + p.getUniqueId());
 			String[] spl = confData.split("\\|");
+			
 			int thirst = spl.length > 0 ? Integer.valueOf(spl[0]) : 20;
 			int zombies = spl.length > 1 ? Integer.valueOf(spl[1]) : 0;
 			int playersk = spl.length > 2 ? Integer.valueOf(spl[2]) : 0;
@@ -218,6 +215,10 @@ public class PlayerManager {
 			
 			Player p = p(id);
 			AdditionalCraftZData data = players.get(id);
+			
+			
+			
+			PlayerVisibilityBar.updatePlayerVisibilityBar(p);
 			
 			
 			
@@ -366,8 +367,12 @@ public class PlayerManager {
 	
 	
 	
-	public static boolean wasAlreadyInWorld(Player p) {
+	public static boolean wasInWorld(Player p) {
 		return getConfig().contains("Data.players." + p.getUniqueId());
+	}
+	
+	public static boolean isInWorld(Player p) {
+		return players.containsKey(p.getUniqueId());
 	}
 	
 	
