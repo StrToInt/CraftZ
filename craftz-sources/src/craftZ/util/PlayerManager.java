@@ -264,7 +264,7 @@ public class PlayerManager {
 					
 					if (dmg > 0) {
 						if (tickID % 200 == 0)
-							p.sendMessage("[CraftZ] " + CraftZ.getMsg("Messages.out-of-world"));
+							p.sendMessage(CraftZ.getPrefix() + " " + CraftZ.getMsg("Messages.out-of-world"));
 						p.damage(dmg);
 						p.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 20, 1));
 						p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20, 1));

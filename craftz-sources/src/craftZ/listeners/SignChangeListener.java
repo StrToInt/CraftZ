@@ -2,6 +2,7 @@ package craftZ.listeners;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -12,6 +13,7 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import craftZ.CraftZ;
+import craftZ.util.BlockChecker;
 import craftZ.util.ChestRefiller;
 import craftZ.util.ConfigManager;
 import craftZ.util.WorldData;
@@ -39,8 +41,8 @@ public class SignChangeListener implements Listener {
 			
 			
 			
-			final ItemMeta meta = p.getItemInHand().getItemMeta();
-			if (meta.getDisplayName() != null && meta.getDisplayName().equals(ChatColor.DARK_PURPLE + "Pre-written Sign")) {
+			ItemMeta meta = p.getItemInHand().getItemMeta();
+			if (meta.getDisplayName() != null && meta.getDisplayName().startsWith(ChatColor.DARK_PURPLE + "Pre-written Sign / ")) {
 				
 				line1 = meta.getLore().get(0);
 				line2 = meta.getLore().get(1);
@@ -198,12 +200,39 @@ public class SignChangeListener implements Listener {
 						String[] l3spl = line3.split(":");
 						
 						String l3y = l3spl[0];
-						try {
-							chestLocY = Integer.parseInt(l3y);
-						} catch(NumberFormatException ex) {
-							p.sendMessage(signNotComplete);
-							block.breakNaturally();
-							return;
+						
+						if (l3y.equals("%c%")) {
+							
+							Location bloc = block.getLocation();
+							Block b = BlockChecker.getFirst(Material.CHEST, bloc.getWorld(), bloc.getBlockX(), bloc.getBlockZ());
+							
+							if (b == null) {
+								p.sendMessage(signNotComplete);
+								if (extended) {
+									p.sendMessage(ChatColor.RED + "No chest was found.");
+								}
+								block.breakNaturally();
+								return;
+							}
+							
+							chestLocY = b.getY();
+							event.setLine(2, line3.replace("%c%", "" + chestLocY));
+							
+						} else {
+							
+							try {
+								chestLocY = Integer.parseInt(l3y);
+							} catch(NumberFormatException ex) {
+								
+								p.sendMessage(signNotComplete);
+								if (extended) {
+									p.sendMessage(ChatColor.RED + "Line 3 contains neither a correct y coordinate nor %c%");
+								}
+								block.breakNaturally();
+								return;
+								
+							}
+							
 						}
 						
 						String l3f = l3spl.length > 1 ? l3spl[1] : "n";

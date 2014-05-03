@@ -18,7 +18,7 @@ public class PlayerKickListener implements Listener {
 		
 		if (CraftZ.isWorld(event.getPlayer().getWorld())) {
 			
-			if (!event.getReason().startsWith("[CraftZ]")) {
+			if (!event.getReason().startsWith(CraftZ.getPrefix())) {
 				PlayerManager.savePlayerToConfig(event.getPlayer());
 				if (ConfigManager.getConfig("config").getBoolean("Config.chat.modify-join-and-quit-messages"))
 					event.setLeaveMessage(ChatColor.RED + "Player " + event.getPlayer().getDisplayName() + " disconnected.");

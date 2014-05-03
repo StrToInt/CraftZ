@@ -56,7 +56,7 @@ public class PlayerDeathListener implements Listener {
 			
 			
 			
-			final String kickMsg = ("[CraftZ] " + CraftZ.getMsg("Messages.died"))
+			final String kickMsg = (CraftZ.getPrefix() + " " + CraftZ.getMsg("Messages.died"))
 					.replaceAll("%z", "" + PlayerManager.getData(p).zombiesKilled)
 					.replaceAll("%p", "" + PlayerManager.getData(p).playersKilled)
 					.replaceAll("%m", "" + PlayerManager.getData(p).minutesSurvived);

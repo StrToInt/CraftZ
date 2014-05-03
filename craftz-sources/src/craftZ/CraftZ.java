@@ -309,7 +309,7 @@ public class CraftZ extends JavaPlugin {
 							
 						}
 						
-						sender.sendMessage("[CraftZ] " + ChatColor.GREEN + getMsg("Messages.cmd.removed-items")
+						sender.sendMessage(CraftZ.getPrefix() + " " + ChatColor.GREEN + getMsg("Messages.cmd.removed-items")
 								.replace("%i", "" + ChatColor.AQUA + craftz_removed_items + ChatColor.GREEN));
 						
 					} else {
@@ -420,9 +420,18 @@ public class CraftZ extends JavaPlugin {
 							String line3 = args.length > 2 ? args[2] : "";
 							String line4 = args.length > 3 ? args[3] : "";
 							
+							String desc = "Unknown";
+							if (line2.equalsIgnoreCase("lootchest")) {
+								desc = "Loot '" + line4 + "'";
+							} else if (line2.equalsIgnoreCase("playerspawn")) {
+								desc = "Player Spawn '" + line3 + "'";
+							} else if (line2.equalsIgnoreCase("zombiespawn")) {
+								desc = "Zombie Spawn " + line3;
+							}
+							
 							ItemStack sign = new ItemStack(Material.SIGN);
 							ItemMeta meta = sign.getItemMeta();
-							meta.setDisplayName(ChatColor.DARK_PURPLE + "Pre-written Sign");
+							meta.setDisplayName(ChatColor.DARK_PURPLE + "Pre-written Sign / " + desc);
 							meta.setLore(Arrays.asList("[CraftZ]", line2, line3, line4));
 							sign.setItemMeta(meta);
 							
@@ -605,6 +614,7 @@ public class CraftZ extends JavaPlugin {
 					def_config.put("Config.mobs.zombies.spawning.interval", 40);
 					def_config.put("Config.mobs.zombies.spawning.maxzombies", 200);
 					def_config.put("Config.mobs.zombies.spawning.enable-auto-spawn", false);
+					def_config.put("Config.mobs.zombies.spawning.enable-mini-zombies", true);
 					def_config.put("Config.mobs.zombies.spawning.auto-spawning-interval", 40);
 					
 					// EFFECTS
@@ -629,6 +639,7 @@ public class CraftZ extends JavaPlugin {
 			def_config.put("Config.chat.modify-death-messages", true);
 			def_config.put("Config.chat.separate-craftz-chat", true);
 			def_config.put("Config.chat.extended-error-messages", true);
+			def_config.put("Config.chat.prefix", "[CraftZ]");
 			
 				// RANGE
 				def_config.put("Config.chat.ranged.enable", false);
@@ -839,6 +850,11 @@ public class CraftZ extends JavaPlugin {
 	
 	public static String getMsg(String path) {
 		return ConfigManager.getConfig("messages").getString(path);
+	}
+	
+	public static String getPrefix() {
+		String pre = ConfigManager.getConfig("config").getString("Config.chat.prefix");
+		return pre.length() > 0 ? pre : "[CraftZ]";
 	}
 	
 	

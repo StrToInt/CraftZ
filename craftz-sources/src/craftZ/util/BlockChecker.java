@@ -5,29 +5,15 @@ import java.util.List;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 
 public class BlockChecker {
 	
-	public static Block getFirstOver(Material material, Location loc) {
+	public static Block getFirst(Material material, World world, int x, int z) {
 		
-		for (int i=1; i<256; i++) {
-			Location tempLoc = loc.clone().add(0, i, 0);
-			if (tempLoc.getBlock().getType() == material)
-				return tempLoc.getBlock();
-		}
-		
-		return null;
-		
-	}
-	
-	
-	
-	
-	public static Block getFirstUnder(Material material, Location loc) {
-		
-		for (int i=1; i<256; i++) {
-			Location tempLoc = loc.clone().subtract(0, i, 0);
+		for (int y=0; y<256; y++) {
+			Location tempLoc = new Location(world, x, y, z);
 			if (tempLoc.getBlock().getType() == material)
 				return tempLoc.getBlock();
 		}

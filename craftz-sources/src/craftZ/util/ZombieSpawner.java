@@ -177,8 +177,10 @@ public class ZombieSpawner implements Listener {
 		
 		
 		
-		if (new Random().nextInt(7) < 1) {
+		if (new Random().nextInt(7) < 1 && ConfigManager.getConfig("config").getBoolean("Config.mobs.zombies.spawning.enable-mini-zombies")) {
 			zombie.setBaby(true);
+			zombie.removePotionEffect(PotionEffectType.SPEED);
+			zombie.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, Integer.MAX_VALUE, 0));
 		}
 		
 		

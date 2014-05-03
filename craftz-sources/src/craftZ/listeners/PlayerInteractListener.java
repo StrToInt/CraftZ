@@ -15,6 +15,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -178,8 +179,15 @@ public class PlayerInteractListener implements Listener {
 				
 				
 				
-				if (block.getType() == Material.FIRE)
-					p.sendMessage(CraftZ.getMsg("Messages.already-have-wood"));
+				if (item == null) return;
+				
+				ItemMeta meta = item.getItemMeta();
+				if (meta.getDisplayName() != null && meta.getDisplayName().startsWith(ChatColor.DARK_PURPLE + "Pre-written Sign / ")
+						&& item.getAmount() == 2 && p.getGameMode() != GameMode.CREATIVE) {
+					
+					item.setAmount(item.getAmount()+1);
+					
+				}
 				
 			}
 		
