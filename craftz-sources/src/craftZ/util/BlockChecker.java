@@ -1,6 +1,8 @@
 package craftZ.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.bukkit.Location;
@@ -9,6 +11,19 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 
 public class BlockChecker {
+	
+	public static final List<Material> TRANSPARENT = Collections.unmodifiableList(Arrays.asList(
+			Material.AIR,
+			Material.LONG_GRASS, Material.FLOWER_POT, Material.CROPS, Material.DEAD_BUSH, Material.DOUBLE_PLANT,
+			Material.WALL_SIGN, Material.SIGN_POST,
+			Material.REDSTONE_WIRE, Material.REDSTONE_TORCH_ON, Material.REDSTONE_TORCH_OFF,
+			Material.REDSTONE_COMPARATOR_ON, Material.REDSTONE_COMPARATOR_OFF,
+			Material.DIODE_BLOCK_ON, Material.DIODE_BLOCK_OFF,
+			Material.TORCH,
+			Material.TRIPWIRE, Material.TRIPWIRE_HOOK
+	));
+	
+	
 	
 	public static Block getFirst(Material material, World world, int x, int z) {
 		
@@ -25,31 +40,16 @@ public class BlockChecker {
 	
 	
 	
-	public static Location getSafeSpawnLocationOver(Location loc, boolean allowWater) {
-		
-		ArrayList<Material> safeMaterials = new ArrayList<Material>();
-		safeMaterials.add(Material.WALL_SIGN);
-		safeMaterials.add(Material.SIGN_POST);
-		safeMaterials.add(Material.AIR);
-		safeMaterials.add(Material.REDSTONE_WIRE);
-		safeMaterials.add(Material.TORCH);
-		safeMaterials.add(Material.REDSTONE_TORCH_OFF);
-		safeMaterials.add(Material.REDSTONE_TORCH_ON);
-		safeMaterials.add(Material.TRIPWIRE);
-		safeMaterials.add(Material.TRIPWIRE_HOOK);
-		if (allowWater == true) safeMaterials.add(Material.WATER);
+	public static Location getSafeSpawnLocationOver(Location loc) {
 		
 		for (int i=1; i<256 - loc.getBlockY(); i++) {
 			
 			Location tempLoc = loc.clone().add(0, i, 0);
-			Block tempBlock = tempLoc.getBlock();
-			Material tempMat = tempBlock.getType();
+			Material tempMat = tempLoc.getBlock().getType();
+			Material tempOverMat = tempLoc.clone().add(0, 1, 0).getBlock().getType();
+			Material tempUnderMat = tempLoc.clone().subtract(0, 1, 0).getBlock().getType();
 			
-			Location tempOverLoc = loc.clone().add(0, i + 1, 0);
-			Block tempOverBlock = tempOverLoc.getBlock();
-			Material tempOverMat = tempOverBlock.getType();
-			
-			if (safeMaterials.contains(tempMat) && safeMaterials.contains(tempOverMat))
+			if (TRANSPARENT.contains(tempMat) && TRANSPARENT.contains(tempOverMat) && !TRANSPARENT.contains(tempUnderMat))
 				return tempLoc;
 			
 		}
@@ -61,35 +61,16 @@ public class BlockChecker {
 	
 	
 	
-	public static Location getSafeSpawnLocationUnder(Location loc, boolean allowWater) {
-		
-		ArrayList<Material> safeMaterials = new ArrayList<Material>();
-		safeMaterials.add(Material.WALL_SIGN);
-		safeMaterials.add(Material.SIGN_POST);
-		safeMaterials.add(Material.AIR);
-		safeMaterials.add(Material.REDSTONE_WIRE);
-		safeMaterials.add(Material.TORCH);
-		safeMaterials.add(Material.REDSTONE_TORCH_OFF);
-		safeMaterials.add(Material.REDSTONE_TORCH_ON);
-		safeMaterials.add(Material.TRIPWIRE);
-		safeMaterials.add(Material.TRIPWIRE_HOOK);
-		if (allowWater == true) safeMaterials.add(Material.WATER);
+	public static Location getSafeSpawnLocationUnder(Location loc) {
 		
 		for (int i=0; i<256 - loc.getBlockY(); i++) {
 			
 			Location tempLoc = loc.clone().subtract(0, i, 0);
-			Block tempBlock = tempLoc.getBlock();
-			Material tempMat = tempBlock.getType();
+			Material tempMat = tempLoc.getBlock().getType();
+			Material tempOverMat = tempLoc.clone().add(0, 1, 0).getBlock().getType();
+			Material tempUnderMat = tempLoc.clone().subtract(0, 1, 0).getBlock().getType();
 			
-			Location tempUnderLoc = loc.clone().subtract(0, (i + 1 > 0 ? i + 1 : 0), 0);
-			Block tempUnderBlock = tempUnderLoc.getBlock();
-			Material tempUnderMat = tempUnderBlock.getType();
-			
-			Location tempOverLoc = loc.clone().subtract(0, i - 1, 0);
-			Block tempOverBlock = tempOverLoc.getBlock();
-			Material tempOverMat = tempOverBlock.getType();
-			
-			if (safeMaterials.contains(tempMat) && safeMaterials.contains(tempOverMat) && !safeMaterials.contains(tempUnderMat))
+			if (TRANSPARENT.contains(tempMat) && TRANSPARENT.contains(tempOverMat) && !TRANSPARENT.contains(tempUnderMat))
 				return tempLoc;
 			
 		}

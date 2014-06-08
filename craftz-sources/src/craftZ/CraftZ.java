@@ -582,6 +582,11 @@ public class CraftZ extends JavaPlugin {
 					def_config.put("Config.players.interact.block-placing", false);
 					def_config.put("Config.players.interact.allow-spiderweb-placing", true);
 				
+				// WEAPONS
+				def_config.put("Config.players.weapons.grenade-enable", true);
+				def_config.put("Config.players.weapons.grenade-range", 8.0);
+				def_config.put("Config.players.weapons.grenade-power", 6.0);
+				
 				// MEDICAL
 				def_config.put("Config.players.medical.enable-sugar-speed-effect", true);
 				def_config.put("Config.players.medical.bleeding.enable", true);

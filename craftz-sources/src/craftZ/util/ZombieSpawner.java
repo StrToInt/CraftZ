@@ -54,7 +54,7 @@ public class ZombieSpawner implements Listener {
 		int spnLocZ = spnptSec.getInt("coords.z");
 		Location spnLoc = new Location(CraftZ.world(), spnLocX, spnLocY, spnLocZ);
 		
-		Location locToSpawn = BlockChecker.getSafeSpawnLocationOver(spnLoc, true);
+		Location locToSpawn = BlockChecker.getSafeSpawnLocationOver(spnLoc);
 		
 		int maxZombiesInRadius = spnptSec.getInt("max-zombies-in-radius");
 		int maxZombiesRadius = spnptSec.getInt("max-zombies-radius");
@@ -99,20 +99,16 @@ public class ZombieSpawner implements Listener {
 				
 				cooldowns.put(str, 0);
 				
-				
-				
-				Set<String> spts_zombies_set = WorldData.get()
-						.getConfigurationSection("Data.zombiespawns").getKeys(false);
-				
+				Set<String> spts_zombies_set = WorldData.get().getConfigurationSection("Data.zombiespawns").getKeys(false);
 				if (spts_zombies_set != null && !spts_zombies_set.isEmpty()) {
 					
-					ConfigurationSection configSec = WorldData.get().getConfigurationSection("Data.zombiespawns."
-							+ str);
-					
-					if (configSec == null) return;
+					ConfigurationSection configSec = WorldData.get().getConfigurationSection("Data.zombiespawns." + str);
+					if (configSec == null)
+						return;
 					
 					Zombie spawnedZombie = evalZombieSpawn(configSec);
-					if (spawnedZombie == null) return;
+					if (spawnedZombie == null)
+						return;
 					
 					equipZombie(spawnedZombie);
 					
@@ -139,20 +135,25 @@ public class ZombieSpawner implements Listener {
 				Location randLoc = p.getLocation().add(new Random().nextInt(128) - 64, 0,
 						new Random().nextInt(128) - 64);
 				
-				Location locToSpawn = BlockChecker.getSafeSpawnLocationOver(randLoc, true);
-				int zombies = 0;
-				int maxZombies = ConfigManager.getConfig("config").getInt("Config.mobs.zombies.spawning.maxzombies");
+				Location locToSpawn = BlockChecker.getSafeSpawnLocationOver(randLoc);
+				if (locToSpawn == null)
+					locToSpawn = BlockChecker.getSafeSpawnLocationUnder(randLoc);
 				
-				for (Entity ent : p.getWorld().getEntities()) {
+				if (locToSpawn != null) {
+						
+					int zombies = 0;
+					int maxZombies = ConfigManager.getConfig("config").getInt("Config.mobs.zombies.spawning.maxzombies");
 					
-					if (ent.getType() == EntityType.ZOMBIE)
-						zombies++;
+					for (Entity ent : p.getWorld().getEntities()) {
+						if (ent.getType() == EntityType.ZOMBIE)
+							zombies++;
+					}
 					
-				}
-				
-				if (zombies <= maxZombies) {
-					Entity ent = p.getWorld().spawnEntity(locToSpawn, EntityType.ZOMBIE);
-					equipZombie((Zombie) ent);
+					if (zombies <= maxZombies) {
+						Entity ent = p.getWorld().spawnEntity(locToSpawn, EntityType.ZOMBIE);
+						equipZombie((Zombie) ent);
+					}
+					
 				}
 				
 			}

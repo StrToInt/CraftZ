@@ -148,10 +148,9 @@ public class PlayerManager {
 			World spnWorld = CraftZ.world();
 			Location spnLoc = new Location(spnWorld, spnLocX, spnLocY, spnLocZ);
 			
-			p.teleport(BlockChecker.getSafeSpawnLocationOver(spnLoc, true));
+			p.teleport(BlockChecker.getSafeSpawnLocationOver(spnLoc));
 			
-			p.sendMessage(ChatColor.YELLOW + CraftZ.getMsg("Messages.spawned")
-					.replaceAll("%s", configSec.getString("name")));
+			p.sendMessage(ChatColor.YELLOW + CraftZ.getMsg("Messages.spawned").replaceAll("%s", configSec.getString("name")));
 			
 		}
 		

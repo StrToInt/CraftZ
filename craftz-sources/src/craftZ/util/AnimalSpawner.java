@@ -39,7 +39,7 @@ public class AnimalSpawner {
 				
 				int x = new Random().nextInt(16) + 16 * loadedChunks[randomChunkNumber].getX();
 				int z = new Random().nextInt(16) + 16 * loadedChunks[randomChunkNumber].getZ();
-				Location loc = BlockChecker.getSafeSpawnLocationUnder(new Location(world, x, 255, z), true);
+				Location loc = BlockChecker.getSafeSpawnLocationUnder(new Location(world, x, 255, z));
 				
 				if (loc == null) continue;
 				

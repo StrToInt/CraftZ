@@ -13,6 +13,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
 
 import craftZ.CraftZ;
+import craftZ.util.ConfigManager;
 
 
 public class ProjectileHitListener implements Listener {
@@ -26,17 +27,23 @@ public class ProjectileHitListener implements Listener {
 			
 			if (event.getEntityType() == EntityType.ENDER_PEARL) {
 				
+				if (!ConfigManager.getConfig("config").getBoolean("Config.players.weapons.grenade-enable", true))
+					return;
+				
 				Location eventLocation = event.getEntity().getLocation();
 				event.getEntity().getWorld().createExplosion(eventLocation, 0);
 				
-				List<Entity> tnt_nearbyEnts = event.getEntity().getNearbyEntities(10, 10, 10);
+				double range = ConfigManager.getConfig("config").getDouble("Config.players.weapons.grenade-range");
+				double power = ConfigManager.getConfig("config").getDouble("Config.players.weapons.grenade-power");
+				
+				List<Entity> tnt_nearbyEnts = event.getEntity().getNearbyEntities(range, range, range);
 				for (Entity targetEntity : tnt_nearbyEnts) {
 					
 					if (targetEntity instanceof LivingEntity || targetEntity instanceof Player) {
 						
 						LivingEntity targetLiving = (LivingEntity) targetEntity;
-						double targetDistance = eventLocation.distance(targetLiving.getLocation()) / 2;
-						targetLiving.damage(10.0 / targetDistance);
+						double targetDistance = eventLocation.distance(targetLiving.getLocation());
+						targetLiving.damage((1D - targetDistance / range) * power);
 						
 					}
 					
