@@ -603,6 +603,7 @@ public class CraftZ extends JavaPlugin {
 				def_config.put("Config.players.medical.thirst.enable", true);
 				def_config.put("Config.players.medical.thirst.ticks-normal", 1200);
 				def_config.put("Config.players.medical.thirst.ticks-desert", 800);
+				def_config.put("Config.players.medical.thirst.show-messages", true);
 			
 			// MOBS
 			def_config.put("Config.mobs.blood-particles-when-damaged", true);
@@ -693,6 +694,8 @@ public class CraftZ extends JavaPlugin {
 		def_messages.put("Messages.bones-broken", "You broke your bones! You need a Morphine Auto Injector!");
 		def_messages.put("Messages.bones-healed", "You used the Morphine Auto Injector successfully.");
 		def_messages.put("Messages.out-of-world", "You're in a very infected area! Go back, or you will die soon!");
+		def_messages.put("Messages.thirsty", "You're becoming very thirsty. Think about drinking something!");
+		def_messages.put("Messages.thirsty-dehydrating", "Get something to drink, you are dehydrating!");
 		def_messages.put("Messages.killed.zombie", "Killed the zombie! Total zombie kills: %k");
 		def_messages.put("Messages.killed.player", "Killed %p! Total player kills: %k");
 		

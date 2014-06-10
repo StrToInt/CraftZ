@@ -225,15 +225,26 @@ public class PlayerManager {
 				
 				Biome biome = p.getLocation().getBlock().getBiome();
 				boolean desert = biome == Biome.DESERT || biome == Biome.DESERT_HILLS || biome == Biome.DESERT_MOUNTAINS;
+				int ticksNeeded = desert ? ConfigManager.getConfig("config").getInt("Config.players.medical.thirst.ticks-desert")
+						: ConfigManager.getConfig("config").getInt("Config.players.medical.thirst.ticks-normal");
 				
-				if (tickID % (desert ? ConfigManager.getConfig("config").getInt("Config.players.medical.thirst.ticks-desert")
-						: ConfigManager.getConfig("config").getInt("Config.players.medical.thirst.ticks-normal")) == 0) {
+				if (tickID % ticksNeeded == 0) {
 					
 					if (data.thirst > 0) {
 						data.thirst--;
 						p.setLevel(data.thirst);
 					} else {
 						p.damage(2);
+					}
+					
+					if (ConfigManager.getConfig("config").getBoolean("Config.players.medical.thirst.show-messages")) {
+						
+						if (data.thirst <= 8 && data.thirst > 1 && data.thirst % 2 == 0) {
+							p.sendMessage(ChatColor.RED + CraftZ.getMsg("Messages.thirsty"));
+						} else if (data.thirst <= 1) {
+							p.sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.thirsty-dehydrating"));
+						}
+						
 					}
 					
 				}
