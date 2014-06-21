@@ -77,8 +77,10 @@ public class PlayerManager {
 			
 		} else {
 			
-			p.getInventory().clear();
-			p.getInventory().setArmorContents(new ItemStack[4]);
+			if (ConfigManager.getConfig("config").getBoolean("Config.players.clear-inventory-on-spawn")) {
+				p.getInventory().clear();
+				p.getInventory().setArmorContents(new ItemStack[4]);
+			}
 			
 			p.setHealth(20);
 			p.setFoodLevel(20);

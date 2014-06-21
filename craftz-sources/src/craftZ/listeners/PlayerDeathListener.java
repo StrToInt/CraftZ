@@ -32,8 +32,11 @@ public class PlayerDeathListener implements Listener {
 			if (p.getKiller() != null) {
 				
 				PlayerManager.getData(p.getKiller()).playersKilled++;
-				p.getKiller().sendMessage(ChatColor.GOLD + CraftZ.getMsg("Messages.killed.player").replaceAll("%p", p.getDisplayName())
-						.replaceAll("%k", "" + PlayerManager.getData(p.getKiller()).playersKilled));
+				
+				if (ConfigManager.getConfig("config").getBoolean("Config.players.send-kill-stat-messages")) {
+					p.getKiller().sendMessage(ChatColor.GOLD + CraftZ.getMsg("Messages.killed.player").replaceAll("%p", p.getDisplayName())
+							.replaceAll("%k", "" + PlayerManager.getData(p.getKiller()).playersKilled));
+				}
 				
 			}
 			

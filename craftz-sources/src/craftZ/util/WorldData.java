@@ -85,6 +85,10 @@ public class WorldData {
 		System.out.println("Converting world data for '" + world + "' to version 1");
 		
 		ConfigurationSection plSec = get(world).getConfigurationSection("Data.players");
+		if (plSec == null) {
+			System.out.println(" -  World data for '" + world + "' seems to be empty, no conversion needed");
+		}
+		
 		for (String key : plSec.getKeys(false)) {
 			
 			UUID id = Bukkit.getOfflinePlayer(key).getUniqueId();

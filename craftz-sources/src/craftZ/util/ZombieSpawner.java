@@ -55,11 +55,13 @@ public class ZombieSpawner implements Listener {
 		Location spnLoc = new Location(CraftZ.world(), spnLocX, spnLocY, spnLocZ);
 		
 		Location locToSpawn = BlockChecker.getSafeSpawnLocationOver(spnLoc);
+		if (locToSpawn == null)
+			locToSpawn = BlockChecker.getSafeSpawnLocationUnder(spnLoc);
 		
 		int maxZombiesInRadius = spnptSec.getInt("max-zombies-in-radius");
 		int maxZombiesRadius = spnptSec.getInt("max-zombies-radius");
 		
-		if (!EntityChecker.areEntitiesNearby(locToSpawn, maxZombiesRadius, EntityType.ZOMBIE, maxZombiesInRadius)) {
+		if (locToSpawn != null && !EntityChecker.areEntitiesNearby(locToSpawn, maxZombiesRadius, EntityType.ZOMBIE, maxZombiesInRadius)) {
 			
 			int zombies = 0;
 			int maxZombies = ConfigManager.getConfig("config").getInt("Config.mobs.zombies.spawning.maxzombies");
