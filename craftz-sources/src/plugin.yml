@@ -3,7 +3,10 @@ version: 1.0
 author: JangoBrick
 main: craftZ.CraftZ
 load: STARTUP
+
+softdepend: ["Vault"]
+
 commands:
-    craftz:
-        description: Main command, displays help.
-        usage: /<command>
+  craftz:
+    description: Main command, displays help.
+    usage: /<command>

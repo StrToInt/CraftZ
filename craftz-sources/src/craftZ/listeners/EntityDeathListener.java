@@ -6,6 +6,7 @@ import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -16,6 +17,7 @@ import craftZ.CraftZ;
 import craftZ.util.ConfigManager;
 import craftZ.util.DeadPlayer;
 import craftZ.util.PlayerManager;
+import craftZ.util.Rewarder.RewardType;
 import craftZ.util.StackParser;
 
 
@@ -26,21 +28,22 @@ public class EntityDeathListener implements Listener {
 		
 		if (CraftZ.isWorld(event.getEntity().getWorld())) {
 		
-			LivingEntity eventEntity = event.getEntity();
-			EntityType eventEntityType = eventEntity.getType();
+			LivingEntity entity = event.getEntity();
 			List<ItemStack> drops = event.getDrops();
 			
 			event.setDroppedExp(0);
 			
-			if (eventEntityType == EntityType.ZOMBIE) {
+			
+			
+			if (event.getEntityType() == EntityType.ZOMBIE) {
 				
 				drops.clear();
 				
 				
 				
-				if (DeadPlayer.getDeadPlayer(eventEntity.getUniqueId()) != null) {
+				if (DeadPlayer.getDeadPlayer(entity.getUniqueId()) != null) {
 					
-					DeadPlayer dp = DeadPlayer.getDeadPlayer(eventEntity.getUniqueId());
+					DeadPlayer dp = DeadPlayer.getDeadPlayer(entity.getUniqueId());
 					
 					drops.clear();
 					drops.addAll(dp.inventory);
@@ -65,14 +68,18 @@ public class EntityDeathListener implements Listener {
 				
 				
 				
-				if (eventEntity.getKiller() != null && !PlayerManager.isInsideOfLobby(eventEntity.getKiller())) {
+				Player killer = entity.getKiller();
+				
+				if (killer != null && !PlayerManager.isInsideOfLobby(killer)) {
 					
-					PlayerManager.getData(event.getEntity().getKiller()).zombiesKilled++;
+					PlayerManager.getData(killer).zombiesKilled++;
 					
 					if (ConfigManager.getConfig("config").getBoolean("Config.players.send-kill-stat-messages")) {
-						eventEntity.getKiller().sendMessage(ChatColor.GOLD + CraftZ.getMsg("Messages.killed.zombie")
-								.replaceAll("%k", "" + PlayerManager.getData(eventEntity.getKiller()).zombiesKilled));
+						killer.sendMessage(ChatColor.GOLD + CraftZ.getMsg("Messages.killed.zombie")
+								.replaceAll("%k", "" + PlayerManager.getData(killer).zombiesKilled));
 					}
+					
+					RewardType.KILL_ZOMBIE.reward(killer);
 					
 				}
 				
@@ -80,19 +87,19 @@ public class EntityDeathListener implements Listener {
 			
 			
 			
-			if (eventEntityType == EntityType.COW) {
+			if (event.getEntityType() == EntityType.COW) {
 				
 			}
 			
-			if (eventEntityType == EntityType.CHICKEN) {
+			if (event.getEntityType() == EntityType.CHICKEN) {
 				
 			}
 			
-			if (eventEntityType == EntityType.PIG) {
+			if (event.getEntityType() == EntityType.PIG) {
 				
 			}
 			
-			if (eventEntityType == EntityType.SHEEP) {
+			if (event.getEntityType() == EntityType.SHEEP) {
 				
 			}
 		

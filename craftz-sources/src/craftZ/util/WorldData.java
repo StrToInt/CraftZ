@@ -1,5 +1,7 @@
 package craftZ.util;
 
+import static craftZ.CraftZ.info;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -15,6 +17,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import com.google.common.io.Files;
 
 import craftZ.CraftZ;
+
 
 public class WorldData {
 	
@@ -82,18 +85,18 @@ public class WorldData {
 	@SuppressWarnings("deprecation")
 	private static void uc_1(String world) {
 		
-		System.out.println("Converting world data for '" + world + "' to version 1");
+		info("Converting world data for '" + world + "' to version 1");
 		
 		ConfigurationSection plSec = get(world).getConfigurationSection("Data.players");
 		if (plSec == null) {
-			System.out.println(" -  World data for '" + world + "' seems to be empty, no conversion needed");
+			info(" -  World data for '" + world + "' seems to be empty, no conversion needed");
 		}
 		
 		for (String key : plSec.getKeys(false)) {
 			
 			UUID id = Bukkit.getOfflinePlayer(key).getUniqueId();
 			if (id == null) {
-				System.err.println(" -  Not able to convert player '" + key + "', he will be deleted");
+				info(" -  Not able to convert player '" + key + "', he will be deleted");
 				plSec.set(key, null);
 				continue;
 			}

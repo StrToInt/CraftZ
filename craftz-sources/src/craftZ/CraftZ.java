@@ -32,6 +32,7 @@ import craftZ.util.ChestRefiller;
 import craftZ.util.ConfigManager;
 import craftZ.util.DeadPlayer;
 import craftZ.util.PlayerManager;
+import craftZ.util.Rewarder;
 import craftZ.util.ScoreboardHelper;
 import craftZ.util.Time;
 import craftZ.util.ZombieSpawner;
@@ -105,8 +106,8 @@ public class CraftZ extends JavaPlugin {
 				wr.close();
 				
 			} catch (Exception ex) {
-				System.out.println();
-				System.err.println("[CraftZ] Could not write the README.txt file to disk!");
+				br();
+				severe("Could not write the README.txt file to disk!");
 			}
 			
 		}
@@ -120,7 +121,7 @@ public class CraftZ extends JavaPlugin {
 				
 				if (world() == null) {
 					
-					getLogger().log(Level.SEVERE, "World '" + worldName() + "' not found! Please check config.yml. CraftZ will not work.");
+					severe("World '" + worldName() + "' not found! Please check config.yml. CraftZ will not work.");
 					failedWorldLoad = true;
 					
 					HandlerList.unregisterAll(CraftZ.this);
@@ -131,14 +132,14 @@ public class CraftZ extends JavaPlugin {
 				
 				if (firstRun) {
 					
-					System.out.println("");
+					br();
 					
 					for (String s : firstRunMessages)
-						System.out.println(s);
+						info(s);
 					
-					System.out.println("");
-					System.out.println("You can also find this message at any time in '/plugins/CraftZ/README.txt'.");
-					System.out.println("");
+					br();
+					info("You can also find this message at any time in '/plugins/CraftZ/README.txt'.");
+					br();
 					
 					rl(new PlayerJoinListener.FirstTimeUse());
 					
@@ -204,10 +205,18 @@ public class CraftZ extends JavaPlugin {
 		
 	
 		
-		System.out.println("++======================================================++");
-		System.out.println("||  [CraftZ] Visit dev.bukkit.org/bukkit-plugins/craftz ||");
-		System.out.println("||  [CraftZ] Plugin successfully enabled.               ||");
-		System.out.println("++======================================================++");
+		info("++=============================================++");
+		info("||  Visit dev.bukkit.org/bukkit-plugins/craftz ||");
+		info("||  Plugin successfully enabled.               ||");
+		info("++=============================================++");
+		
+		
+		
+		if (Rewarder.setup()) {
+			info("Successfully hooked into Vault. Players can receive rewards.");
+		} else {
+			warn("Not able to hook into Vault. Players will not receive rewards.");
+		}
 		
 	}
 	
@@ -219,9 +228,9 @@ public class CraftZ extends JavaPlugin {
 		
 		PlayerManager.saveAllPlayersToConfig();
 		
-		System.out.println("++==========================================++");
-		System.out.println("||  [CraftZ] Plugin successfully disabled.  ||");
-		System.out.println("++==========================================++");
+		info("++=================================++");
+		info("||  Plugin successfully disabled.  ||");
+		info("++=================================++");
 		
 	}
 	
@@ -578,11 +587,9 @@ public class CraftZ extends JavaPlugin {
 				// INTERACT
 				def_config.put("Config.players.interact.shearing", false);
 				def_config.put("Config.players.interact.sleeping", false);
-				
-					// BLOCKS
-					def_config.put("Config.players.interact.block-breaking", false);
-					def_config.put("Config.players.interact.block-placing", false);
-					def_config.put("Config.players.interact.allow-spiderweb-placing", true);
+				def_config.put("Config.players.interact.block-breaking", false);
+				def_config.put("Config.players.interact.block-placing", false);
+				def_config.put("Config.players.interact.allow-spiderweb-placing", true);
 				
 				// WEAPONS
 				def_config.put("Config.players.weapons.grenade-enable", true);
@@ -606,6 +613,13 @@ public class CraftZ extends JavaPlugin {
 				def_config.put("Config.players.medical.thirst.ticks-normal", 1200);
 				def_config.put("Config.players.medical.thirst.ticks-desert", 800);
 				def_config.put("Config.players.medical.thirst.show-messages", true);
+				
+				// REWARDS
+				def_config.put("Config.players.rewards.enable", false);
+				def_config.put("Config.players.rewards.enable-notifications", true);
+				def_config.put("Config.players.rewards.amount-kill-zombie", 10.0);
+				def_config.put("Config.players.rewards.amount-kill-player", 50.0);
+				def_config.put("Config.players.rewards.amount-heal-player", 30.0);
 			
 			// MOBS
 			def_config.put("Config.mobs.blood-particles-when-damaged", true);
@@ -698,9 +712,14 @@ public class CraftZ extends JavaPlugin {
 		def_messages.put("Messages.out-of-world", "You're in a very infected area! Go back, or you will die soon!");
 		def_messages.put("Messages.thirsty", "You're becoming very thirsty. Think about drinking something!");
 		def_messages.put("Messages.thirsty-dehydrating", "Get something to drink, you are dehydrating!");
-		def_messages.put("Messages.killed.zombie", "Killed the zombie! Total zombie kills: %k");
-		def_messages.put("Messages.killed.player", "Killed %p! Total player kills: %k");
-		
+			
+			// KILLED
+			def_messages.put("Messages.killed.zombie", "Killed the zombie! Total zombie kills: %k");
+			def_messages.put("Messages.killed.player", "Killed %p! Total player kills: %k");
+			
+			// REWARDS
+			def_messages.put("Messages.rewards.message", "You earned %m!");
+			
 			// HELP
 			def_messages.put("Messages.help.title", "=== CraftZ Help ===");
 			def_messages.put("Messages.help.help-command", "/craftz: Displays this help menu.");
@@ -885,6 +904,26 @@ public class CraftZ extends JavaPlugin {
 	
 	public static boolean isWorld(World world) {
 		return world.getName().equals(worldName());
+	}
+	
+	
+	
+	
+	
+	public static void info(Object msg) {
+		i.getLogger().log(Level.INFO, "" + msg);
+	}
+	
+	public static void warn(Object msg) {
+		i.getLogger().log(Level.WARNING, "" + msg);
+	}
+	
+	public static void severe(Object msg) {
+		i.getLogger().log(Level.SEVERE, "" + msg);
+	}
+	
+	public static void br() {
+		info("");
 	}
 	
 }

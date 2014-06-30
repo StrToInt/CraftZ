@@ -1,4 +1,4 @@
-package craftZ.listeners;
+﻿package craftZ.listeners;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -10,13 +10,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import craftZ.CraftZ;
 import craftZ.util.ConfigManager;
 import craftZ.util.PlayerManager;
+import craftZ.util.Rewarder.RewardType;
 
 
 public class EntityDamageByEntityListener implements Listener {
@@ -33,10 +33,10 @@ public class EntityDamageByEntityListener implements Listener {
 			
 			
 			
-			if (event.getDamager() instanceof Player && event.getEntity() instanceof Player && event.getCause() == DamageCause.ENTITY_ATTACK) {
+			if (event.getDamager() instanceof Player && event.getEntity() instanceof Player) {
 				
 				Player damager = (Player) event.getDamager();
-				Player eventPlayer = (Player) event.getEntity();
+				Player player = (Player) event.getEntity();
 				
 				if (damager.getItemInHand().getType() == Material.PAPER) {
 					
@@ -45,17 +45,19 @@ public class EntityDamageByEntityListener implements Listener {
 						event.setCancelled(true);
 						event.setDamage(0);
 						
-						eventPlayer.playSound(eventPlayer.getLocation(), Sound.ENDERDRAGON_WINGS, 1, 1);
-						damager.playSound(eventPlayer.getLocation(), Sound.ENDERDRAGON_WINGS, 1, 1);
+						player.playSound(player.getLocation(), Sound.ENDERDRAGON_WINGS, 1, 1);
+						damager.playSound(player.getLocation(), Sound.ENDERDRAGON_WINGS, 1, 1);
 						
 						if (damager.getItemInHand().getAmount() < 2)
 							damager.setItemInHand(new ItemStack(Material.AIR, 0));
 						else
 							damager.getItemInHand().setAmount(damager.getItemInHand().getAmount() - 1);
 						
-						PlayerManager.getData(eventPlayer).bleeding = false;
+						PlayerManager.getData(player).bleeding = false;
 						
-						eventPlayer.sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.bandaged"));
+						player.sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.bandaged"));
+						
+						RewardType.HEAL_PLAYER.reward(damager);
 						
 					}
 					
@@ -78,9 +80,11 @@ public class EntityDamageByEntityListener implements Listener {
 						else
 							damager.getItemInHand().setAmount(damager.getItemInHand().getAmount() - 1);
 						
-						eventPlayer.setHealth(20);
+						player.setHealth(20);
 						
-						eventPlayer.sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.bloodbag"));
+						player.sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.bloodbag"));
+						
+						RewardType.HEAL_PLAYER.reward(damager);
 						
 					}
 					
@@ -95,17 +99,19 @@ public class EntityDamageByEntityListener implements Listener {
 						event.setCancelled(true);
 						event.setDamage(0);
 						
-						eventPlayer.playSound(eventPlayer.getLocation(), Sound.ZOMBIE_UNFECT, 1, 1);
-						damager.playSound(eventPlayer.getLocation(), Sound.ZOMBIE_UNFECT, 1, 1);
+						player.playSound(player.getLocation(), Sound.ZOMBIE_UNFECT, 1, 1);
+						damager.playSound(player.getLocation(), Sound.ZOMBIE_UNFECT, 1, 1);
 						
 						if (damager.getItemInHand().getAmount() < 2)
 							damager.setItemInHand(new ItemStack(Material.AIR, 0));
 						else
 							damager.getItemInHand().setAmount(damager.getItemInHand().getAmount() - 1);
 						
-						PlayerManager.getData(eventPlayer).poisoned = false;
+						PlayerManager.getData(player).poisoned = false;
 						
-						eventPlayer.sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.unpoisoned"));
+						player.sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.unpoisoned"));
+						
+						RewardType.HEAL_PLAYER.reward(damager);
 						
 					}
 					

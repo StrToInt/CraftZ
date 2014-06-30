@@ -13,6 +13,7 @@ import craftZ.CraftZ;
 import craftZ.util.ConfigManager;
 import craftZ.util.DeadPlayer;
 import craftZ.util.PlayerManager;
+import craftZ.util.Rewarder.RewardType;
 
 
 public class PlayerDeathListener implements Listener {
@@ -29,14 +30,18 @@ public class PlayerDeathListener implements Listener {
 			
 			
 			
-			if (p.getKiller() != null) {
+			Player killer = p.getKiller();
+			
+			if (killer != null) {
 				
-				PlayerManager.getData(p.getKiller()).playersKilled++;
+				PlayerManager.getData(killer).playersKilled++;
 				
 				if (ConfigManager.getConfig("config").getBoolean("Config.players.send-kill-stat-messages")) {
-					p.getKiller().sendMessage(ChatColor.GOLD + CraftZ.getMsg("Messages.killed.player").replaceAll("%p", p.getDisplayName())
-							.replaceAll("%k", "" + PlayerManager.getData(p.getKiller()).playersKilled));
+					killer.sendMessage(ChatColor.GOLD + CraftZ.getMsg("Messages.killed.player").replaceAll("%p", p.getDisplayName())
+							.replaceAll("%k", "" + PlayerManager.getData(killer).playersKilled));
 				}
+				
+				RewardType.KILL_PLAYER.reward(killer);
 				
 			}
 			
