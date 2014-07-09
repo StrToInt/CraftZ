@@ -662,6 +662,7 @@ public class CraftZ extends JavaPlugin {
 			def_config.put("Config.chat.separate-craftz-chat", true);
 			def_config.put("Config.chat.extended-error-messages", true);
 			def_config.put("Config.chat.prefix", "[CraftZ]");
+			def_config.put("Config.chat.radio", true);
 			
 				// RANGE
 				def_config.put("Config.chat.ranged.enable", false);
@@ -678,7 +679,7 @@ public class CraftZ extends JavaPlugin {
 			def_config.put("Config.change-item-names.enable", true);
 			def_config.put("Config.change-item-names.names", new String[] {
 					"paper=Bandage", "ink_sack:1=Blood Bag", "ink_sack:10=Antibiotics", "shears=Toolbox", "ender_pearl=Grenade",
-					"blaze_rod=Morphine Auto Injector"
+					"blaze_rod=Morphine Auto Injector", "watch=Radio"
 			});
 			
 		ConfigManager.newConfig("config", i, def_config);
