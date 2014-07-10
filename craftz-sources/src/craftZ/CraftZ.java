@@ -662,11 +662,12 @@ public class CraftZ extends JavaPlugin {
 			def_config.put("Config.chat.separate-craftz-chat", true);
 			def_config.put("Config.chat.extended-error-messages", true);
 			def_config.put("Config.chat.prefix", "[CraftZ]");
-			def_config.put("Config.chat.radio", true);
 			
-				// RANGE
+				// RANGED
 				def_config.put("Config.chat.ranged.enable", false);
 				def_config.put("Config.chat.ranged.range", 80);
+				def_config.put("Config.chat.ranged.enable-radio", true);
+				def_config.put("Config.chat.ranged.radio-channels", 10);
 			
 			// VEHICLES
 			def_config.put("Config.vehicles.enable", false);

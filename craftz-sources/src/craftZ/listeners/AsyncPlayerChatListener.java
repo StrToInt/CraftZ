@@ -1,14 +1,18 @@
 package craftZ.listeners;
 
+import java.util.Map.Entry;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.inventory.ItemStack;
 
 import craftZ.CraftZ;
 import craftZ.util.ConfigManager;
@@ -29,27 +33,50 @@ public class AsyncPlayerChatListener implements Listener {
 			
 			if (ConfigManager.getConfig("config").getBoolean("Config.chat.modify-player-messages"))
 				event.setFormat(ChatColor.AQUA + "[%1$s]: \"%2$s" + ChatColor.AQUA + "\"");
-			
-			boolean ranged = ConfigManager.getConfig("config").getBoolean("Config.chat.ranged.enable");
+			String s = String.format(event.getFormat(), event.getPlayer().getDisplayName(), event.getMessage());
 			
 			event.setCancelled(true);
+			
+			
+			
+			boolean ranged = ConfigManager.getConfig("config").getBoolean("Config.chat.ranged.enable");
 			
 			double range = ConfigManager.getConfig("config").getDouble("Config.chat.ranged.range");
 			Location ploc = event.getPlayer().getLocation();
 			
-			String s = String.format(event.getFormat(), event.getPlayer().getDisplayName(), event.getMessage());
-			if (ConfigManager.getConfig("config").getBoolean("Config.chat.radio")) {
-				if (!event.getPlayer().getItemInHand().getType().equals(Material.WATCH)) return;
-					for (Player p : event.getRecipients()) {
-						if (!p.getItemInHand().getType().equals(Material.WATCH)) return;
-						p.sendMessage(s);
-					}
-			}
-				
+			
+			
+			boolean radio = ConfigManager.getConfig("config").getBoolean("Config.chat.ranged.enable-radio")
+					&& event.getPlayer().getItemInHand() != null && event.getPlayer().getItemInHand().getType() == Material.WATCH;
+			int channel = 0;
+			try {
+				channel = Integer.parseInt(event.getPlayer().getItemInHand().getItemMeta().getLore().get(0).replace("Channel ", ""));
+			} catch (Exception ex) { }
+			
+			
+			
 			for (Player p : event.getRecipients()) {
-				if ((!ranged && (!separate || ploc.getWorld().equals(p.getWorld()))) || (ranged && ploc.distance(p.getLocation()) <= range))
+				
+				boolean send_separate = !separate || ploc.getWorld().equals(p.getWorld());
+				boolean send_range = ploc.getWorld().equals(p.getWorld()) && ploc.distance(p.getLocation()) <= range;
+				
+				boolean send_radio = false;
+				for (Entry<Integer, ? extends ItemStack> entry : p.getInventory().all(Material.WATCH).entrySet()) {
+					ItemStack stack = entry.getValue();
+					if (stack != null && stack.hasItemMeta()) {
+						int ochannel = 0;
+						try {
+							ochannel = Integer.parseInt(stack.getItemMeta().getLore().get(0).replace("Channel ", ""));
+						} catch (Exception ex) { }
+						if (ochannel == channel) send_radio = true;
+					}
+				}
+				
+				if ((!ranged && send_separate) || (ranged && send_range) || (radio && send_radio))
 					p.sendMessage(s);
 			}
+			
+			
 			
 			Bukkit.getLogger().info(s);
 			

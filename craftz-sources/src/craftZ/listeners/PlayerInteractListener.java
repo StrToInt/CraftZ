@@ -1,5 +1,7 @@
 package craftZ.listeners;
 
+import java.util.Arrays;
+
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -188,6 +190,31 @@ public class PlayerInteractListener implements Listener {
 					item.setAmount(item.getAmount()+1);
 					
 				}
+				
+			}
+			
+			
+			
+			if (itemType == Material.WATCH && ConfigManager.getConfig("config").getBoolean("Config.chat.ranged.enable-radio")) {
+				
+				ItemMeta meta = item.getItemMeta();
+				
+				int channel = 0;
+				try {
+					channel = Integer.parseInt(meta.getLore().get(0).replace("Channel ", ""));
+				} catch (Exception ex) { }
+				
+				if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
+					channel++;
+				} else if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
+					channel--;
+				}
+				
+				channel = Math.max(Math.min(channel, ConfigManager.getConfig("config").getInt("Config.chat.ranged.radio-channels")), 0);
+				
+				meta.setLore(Arrays.asList("Channel " + channel));
+				
+				item.setItemMeta(meta);
 				
 			}
 		
