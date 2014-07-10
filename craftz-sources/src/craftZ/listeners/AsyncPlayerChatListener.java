@@ -38,6 +38,14 @@ public class AsyncPlayerChatListener implements Listener {
 			Location ploc = event.getPlayer().getLocation();
 			
 			String s = String.format(event.getFormat(), event.getPlayer().getDisplayName(), event.getMessage());
+			if (ConfigManager.getConfig("config").getBoolean("Config.chat.radio")) {
+				if (!event.getPlayer().getItemInHand().getType().equals(Material.WATCH)) return;
+					for (Player p : event.getRecipients()) {
+						if (!p.getItemInHand().getType().equals(Material.WATCH)) return;
+						p.sendMessage(s);
+					}
+			}
+				
 			for (Player p : event.getRecipients()) {
 				if ((!ranged && (!separate || ploc.getWorld().equals(p.getWorld()))) || (ranged && ploc.distance(p.getLocation()) <= range))
 					p.sendMessage(s);
