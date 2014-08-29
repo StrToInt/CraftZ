@@ -67,10 +67,8 @@ public class ZombieSpawner implements Listener {
 			int maxZombies = ConfigManager.getConfig("config").getInt("Config.mobs.zombies.spawning.maxzombies");
 			
 			for (Entity ent : CraftZ.world().getEntities()) {
-				
 				if (ent.getType() == EntityType.ZOMBIE)
 					zombies++;
-				
 			}
 			
 			if (zombies <= maxZombies) {
@@ -169,6 +167,13 @@ public class ZombieSpawner implements Listener {
 	
 	
 	public static void equipZombie(Zombie zombie) {
+		
+		if (zombie.isBaby() || !zombie.getActivePotionEffects().isEmpty() // already equipped
+				|| zombie.getHealth() != zombie.getMaxHealth()) {
+			return;
+		}
+		
+		
 		
 		int speed = ConfigManager.getConfig("config").getInt("Config.mobs.zombies.properties.speed-boost");
 		int damage = ConfigManager.getConfig("config").getInt("Config.mobs.zombies.properties.damage-boost");

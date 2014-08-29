@@ -33,34 +33,36 @@ public class CreatureSpawnListener implements Listener {
 		
 		if (CraftZ.isWorld(event.getLocation().getWorld())) {
 			
-			boolean plg = event.getSpawnReason() == SpawnReason.CUSTOM
-					&& ConfigManager.getConfig("config").getBoolean("Config.mobs.allow-all-plugin-spawning");
-			
-			
-			
-			for (EntityType bt : blocked) {
-				if (event.getEntityType() == bt && !plg)
-					event.setCancelled(true);
-			}
-			
-			
-			
-			boolean allowAnimalSpawns = ConfigManager.getConfig("config").getBoolean("Config.mobs.animals.spawning.enable");
-			for (EntityType at : animals) {
-				if (event.getEntityType() == at && !allowAnimalSpawns && !plg)
-					event.setCancelled(true);
-			}
-			
-			
-			
-			if (event.getEntityType() == EntityType.ZOMBIE) {
-				if (event.getSpawnReason() != SpawnReason.CUSTOM && event.getSpawnReason() != SpawnReason.SPAWNER_EGG) {
-					event.setCancelled(true);
-				} else {
-					ZombieSpawner.equipZombie((Zombie) event.getEntity());
+			if (!ConfigManager.getConfig("config").getBoolean("Config.mobs.completely-disable-spawn-control")) {
+				
+				boolean plg = event.getSpawnReason() == SpawnReason.CUSTOM
+						&& ConfigManager.getConfig("config").getBoolean("Config.mobs.allow-all-plugin-spawning");
+				
+				// disallow blocked (if not by plugin)
+				for (EntityType bt : blocked) {
+					if (event.getEntityType() == bt && !plg)
+						event.setCancelled(true);
 				}
+				
+				// disallow animal spawns (if not by plugin or explicitly allowed)
+				boolean allowAnimalSpawns = ConfigManager.getConfig("config").getBoolean("Config.mobs.animals.spawning.enable");
+				for (EntityType at : animals) {
+					if (event.getEntityType() == at && !allowAnimalSpawns && !plg)
+						event.setCancelled(true);
+				}
+				
+				if (event.getEntityType() == EntityType.ZOMBIE) {
+					if (event.getSpawnReason() != SpawnReason.CUSTOM && event.getSpawnReason() != SpawnReason.SPAWNER_EGG) {
+						event.setCancelled(true);
+					} else {
+						ZombieSpawner.equipZombie((Zombie) event.getEntity());
+					}
+				}
+				
+			} else if (event.getEntityType() == EntityType.ZOMBIE) {
+				ZombieSpawner.equipZombie((Zombie) event.getEntity());
 			}
-		
+			
 		}
 		
 	}

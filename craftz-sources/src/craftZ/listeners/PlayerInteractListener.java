@@ -144,20 +144,24 @@ public class PlayerInteractListener implements Listener {
 				
 				if (itemType == Material.IRON_AXE) {
 					
-					if (BlockChecker.isTree(block)) {
+					if (ConfigManager.getConfig("config").getBoolean("Config.players.wood-harvesting.enable")) {
 						
-						if (!p.getInventory().contains(Material.LOG)) {
+						if (BlockChecker.isTree(block)) {
 							
-							Item itm = p.getWorld().dropItem(p.getLocation(), new ItemStack(Material.LOG, 1));
-							itm.setPickupDelay(0);
-							p.sendMessage(CraftZ.getMsg("Messages.harvested-tree"));
+							if (!p.getInventory().contains(Material.LOG)) {
+								
+								Item itm = p.getWorld().dropItem(p.getLocation(), new ItemStack(Material.LOG, 1));
+								itm.setPickupDelay(0);
+								p.sendMessage(CraftZ.getMsg("Messages.harvested-tree"));
+								
+							} else {
+								p.sendMessage(CraftZ.getMsg("Messages.already-have-wood"));
+							}
 							
 						} else {
-							p.sendMessage(CraftZ.getMsg("Messages.already-have-wood"));
+							p.sendMessage(CraftZ.getMsg("Messages.isnt-a-tree"));
 						}
 						
-					} else {
-						p.sendMessage(CraftZ.getMsg("Messages.isnt-a-tree"));
 					}
 					
 				}

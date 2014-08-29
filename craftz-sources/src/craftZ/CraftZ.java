@@ -17,6 +17,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -591,10 +592,15 @@ public class CraftZ extends JavaPlugin {
 				def_config.put("Config.players.interact.block-placing", false);
 				def_config.put("Config.players.interact.allow-spiderweb-placing", true);
 				
+				// WOOD HARVESTING
+				def_config.put("Config.players.wood-harvesting.enable", true);
+				
 				// WEAPONS
 				def_config.put("Config.players.weapons.grenade-enable", true);
 				def_config.put("Config.players.weapons.grenade-range", 8.0);
 				def_config.put("Config.players.weapons.grenade-power", 6.0);
+				def_config.put("Config.players.weapons.grenade-damage-players", true);
+				def_config.put("Config.players.weapons.grenade-damage-mobs", true);
 				
 				// MEDICAL
 				def_config.put("Config.players.medical.enable-sugar-speed-effect", true);
@@ -624,6 +630,7 @@ public class CraftZ extends JavaPlugin {
 			// MOBS
 			def_config.put("Config.mobs.blood-particles-when-damaged", true);
 			def_config.put("Config.mobs.allow-all-plugin-spawning", true);
+			def_config.put("Config.mobs.completely-disable-spawn-control", false);
 			
 				// ZOMBIES
 					
@@ -656,6 +663,7 @@ public class CraftZ extends JavaPlugin {
 //								getConfig().addDefault("Config.mobs.animals.spawning.chance.sheep", 0.1);
 					
 			// CHAT
+			def_config.put("Config.chat.completely-disable-modifications", false);
 			def_config.put("Config.chat.modify-join-and-quit-messages", true);
 			def_config.put("Config.chat.modify-player-messages", false);
 			def_config.put("Config.chat.modify-death-messages", true);
@@ -766,91 +774,7 @@ public class CraftZ extends JavaPlugin {
 			def_loot.put("Loot.settings.min-stacks-filled", 1);
 			def_loot.put("Loot.settings.max-stacks-filled", 3);
 			
-			// LISTS
 			
-			String[] value_lists_all = {
-//				"30", "46", "2x39", "2x40", "258", "259", "2x260", "261", "4x262", "267", "2x268", "272", "3x281", "2x282",
-//				"2x296", "297",	"298", "299", "300", "301", "302", "303", "304", "305", "306", "307", "308", "309", "339",
-//				"346", "353", "357", "360", "368", "369", "374", "391", "393", "400", "373:5", "373:16389"
-				"web", "tnt", "2x'brown_mushroom'", "2x'red_mushroom'", "iron_axe", "flint_and_steel", "2x'apple'", "bow",
-				"4x'arrow'", "iron_sword", "2x'wood_sword'", "stone_sword", "3x'bowl'", "2x'mushroom_soup'",
-				"2x'wheat'", "bread",	"leather_helmet", "leather_chestplate", "leather_leggings", "leather_boots", "chainmail_helmet",
-				"chainmail_chestplate", "chainmail_leggings", "chainmail_boots", "iron_helmet", "iron_chestplate", "iron_leggings", "iron_boots",
-				"paper", "sugar", "cookie", "melon", "ender_pearl", "blaze_rod", "glass_bottle", "carrot_item", "baked_potato",
-				"pumpkin_pie", "potion:5", "potion:16389"
-			};
-			def_loot.put("Loot.lists.all", value_lists_all);
-			
-			
-			
-			String[] value_lists_military = {
-//				"30", "258", "261", "4x262", "2x268", "2x281", "2x282", "3x298", "3x299", "3x300", "3x301"
-				"web", "iron_axe", "bow", "4x'arrow'", "2x'wood_sword'", "2x'bowl'", "2x'mushroom_soup'", "3x'leather_helmet'",
-				"3x'leather_chestplate'", "3x'leather_leggings'", "3x'leather_boots'"
-			};
-			def_loot.put("Loot.lists.military", value_lists_military);
-			
-			
-			
-			String[] value_lists_militaryEpic = {
-//				"30", "46", "258", "261", "4x262", "267", "2x268", "272", "2x281", "282", "2x298", "2x299", "2x300",
-//				"2x301", "302", "303", "304", "305", "306", "307", "308", "309", "368"
-				"web", "tnt", "iron_axe", "bow", "4x'arrow'", "iron_sword", "2x'wood_sword'", "stone_sword", "2x'bowl'", "mushroom_soup",
-				"2x'leather_helmet'", "2x'leather_chestplate'", "2x'leather_leggings'", "2x'leather_boots'",
-				"chainmail_helmet", "chainmail_chestplate", "chainmail_leggings", "chainmail_boots",
-				"iron_helmet", "iron_chestplate", "iron_leggings", "iron_boots", "ender_pearl"
-			};
-			def_loot.put("Loot.lists.military-epic", value_lists_militaryEpic);
-			
-			
-			
-			String[] value_lists_civilian = {
-//				"2x39", "2x40", "258", "259", "2x260", "2x262", "268", "2x281", "282", "296", "297", "298", "299",
-//				"300", "301", "346", "357", "360", "369", "391", "393", "400"
-				"2x'brown_mushroom'", "2x'red_mushroom'", "iron_axe", "flint_and_steel", "2x'apple'", "2x'arrow'", "wood_sword", "2x'bowl'",
-				"mushroom_soup", "wheat", "bread", "leather_helmet", "leather_chestplate",
-				"leather_leggings", "leather_boots", "cookie", "melon", "blaze_rod", "carrot_item", "baked_potato", "pumpkin_pie"
-			};
-			def_loot.put("Loot.lists.civilian", value_lists_civilian);
-			
-			
-			
-			String[] value_lists_farms = {
-//				"3x39", "3x40", "258", "259", "4x260", "261", "4x262", "2x268", "4x281", "2x282", "2x296", "2x297",
-//				"298", "299", "300", "301", "346", "353", "357", "360", "374", "391", "393", "400"
-				"3x'brown_mushroom'", "3x'red_mushroom'", "iron_axe", "flint_and_steel", "4x'apple'", "bow", "4x'arrow'", "2x'wood_sword'",
-				"4x'bowl'", "2x'mushroom_soup'", "2x'wheat'", "2x'bread'", "leather_helmet", "leather_chestplate", "leather_leggings", "leather_boots",
-				"sugar", "cookie", "melon", "glass_bottle", "carrot_item", "baked_potato", "pumpkin_pie"
-			};
-			def_loot.put("Loot.lists.farms", value_lists_farms);
-			
-			
-			
-			String[] value_lists_industrial = {
-//				"30", "4x262", "2x268", "296"
-				"web", "4x'arrow'", "2x'wood_sword'", "wheat"
-			};
-			def_loot.put("Loot.lists.industrial", value_lists_industrial);
-			
-			
-			
-			String[] value_lists_barracks = {
-//				"2x39", "2x40", "260", "262", "268", "281"
-				"2x'brown_mushroom'", "2x'red_mushroom'", "apple", "arrow", "wood_sword", "bowl"
-			};
-			def_loot.put("Loot.lists.barracks", value_lists_barracks);
-			
-			
-			
-			String[] value_lists_medical = {
-//				"2x260", "2x281", "2x282", "339", "2x351:1", "351:10", "2x353", "357", "2x369", "360", "374", "391",
-//				"2x373:5", "373:16389"
-				"2x'apple'", "2x'bowl'", "2x'mushroom_soup'", "paper", "2x'ink_sack:1'", "ink_sack:10", "2x'sugar'", "cookie", "2x'blaze_rod'",
-				"melon", "glass_bottle", "carrot_item", "2x'potion:5'", "potion:16389"
-			};
-			def_loot.put("Loot.lists.medical", value_lists_medical);
-		
-		
 		
 		ConfigManager.newConfig("loot", i, def_loot);
 		ConfigManager.getConfig("loot").options().header(
@@ -859,10 +783,90 @@ public class CraftZ extends JavaPlugin {
 		 		+ "++================================================++"
 		);
 		
-		if (ConfigManager.getConfig("loot").contains("Messages")) {
-			ConfigManager.getConfig("loot").set("Messages", null);
-			ConfigManager.saveConfig("loot");
+		
+		
+		FileConfiguration loot = ConfigManager.getConfig("loot");
+		if (!loot.contains("Loot.lists") || loot.getConfigurationSection("Loot.lists").getKeys(false).isEmpty()) {
+			
+			String[] value_lists_all = {
+				"web", "tnt", "2x'brown_mushroom'", "2x'red_mushroom'", "iron_axe", "flint_and_steel", "2x'apple'", "bow",
+				"4x'arrow'", "iron_sword", "2x'wood_sword'", "stone_sword", "3x'bowl'", "2x'mushroom_soup'",
+				"2x'wheat'", "bread",	"leather_helmet", "leather_chestplate", "leather_leggings", "leather_boots", "chainmail_helmet",
+				"chainmail_chestplate", "chainmail_leggings", "chainmail_boots", "iron_helmet", "iron_chestplate", "iron_leggings", "iron_boots",
+				"paper", "sugar", "cookie", "melon", "ender_pearl", "blaze_rod", "glass_bottle", "carrot_item", "baked_potato",
+				"pumpkin_pie", "potion:5", "potion:16389"
+			};
+			loot.addDefault("Loot.lists.all", value_lists_all);
+			
+			loot.addDefault("Loot.lists-settings.all.max-stacks-filled", 2);
+			
+			
+			
+			String[] value_lists_military = {
+				"web", "iron_axe", "bow", "4x'arrow'", "2x'wood_sword'", "2x'bowl'", "2x'mushroom_soup'", "3x'leather_helmet'",
+				"3x'leather_chestplate'", "3x'leather_leggings'", "3x'leather_boots'"
+			};
+			loot.addDefault("Loot.lists.military", value_lists_military);
+			
+			
+			
+			String[] value_lists_militaryEpic = {
+				"web", "tnt", "iron_axe", "bow", "4x'arrow'", "iron_sword", "2x'wood_sword'", "stone_sword", "2x'bowl'", "mushroom_soup",
+				"2x'leather_helmet'", "2x'leather_chestplate'", "2x'leather_leggings'", "2x'leather_boots'",
+				"chainmail_helmet", "chainmail_chestplate", "chainmail_leggings", "chainmail_boots",
+				"iron_helmet", "iron_chestplate", "iron_leggings", "iron_boots", "ender_pearl"
+			};
+			loot.addDefault("Loot.lists.military-epic", value_lists_militaryEpic);
+			
+			loot.addDefault("Loot.lists-settings.military-epic.time-before-refill", 240);
+			
+			
+			
+			String[] value_lists_civilian = {
+				"2x'brown_mushroom'", "2x'red_mushroom'", "iron_axe", "flint_and_steel", "2x'apple'", "2x'arrow'", "wood_sword", "2x'bowl'",
+				"mushroom_soup", "wheat", "bread", "leather_helmet", "leather_chestplate",
+				"leather_leggings", "leather_boots", "cookie", "melon", "blaze_rod", "carrot_item", "baked_potato", "pumpkin_pie"
+			};
+			loot.addDefault("Loot.lists.civilian", value_lists_civilian);
+			
+			
+			
+			String[] value_lists_farms = {
+				"3x'brown_mushroom'", "3x'red_mushroom'", "iron_axe", "flint_and_steel", "4x'apple'", "bow", "4x'arrow'", "2x'wood_sword'",
+				"4x'bowl'", "2x'mushroom_soup'", "2x'wheat'", "2x'bread'", "leather_helmet", "leather_chestplate", "leather_leggings", "leather_boots",
+				"sugar", "cookie", "melon", "glass_bottle", "carrot_item", "baked_potato", "pumpkin_pie"
+			};
+			loot.addDefault("Loot.lists.farms", value_lists_farms);
+			
+			
+			
+			String[] value_lists_industrial = {
+				"web", "4x'arrow'", "2x'wood_sword'", "wheat"
+			};
+			loot.addDefault("Loot.lists.industrial", value_lists_industrial);
+			
+			
+			
+			String[] value_lists_barracks = {
+				"2x'brown_mushroom'", "2x'red_mushroom'", "apple", "arrow", "wood_sword", "bowl"
+			};
+			loot.addDefault("Loot.lists.barracks", value_lists_barracks);
+			
+			loot.addDefault("Loot.lists-settings.barracks.time-before-refill", 180);
+			loot.addDefault("Loot.lists-settings.barracks.min-stacks-filled", 2);
+			loot.addDefault("Loot.lists-settings.barracks.max-stacks-filled", 4);
+			
+			
+			
+			String[] value_lists_medical = {
+				"2x'apple'", "2x'bowl'", "2x'mushroom_soup'", "paper", "2x'ink_sack:1'", "ink_sack:10", "2x'sugar'", "cookie", "2x'blaze_rod'",
+				"melon", "glass_bottle", "carrot_item", "2x'potion:5'", "potion:16389"
+			};
+			loot.addDefault("Loot.lists.medical", value_lists_medical);
+			
 		}
+		
+		ConfigManager.saveConfig("loot");
 		
 	}
 	
@@ -871,8 +875,19 @@ public class CraftZ extends JavaPlugin {
 	
 	
 	public static void reloadConfigs() {
+		
 		ConfigManager.reloadConfigs();
 		DeadPlayer.loadDeadPlayers();
+		
+		if (world() == null) {
+			
+			severe("World '" + worldName() + "' not found! Please check config.yml. CraftZ will stop.");
+			failedWorldLoad = true;
+			
+			Bukkit.getPluginManager().disablePlugin(i);
+			
+		}
+		
 	}
 	
 	

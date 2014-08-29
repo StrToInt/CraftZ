@@ -23,7 +23,7 @@ public class AsyncPlayerChatListener implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerChat(AsyncPlayerChatEvent event) {
 		
-		if (event.isCancelled())
+		if (event.isCancelled() || ConfigManager.getConfig("config").getBoolean("Config.chat.completely-disable-modifications"))
 			return;
 		
 		World world = event.getPlayer().getWorld();

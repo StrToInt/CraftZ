@@ -39,8 +39,7 @@ public class ConfigManager {
 	
 	
 	public static void reloadConfig(String name) {
-		configs.get(name).config = YamlConfiguration
-				.loadConfiguration(configs.get(name).configFile);
+		configs.get(name).config = YamlConfiguration.loadConfiguration(configs.get(name).configFile);
 	}
 	
 	

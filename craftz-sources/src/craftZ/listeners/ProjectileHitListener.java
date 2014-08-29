@@ -39,9 +39,13 @@ public class ProjectileHitListener implements Listener {
 				List<Entity> tnt_nearbyEnts = event.getEntity().getNearbyEntities(range, range, range);
 				for (Entity targetEntity : tnt_nearbyEnts) {
 					
-					if (targetEntity instanceof LivingEntity || targetEntity instanceof Player) {
+					boolean allowPlayer = ConfigManager.getConfig("config").getBoolean("Config.players.weapons.grenade-damage-players");
+					boolean allowMobs = ConfigManager.getConfig("config").getBoolean("Config.players.weapons.grenade-damage-mobs");
+					
+					if ((targetEntity instanceof Player && allowPlayer)
+							|| (targetEntity instanceof LivingEntity && allowMobs)) {
 						
-						LivingEntity targetLiving = (LivingEntity) targetEntity;
+						LivingEntity targetLiving = (LivingEntity) targetEntity; // Player is also LivingEntity
 						double targetDistance = eventLocation.distance(targetLiving.getLocation());
 						targetLiving.damage((1D - targetDistance / range) * power);
 						

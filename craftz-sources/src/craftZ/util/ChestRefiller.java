@@ -117,8 +117,8 @@ public class ChestRefiller {
 				
 			}
 			
-			int min = ConfigManager.getConfig("loot").getInt("Loot.settings.min-stacks-filled");
-			int max = ConfigManager.getConfig("loot").getInt("Loot.settings.max-stacks-filled");
+			int min = getPropertyInt("min-stacks-filled", lootList);
+			int max = getPropertyInt("max-stacks-filled", lootList);
 			
 			for (int i=0; i<(1 + min + new Random().nextInt(max - min)); i++) {
 				String itemString = items.get(new Random().nextInt(items.size()));
@@ -130,6 +130,16 @@ public class ChestRefiller {
 			
 		}
 		
+	}
+	
+	
+	
+	
+	
+	public static int getPropertyInt(String name, String list) {
+		return ConfigManager.getConfig("loot").contains("Loot.lists-settings." + list + "." + name)
+				? ConfigManager.getConfig("loot").getInt("Loot.lists-settings." + list + "." + name)
+				: ConfigManager.getConfig("loot").getInt("Loot.settings." + name);
 	}
 	
 	
