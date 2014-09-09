@@ -13,6 +13,7 @@ import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -21,6 +22,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Zombie;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
@@ -271,6 +273,9 @@ public class CraftZ extends JavaPlugin {
 					if (sender.hasPermission("craftz.smasher"))
 						sender.sendMessage(ChatColor.YELLOW + getMsg("Messages.help.smasher-command"));
 					
+					if (sender.hasPermission("craftz.purge"))
+						sender.sendMessage(ChatColor.YELLOW + getMsg("Messages.help.purge-command"));
+					
 					if (sender.hasPermission("craftz.sign"))
 						sender.sendMessage(ChatColor.YELLOW + getMsg("Messages.help.sign-command"));
 					
@@ -405,6 +410,44 @@ public class CraftZ extends JavaPlugin {
 						p.getInventory().addItem(stack);
 //						Item i = p.getWorld().dropItem(p.getLocation(), stack);
 //						i.setPickupDelay(0);
+						
+					} else {
+						p.sendMessage(noPerms);
+					}
+					
+					return true;
+					
+				}
+				
+				
+				
+				if (args[0].equalsIgnoreCase("purge")) {
+					
+					if (!(sender instanceof Player)) return true;
+					
+					Player p = (Player) sender;
+					
+					if (p.hasPermission("craftz.purge")) {
+						
+						World w = world();
+						List<Entity> ents = w.getEntities();
+						int n = 0;						
+						for (Entity ent : ents) {
+							
+							if (ent instanceof Zombie) {
+								Zombie z = (Zombie) ent;
+								for (double ya=0; ya<2; ya+=0.2) {
+									for (int i=0; i<9; i++)
+										w.playEffect(z.getLocation().add(0, ya, 0), Effect.SMOKE, i);
+								}
+								ent.remove();
+								n++;
+							}
+							
+						}
+						
+						p.sendMessage(CraftZ.getPrefix() + " " + ChatColor.GREEN + getMsg("Messages.cmd.purged")
+								.replace("%z", "" + ChatColor.AQUA + n + ChatColor.GREEN));
 						
 					} else {
 						p.sendMessage(noPerms);
@@ -738,12 +781,14 @@ public class CraftZ extends JavaPlugin {
 			def_messages.put("Messages.help.spawn-command", "/craftz spawn: Spawn at a random point inside of the world.");
 			def_messages.put("Messages.help.setlobby-command", "/craftz setlobby: Set the lobby location where you're standing.");
 			def_messages.put("Messages.help.smasher-command", "/craftz smasher: Get the ultimate zombie smasher!");
+			def_messages.put("Messages.help.purge-command", "/craftz purge: Purge all zombies from the world.");
 			def_messages.put("Messages.help.sign-command", "/craftz sign <line2> <line3> <line4>: Get a pre-written sign.");
 			
 			// COMMAND
 			def_messages.put("Messages.cmd.removed-items", "Removed %i items.");
 			def_messages.put("Messages.cmd.reloaded", "Reloaded the config files.");
 			def_messages.put("Messages.cmd.setlobby", "The lobby center is set at your location. For lobby radius, see configuration file.");
+			def_messages.put("Messages.cmd.purged", "All %z loaded zombies were purged from the world.");
 			def_messages.put("Messages.cmd.sign", "A pre-written sign was given to you.");
 			
 			// ERRORS

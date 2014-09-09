@@ -122,8 +122,9 @@ public class ChestRefiller {
 			
 			for (int i=0; i<(1 + min + new Random().nextInt(max - min)); i++) {
 				String itemString = items.get(new Random().nextInt(items.size()));
-				ItemStack itemStack = StackParser.fromString(itemString, false);
-				chest.getInventory().addItem(itemStack);
+				ItemStack stack = StackParser.fromString(itemString, false);
+				if (stack != null)
+					chest.getInventory().addItem(stack);
 			}
 			
 			ItemRenamer.convertInventoryItemNames(chest.getInventory(), ConfigManager.getConfig("config").getStringList("Config.change-item-names.names"));

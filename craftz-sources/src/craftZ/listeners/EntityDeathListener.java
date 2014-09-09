@@ -59,7 +59,7 @@ public class EntityDeathListener implements Listener {
 					for (String itemString : items) {
 						
 						ItemStack item = StackParser.fromString(itemString, true);
-						if (Math.random() >= 1 - ConfigManager.getConfig("config").getDouble("Config.mobs.zombies.drops.chance"))
+						if (item != null && Math.random() >= 1 - ConfigManager.getConfig("config").getDouble("Config.mobs.zombies.drops.chance"))
 							drops.add(item);
 						
 					}

@@ -3,6 +3,8 @@ package craftZ.util;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import craftZ.CraftZ;
+
 public class StackParser {
 	
 	@SuppressWarnings("deprecation")
@@ -43,6 +45,10 @@ public class StackParser {
 				data = Short.parseShort(itemName.split(":")[1]);
 			} catch(Exception ex) { }
 			
+			if (mat == null) {
+				CraftZ.severe("There is no item with name '" + itemName.split(":")[0] + "'! Please check the configuration files.");
+			}
+			
 		} else {
 			
 			try {
@@ -50,11 +56,15 @@ public class StackParser {
 				mat = mat1 != null ? mat1 : Material.getMaterial(Integer.parseInt(itemName));
 			} catch(Exception ex) { }
 			
+			if (mat == null) {
+				CraftZ.severe("There is no item with name '" + itemName + "'! Please check the configuration files.");
+			}
+			
 		}
 		
 		
 		
-		return new ItemStack(mat, amount, data);
+		return mat == null ? null : new ItemStack(mat, amount, data);
 		
 	}
 	
