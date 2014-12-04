@@ -133,6 +133,10 @@ public class PlayerInteractListener implements Listener {
 					
 				}
 
+            }
+
+
+            if (action == Action.RIGHT_CLICK_BLOCK) {
 
                 if (itemType == Material.LOG && ConfigManager.getConfig("config").getBoolean("Config.players.campfires.enable")) {
                     if (!block.getType().isTransparent() && block.getType().isSolid() && block.getLocation().add(0, 1, 0).getBlock().getType() == Material.AIR) {
@@ -168,10 +172,6 @@ public class PlayerInteractListener implements Listener {
                         p.sendMessage(CraftZ.getMsg("Messages.cannot-place-fireplace"));
                     }
                 }
-            }
-
-
-            if (action == Action.RIGHT_CLICK_BLOCK) {
 				
 				if (itemType == Material.IRON_AXE) {
 					
