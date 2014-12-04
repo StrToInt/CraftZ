@@ -637,6 +637,10 @@ public class CraftZ extends JavaPlugin {
 				
 				// WOOD HARVESTING
 				def_config.put("Config.players.wood-harvesting.enable", true);
+
+                // CAMPFIRES
+                def_config.put("Config.players.campfires.enable", true);
+                def_config.put("Config.players.campfires.tick-duration", 600);
 				
 				// WEAPONS
 				def_config.put("Config.players.weapons.grenade-enable", true);
@@ -765,6 +769,8 @@ public class CraftZ extends JavaPlugin {
 		def_messages.put("Messages.out-of-world", "You're in a very infected area! Go back, or you will die soon!");
 		def_messages.put("Messages.thirsty", "You're becoming very thirsty. Think about drinking something!");
 		def_messages.put("Messages.thirsty-dehydrating", "Get something to drink, you are dehydrating!");
+        def_messages.put("Messages.placed-fireplace", "You built a bright warm fireplace.");
+        def_messages.put("Messages.cannot-place-fireplace", "You cannot place a fireplace here.");
 			
 			// KILLED
 			def_messages.put("Messages.killed.zombie", "Killed the zombie! Total zombie kills: %k");
