@@ -988,4 +988,18 @@ public class CraftZ extends JavaPlugin {
 		info("");
 	}
 	
+	
+	
+	
+	
+	public static void broadcastToWorld(String msg, World world) {
+		
+		List<Player> players = world.getPlayers();
+		for (int i=0; i<players.size(); i++) {
+			Player p = players.get(i);
+			p.sendMessage(msg);
+		}
+		
+	}
+	
 }
