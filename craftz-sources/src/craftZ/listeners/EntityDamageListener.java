@@ -61,7 +61,9 @@ public class EntityDamageListener implements Listener {
 					}
 					
 				}
-				
+                if (event.getEntityType() == EntityType.ARMOR_STAND && event.getCause() == DamageCause.FIRE_TICK) {
+                    event.setCancelled(true);       // prevent armor stand from burning away before it's "done"
+                }
 //				boolean value_mobs_blood = false;//ConfigManager.getConfig("config").getBoolean("Config.mobs.blood-particles-when-damaged");
 //				if (!event.isCancelled() && value_mobs_blood) {
 //					

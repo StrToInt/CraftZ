@@ -1,4 +1,4 @@
-﻿package craftZ.listeners;
+package craftZ.listeners;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
