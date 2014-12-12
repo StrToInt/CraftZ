@@ -1,6 +1,7 @@
 package craftZ.listeners;
 
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -16,12 +17,14 @@ public class PlayerKickListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerKick(PlayerKickEvent event) {
 		
-		if (CraftZ.isWorld(event.getPlayer().getWorld())) {
+		Player p = event.getPlayer();
+		
+		if (CraftZ.isWorld(p.getWorld())) {
 			
 			if (!event.getReason().startsWith(CraftZ.getPrefix())) {
-				PlayerManager.savePlayerToConfig(event.getPlayer());
+				PlayerManager.savePlayer(p);
 				if (ConfigManager.getConfig("config").getBoolean("Config.chat.modify-join-and-quit-messages"))
-					event.setLeaveMessage(ChatColor.RED + "Player " + event.getPlayer().getDisplayName() + " disconnected.");
+					event.setLeaveMessage(ChatColor.RED + "Player " + p.getDisplayName() + " disconnected.");
 			}
 			
 		}

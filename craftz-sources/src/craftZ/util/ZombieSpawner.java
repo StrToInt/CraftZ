@@ -1,9 +1,9 @@
 package craftZ.util;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.util.Map.Entry;
 
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
@@ -17,20 +17,20 @@ import org.bukkit.potion.PotionEffectType;
 
 import craftZ.CraftZ;
 
+
 public class ZombieSpawner implements Listener {
 	
-	private static int ticksForAutoSpawn = 0;
+	private static int autoSpawnTicks = 0;
 	private static Map<String, Integer> cooldowns = new HashMap<String, Integer>();
 	
 	
 	
 	public static void addSpawns() {
 		
-		if (WorldData.get().getConfigurationSection("Data.zombiespawns") != null) {
-			
-			for (String spawnEntry : WorldData.get().getConfigurationSection("Data.zombiespawns").getKeys(false))
-				addSpawn(spawnEntry);
-			
+		ConfigurationSection sec = WorldData.get().getConfigurationSection("Data.zombiespawns");
+		if (sec != null) {
+			for (String entry : sec.getKeys(false))
+				addSpawn(entry);
 		}
 		
 	}
@@ -47,35 +47,24 @@ public class ZombieSpawner implements Listener {
 	
 	
 	
-	public static Zombie evalZombieSpawn(ConfigurationSection spnptSec) {
+	public static Zombie evalZombieSpawn(ConfigurationSection sec) {
 		
-		int spnLocX = spnptSec.getInt("coords.x");
-		int spnLocY = spnptSec.getInt("coords.y");
-		int spnLocZ = spnptSec.getInt("coords.z");
-		Location spnLoc = new Location(CraftZ.world(), spnLocX, spnLocY, spnLocZ);
+		Location sloc = new Location(CraftZ.world(), sec.getInt("coords.x"), sec.getInt("coords.y"), sec.getInt("coords.z"));
 		
-		Location locToSpawn = BlockChecker.getSafeSpawnLocationOver(spnLoc);
-		if (locToSpawn == null)
-			locToSpawn = BlockChecker.getSafeSpawnLocationUnder(spnLoc);
+		Location loc = BlockChecker.getSafeSpawnLocationOver(sloc);
+		if (loc == null)
+			loc = BlockChecker.getSafeSpawnLocationUnder(sloc);
 		
-		int maxZombiesInRadius = spnptSec.getInt("max-zombies-in-radius");
-		int maxZombiesRadius = spnptSec.getInt("max-zombies-radius");
+		int maxZombiesInRadius = sec.getInt("max-zombies-in-radius");
+		int maxZombiesRadius = sec.getInt("max-zombies-radius");
 		
-		if (locToSpawn != null && !EntityChecker.areEntitiesNearby(locToSpawn, maxZombiesRadius, EntityType.ZOMBIE, maxZombiesInRadius)) {
+		if (loc != null && !EntityChecker.areEntitiesNearby(loc, maxZombiesRadius, EntityType.ZOMBIE, maxZombiesInRadius)) {
 			
-			int zombies = 0;
+			int zombies = EntityChecker.getEntityCountInWorld(CraftZ.world(), EntityType.ZOMBIE);;
 			int maxZombies = ConfigManager.getConfig("config").getInt("Config.mobs.zombies.spawning.maxzombies");
 			
-			for (Entity ent : CraftZ.world().getEntities()) {
-				if (ent.getType() == EntityType.ZOMBIE)
-					zombies++;
-			}
-			
-			if (zombies <= maxZombies) {
-				
-				Entity ent = CraftZ.world().spawnEntity(locToSpawn, EntityType.ZOMBIE);
-				return (Zombie) ent;
-				
+			if (zombies < maxZombies) {
+				return (Zombie) CraftZ.world().spawnEntity(loc, EntityType.ZOMBIE);
 			} else {
 				return null;
 			}
@@ -91,26 +80,23 @@ public class ZombieSpawner implements Listener {
 	
 	public static void onServerTick() {
 		
-		for (String str : cooldowns.keySet()) {
+		for (Iterator<Entry<String, Integer>> it=cooldowns.entrySet().iterator(); it.hasNext(); ) {
 			
-			cooldowns.put(str, cooldowns.get(str) + 1);
+			Entry<String, Integer> entry = it.next();
+			int v = entry.getValue() + 1;
+			entry.setValue(v);
 			
-			if (cooldowns.get(str) >= ConfigManager.getConfig("config").getInt("Config.mobs.zombies.spawning.interval") * 20) {
+			if (v >= ConfigManager.getConfig("config").getInt("Config.mobs.zombies.spawning.interval") * 20) {
 				
-				cooldowns.put(str, 0);
+				entry.setValue(0);
 				
-				Set<String> spts_zombies_set = WorldData.get().getConfigurationSection("Data.zombiespawns").getKeys(false);
-				if (spts_zombies_set != null && !spts_zombies_set.isEmpty()) {
+				ConfigurationSection sec = WorldData.get().getConfigurationSection("Data.zombiespawns." + entry.getKey());
+				if (sec != null) {
 					
-					ConfigurationSection configSec = WorldData.get().getConfigurationSection("Data.zombiespawns." + str);
-					if (configSec == null)
-						return;
-					
-					Zombie spawnedZombie = evalZombieSpawn(configSec);
-					if (spawnedZombie == null)
-						return;
-					
-					equipZombie(spawnedZombie);
+					Zombie spawnedZombie = evalZombieSpawn(sec);
+					if (spawnedZombie != null) {
+						equipZombie(spawnedZombie);
+					}
 					
 				}
 				
@@ -122,24 +108,23 @@ public class ZombieSpawner implements Listener {
 		
 		if (ConfigManager.getConfig("config").getBoolean("Config.mobs.zombies.spawning.enable-auto-spawn")) {
 			
-			ticksForAutoSpawn++;
-			if (PlayerManager.getPlayCount() > 0 && ticksForAutoSpawn >= ConfigManager.getConfig("config")
-					.getInt("Config.mobs.zombies.spawning.auto-spawning-interval") * 20 / PlayerManager.getPlayCount()) {
+			autoSpawnTicks++;
+			if (PlayerManager.getPlayerCount() > 0 && autoSpawnTicks >= ConfigManager.getConfig("config")
+					.getDouble("Config.mobs.zombies.spawning.auto-spawning-interval") * 20 / PlayerManager.getPlayerCount()) {
 				
-				ticksForAutoSpawn = 0;
+				autoSpawnTicks = 0;
 				
 				Player p = PlayerManager.randomPlayer();
 				if (p == null)
 					return;
 				
-				Location randLoc = p.getLocation().add(new Random().nextInt(128) - 64, 0,
-						new Random().nextInt(128) - 64);
+				Location sloc = p.getLocation().add(CraftZ.RANDOM.nextInt(128) - 64, 0, CraftZ.RANDOM.nextInt(128) - 64);
 				
-				Location locToSpawn = BlockChecker.getSafeSpawnLocationOver(randLoc);
-				if (locToSpawn == null)
-					locToSpawn = BlockChecker.getSafeSpawnLocationUnder(randLoc);
+				Location loc = BlockChecker.getSafeSpawnLocationOver(sloc);
+				if (loc == null)
+					loc = BlockChecker.getSafeSpawnLocationUnder(sloc);
 				
-				if (locToSpawn != null) {
+				if (loc != null) {
 						
 					int zombies = 0;
 					int maxZombies = ConfigManager.getConfig("config").getInt("Config.mobs.zombies.spawning.maxzombies");
@@ -150,7 +135,7 @@ public class ZombieSpawner implements Listener {
 					}
 					
 					if (zombies <= maxZombies) {
-						Entity ent = p.getWorld().spawnEntity(locToSpawn, EntityType.ZOMBIE);
+						Entity ent = p.getWorld().spawnEntity(loc, EntityType.ZOMBIE);
 						equipZombie((Zombie) ent);
 					}
 					
@@ -185,7 +170,7 @@ public class ZombieSpawner implements Listener {
 		
 		
 		
-		if (new Random().nextInt(7) < 1 && ConfigManager.getConfig("config").getBoolean("Config.mobs.zombies.spawning.enable-mini-zombies")) {
+		if (CraftZ.RANDOM.nextInt(7) < 1 && ConfigManager.getConfig("config").getBoolean("Config.mobs.zombies.spawning.enable-mini-zombies")) {
 			zombie.setBaby(true);
 			zombie.removePotionEffect(PotionEffectType.SPEED);
 			zombie.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, Integer.MAX_VALUE, 0));

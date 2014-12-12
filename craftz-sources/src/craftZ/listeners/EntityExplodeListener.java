@@ -19,25 +19,25 @@ public class EntityExplodeListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onEntityExplode(EntityExplodeEvent event) {
 		
-		if (CraftZ.isWorld(event.getLocation().getWorld())) {
+		Entity entity = event.getEntity();
+		EntityType type = event.getEntityType();
+		Location loc = event.getLocation();
+		
+		if (CraftZ.isWorld(loc.getWorld())) {
 			
-			if (event.getEntity() != null && event.getEntityType() == EntityType.PRIMED_TNT) {
+			if (entity != null && type == EntityType.PRIMED_TNT) {
 				
 				event.setCancelled(true);
 				
-				Location eventLocation = event.getLocation();
-				event.getLocation().getWorld().createExplosion(eventLocation, 0);
+				loc.getWorld().createExplosion(loc, 0);
 				
-				List<Entity> tnt_nearbyEnts = event.getEntity().getNearbyEntities(20, 20, 20);
-				for (Entity targetEntity : tnt_nearbyEnts) {
+				List<Entity> nearby = entity.getNearbyEntities(20, 20, 20);
+				for (Entity ent : nearby) {
 					
-					if (targetEntity instanceof LivingEntity) {
-						
-						LivingEntity targetLiving = (LivingEntity) targetEntity;
-						Location targetMobLoc = targetLiving.getLocation();
-						double targetDistance = eventLocation.distance(targetMobLoc) / 2;
-						targetLiving.damage(20 / targetDistance * 2);
-						
+					if (ent instanceof LivingEntity) {
+						LivingEntity lent = (LivingEntity) ent;
+						double dist = loc.distance(lent.getLocation()) / 2;
+						lent.damage(20 / dist * 2);
 					}
 					
 				}

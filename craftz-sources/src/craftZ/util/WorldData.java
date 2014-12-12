@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -22,6 +21,7 @@ import craftZ.CraftZ;
 public class WorldData {
 	
 	private static Map<String, ConfigData> configs = new HashMap<String, ConfigData>();
+	private static File dir;
 	
 	
 	
@@ -29,10 +29,11 @@ public class WorldData {
 		
 		tryUpdate();
 		
-		File worldsFolder = new File(CraftZ.i.getDataFolder(), "worlds/");
-		if (!worldsFolder.exists()) return;
+		dir = new File(CraftZ.i.getDataFolder(), "worlds");
+		if (!dir.exists() || !dir.isDirectory())
+			return;
 		
-		for (File file : worldsFolder.listFiles()) {
+		for (File file : dir.listFiles()) {
 			if (file.getName().toLowerCase().endsWith(".yml"))
 				reload(file.getName().substring(0, file.getName().length() - 4));
 		}
@@ -50,8 +51,9 @@ public class WorldData {
 			
 			try {
 				
-				File newFile = new File(CraftZ.i.getDataFolder(), "worlds/" + CraftZ.worldName() + ".yml");
-				if (newFile.exists()) return;
+				File newFile = new File(dir, CraftZ.worldName() + ".yml");
+				if (newFile.exists())
+					return;
 				
 				newFile.getParentFile().mkdirs();
 				newFile.createNewFile();
@@ -102,15 +104,14 @@ public class WorldData {
 			}
 			
 			int thirst = get(world).getInt("Data.players." + key + ".thirst");
-			int zombies = get(world).getInt("Data.players." + key + ".zombiesKilled");
-			int players = get(world).getInt("Data.players." + key + ".playersKilled");
-			int mins = get(world).getInt("Data.players." + key + ".minsSurvived");
+			int zombiesKilled = get(world).getInt("Data.players." + key + ".zombiesKilled");
+			int playersKilled = get(world).getInt("Data.players." + key + ".playersKilled");
+			int minutesSurvived = get(world).getInt("Data.players." + key + ".minsSurvived");
 			boolean bleeding = get(world).getBoolean("Data.players." + key + ".bleeding");
 			boolean bonesBroken = get(world).getBoolean("Data.players." + key + ".bonesBroken");
 			boolean poisoned = get(world).getBoolean("Data.players." + key + ".poisoned");
 			
-			String conv = thirst + "|" + zombies + "|" + players + "|" + mins + "|" + (bleeding ? "1" : "0")
-					+ "|" + (bonesBroken ? "1" : "0") + "|" + (poisoned ? "1" : "0");
+			String conv = new PlayerData(thirst, zombiesKilled, playersKilled, minutesSurvived, bleeding, bonesBroken, poisoned).toString();
 			plSec.set(id.toString(), conv);
 			plSec.set(key, null);
 			
@@ -124,10 +125,11 @@ public class WorldData {
 	
 	private static void load(String world) {
 		
-		get(world).options().header("Data for the CraftZ plugin by JangoBrick"
-								+ "\nThis is for the world \"" + world + "\"");
+		FileConfiguration config = get(world);
 		
-		get(world).options().copyDefaults(true);
+		config.options().header("Data for the CraftZ plugin by JangoBrick"
+								+ "\nThis is for the world \"" + world + "\"");
+		config.options().copyDefaults(true);
 		save(world);
 		
 		tryUpdateConfig(world);
@@ -140,7 +142,7 @@ public class WorldData {
 	
 	public static void reload(String world) {
 		
-		ConfigData data = new ConfigData(new File(CraftZ.i.getDataFolder(), "worlds/" + world + ".yml"));
+		ConfigData data = new ConfigData(new File(dir, world + ".yml"));
 		data.config = YamlConfiguration.loadConfiguration(data.configFile);
 		
 		if (!configs.containsKey(world))
@@ -178,15 +180,17 @@ public class WorldData {
 	
 	public static void save(String world) {
 		
-		if (configs.get(world).config == null || configs.get(world).configFile == null) {
+		ConfigData cd = configs.get(world);
+		
+		if (cd.config == null || cd.configFile == null) {
 			return;
 		}
 		
 		try {
-			get(world).save(configs.get(world).configFile);
+			cd.config.save(cd.configFile);
 		} catch (IOException ex) {
-			CraftZ.i.getLogger().log(Level.SEVERE, "Could not save config to "
-					+ configs.get(world).configFile, ex);
+			CraftZ.severe("Could not save config to " + configs.get(world).configFile);
+			ex.printStackTrace();
 		}
 		
 	}

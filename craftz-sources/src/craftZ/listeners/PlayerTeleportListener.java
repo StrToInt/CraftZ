@@ -16,7 +16,7 @@ public class PlayerTeleportListener implements Listener {
 		
 		if (CraftZ.isWorld(event.getTo().getWorld())) {
 			
-			if (event.getCause() == TeleportCause.ENDER_PEARL)
+			if (event.getCause() == TeleportCause.ENDER_PEARL) // grenades
 				event.setCancelled(true);
 			
 		}

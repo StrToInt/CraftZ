@@ -90,7 +90,7 @@ public class AsyncPlayerChatListener implements Listener {
 					p.sendMessage(s);
 			}
 			
-			Bukkit.getLogger().info(s);
+			CraftZ.info(s);
 			
 		}
 		

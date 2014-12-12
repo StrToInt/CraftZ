@@ -11,8 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.ItemStack;
 
-import craftZ.CraftZ;
-
 
 public class DeadPlayer {
 	
@@ -22,8 +20,10 @@ public class DeadPlayer {
 		Material.BOW
 	});
 	
+	private static List<DeadPlayer> deadPlayers = new ArrayList<DeadPlayer>();
+	
 	public String p;
-	public ArrayList<ItemStack> inventory = new ArrayList<ItemStack>();
+	public List<ItemStack> inventory = new ArrayList<ItemStack>();
 	public ItemStack[] armor = new ItemStack[4];
 	public UUID uuid;
 	
@@ -93,7 +93,21 @@ public class DeadPlayer {
 	
 	
 	public void remove() {
-		CraftZ.deadPlayers.remove(this);
+		deadPlayers.remove(this);
+	}
+	
+	
+	
+	
+	
+	public List<ItemStack> getDrops() {
+		
+		List<ItemStack> drops = new ArrayList<ItemStack>();
+		drops.addAll(inventory);
+		drops.addAll(Arrays.asList(armor));
+		
+		return drops;
+		
 	}
 	
 	
@@ -132,7 +146,7 @@ public class DeadPlayer {
 	
 	
 	public static void create(Player p) {
-		CraftZ.deadPlayers.add(new DeadPlayer(p));
+		deadPlayers.add(new DeadPlayer(p));
 		saveDeadPlayers();
 	}
 	
@@ -142,9 +156,9 @@ public class DeadPlayer {
 	
 	public static void saveDeadPlayers() {
 		
-		ArrayList<String> strings = new ArrayList<String>();
+		List<String> strings = new ArrayList<String>();
 		
-		for (DeadPlayer dp : CraftZ.deadPlayers)
+		for (DeadPlayer dp : deadPlayers)
 			strings.add(dp.toString());
 		
 		WorldData.get().set("Data.dead", strings);
@@ -158,11 +172,11 @@ public class DeadPlayer {
 	
 	public static void loadDeadPlayers() {
 		
-		CraftZ.deadPlayers.clear();
+		deadPlayers.clear();
 		List<String> strings = WorldData.get().getStringList("Data.dead");
 		
 		for (String s : strings)
-			CraftZ.deadPlayers.add(new DeadPlayer(s));
+			deadPlayers.add(new DeadPlayer(s));
 		
 	}
 	
@@ -170,10 +184,12 @@ public class DeadPlayer {
 	
 	
 	
-	public static DeadPlayer getDeadPlayer(UUID uuid) {
+	public static DeadPlayer get(UUID uuid) {
 		
-		for (DeadPlayer dp : CraftZ.deadPlayers)
-			if (dp.uuid.equals(uuid)) return dp;
+		for (DeadPlayer dp : deadPlayers) {
+			if (dp.uuid.equals(uuid))
+				return dp;
+		}
 		
 		return null;
 		

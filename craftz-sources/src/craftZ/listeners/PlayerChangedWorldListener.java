@@ -1,6 +1,8 @@
 package craftZ.listeners;
 
 import org.bukkit.ChatColor;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -16,17 +18,24 @@ public class PlayerChangedWorldListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onWorldChanged(PlayerChangedWorldEvent event) {
 		
-		if (CraftZ.isWorld(event.getFrom())) {
+		Player p = event.getPlayer();
+		World w = p.getWorld();
+		World f = event.getFrom();
+		boolean modify = ConfigManager.getConfig("config").getBoolean("Config.chat.modify-join-and-quit-messages");
+		
+		if (CraftZ.isWorld(f)) {
 			
-			if (ConfigManager.getConfig("config").getBoolean("Config.chat.modify-join-and-quit-messages"))
-				CraftZ.broadcastToWorld((ChatColor.RED + "Player " + event.getPlayer().getDisplayName() + " disconnected."), event.getFrom());
-			PlayerManager.savePlayerToConfig(event.getPlayer());
+			if (modify) {
+				CraftZ.broadcastToWorld((ChatColor.RED + "Player " + p.getDisplayName() + " disconnected."), f);
+			}
+			PlayerManager.savePlayer(p);
 			
-		} else if (CraftZ.isWorld(event.getPlayer().getWorld())) {
+		} else if (CraftZ.isWorld(w)) {
 			
-			if (ConfigManager.getConfig("config").getBoolean("Config.chat.modify-join-and-quit-messages"))
-				CraftZ.broadcastToWorld((ChatColor.RED + "Player " + event.getPlayer().getDisplayName() + " connected."), event.getPlayer().getWorld());
-			PlayerManager.loadPlayer(event.getPlayer(), false);
+			if (modify) {
+				CraftZ.broadcastToWorld((ChatColor.RED + "Player " + p.getDisplayName() + " connected."), w);
+			}
+			PlayerManager.loadPlayer(p, false);
 			
 		}
 		

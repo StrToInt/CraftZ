@@ -17,7 +17,8 @@ public class HangingPlaceListener implements Listener {
 		
 		if (CraftZ.isWorld(event.getEntity().getWorld())) {
 			
-			if (!ConfigManager.getConfig("config").getBoolean("Config.players.interact.block-placing") && !event.getPlayer().hasPermission("craftz.build")) {
+			if (!ConfigManager.getConfig("config").getBoolean("Config.players.interact.block-placing")
+					&& !event.getPlayer().hasPermission("craftz.build")) {
 				event.setCancelled(true);
 				event.getPlayer().sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.errors.not-enough-permissions"));
 			}

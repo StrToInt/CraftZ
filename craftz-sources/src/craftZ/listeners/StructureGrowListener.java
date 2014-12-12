@@ -24,7 +24,8 @@ public class StructureGrowListener implements Listener {
 				} else {
 					
 					Player p = event.getPlayer();
-					if (!ConfigManager.getConfig("config").getBoolean("Config.players.interact.block-placing") && !p.hasPermission("craftz.interact.blockPlace"))
+					if (!ConfigManager.getConfig("config").getBoolean("Config.players.interact.block-placing")
+							&& !p.hasPermission("craftz.interact.blockPlace"))
 						event.setCancelled(true);
 					
 				}

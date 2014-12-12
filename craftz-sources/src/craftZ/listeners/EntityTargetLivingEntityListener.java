@@ -8,7 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 
 import craftZ.CraftZ;
-import craftZ.util.PlayerVisibilityBar;
+import craftZ.util.PlayerManager;
 
 
 public class EntityTargetLivingEntityListener implements Listener {
@@ -23,7 +23,7 @@ public class EntityTargetLivingEntityListener implements Listener {
 			
 			Zombie z = (Zombie) event.getEntity();
 			Player p = (Player) event.getTarget();
-			float vis = PlayerVisibilityBar.getVisibility(p);
+			float vis = PlayerManager.getVisibility(p);
 			
 			double blocks = 50 * vis;
 			double dist = z.getLocation().distance(p.getLocation());

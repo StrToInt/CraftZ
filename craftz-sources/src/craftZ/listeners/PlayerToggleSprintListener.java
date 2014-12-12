@@ -15,14 +15,11 @@ public class PlayerToggleSprintListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerToggleSprint(PlayerToggleSprintEvent event) {
 		
-		if (CraftZ.isWorld(event.getPlayer().getWorld())) {
-			
-			Player p = event.getPlayer();
-			
-			if (event.isSprinting() && PlayerManager.isInWorld(p) && PlayerManager.getData(p).bonesBroken) {
-				event.setCancelled(true);
-			}
+		Player p = event.getPlayer();
 		
+		if (CraftZ.isWorld(p.getWorld())) {
+			if (event.isSprinting() && PlayerManager.existsInWorld(p) && PlayerManager.getData(p).bonesBroken)
+				event.setCancelled(true);
 		}
 		
 	}

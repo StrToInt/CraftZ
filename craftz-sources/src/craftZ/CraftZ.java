@@ -3,12 +3,12 @@ package craftZ;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
+import java.util.Random;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
@@ -30,30 +30,17 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import craftZ.listeners.*;
-import craftZ.util.AnimalSpawner;
-import craftZ.util.ChestRefiller;
-import craftZ.util.ConfigManager;
-import craftZ.util.DeadPlayer;
-import craftZ.util.PlayerManager;
-import craftZ.util.Rewarder;
-import craftZ.util.ScoreboardHelper;
-import craftZ.util.Time;
-import craftZ.util.ZombieSpawner;
+import craftZ.util.*;
 
 
 public class CraftZ extends JavaPlugin {
-	
-	public static long tickID = 0;
-	public static Map<UUID, Integer> movingPlayers = new HashMap<UUID, Integer>();
-	public static ArrayList<DeadPlayer> deadPlayers = new ArrayList<DeadPlayer>();
-	public static boolean firstRun, failedWorldLoad = false;
 	
 	public static String[] firstRunMessages = {
 		"CraftZ -- It seems that this is the first time you run CraftZ. There are a few important things on first-time use:",
 		"* It is likely that CraftZ will not be able to load up because the default world might not exist.",
 		"* The whole world which is used by CraftZ (defaults to 'world') will be changed. This includes:",
 		"   - Ingame daytime will be the same as reallife daytime.",
-		"   - Only zombies will spawn, even during the day. http://youtube.com/ ",
+		"   - Only zombies will spawn, even during the day.",
 		"   - The world is protected from most changes (by players AND other things). " +
 				"In addition, players without special permissions are restricted in their actions.",
 		"* Please modify the configuration file located at '/plugins/CraftZ/config.yml' to suit your needs. " +
@@ -71,7 +58,10 @@ public class CraftZ extends JavaPlugin {
 		"More info can be found in the console or at '/plugins/CraftZ/README.txt'."
 	};
 	
+	public static final Random RANDOM = new Random();
 	public static CraftZ i;
+	public static boolean firstRun, failedWorldLoad;
+	public static long tick = 0;
 	
 	
 	
@@ -99,12 +89,10 @@ public class CraftZ extends JavaPlugin {
 			try {
 				
 				BufferedWriter wr = new BufferedWriter(new FileWriter(readme));
-				
 				for (String s : firstRunMessages) {
 					wr.write(s);
 					wr.newLine();
 				}
-				
 				wr.flush();
 				wr.close();
 				
@@ -117,18 +105,15 @@ public class CraftZ extends JavaPlugin {
 		
 		
 		
-		this.getServer().getScheduler().runTask(this, new Runnable() {
+		Bukkit.getScheduler().runTask(this, new Runnable() {
 			
 			@Override
 			public void run() {
 				
 				if (world() == null) {
-					
 					severe("World '" + worldName() + "' not found! Please check config.yml. CraftZ will not work.");
 					failedWorldLoad = true;
-					
 					HandlerList.unregisterAll(CraftZ.this);
-					
 				}
 				
 				
@@ -136,10 +121,8 @@ public class CraftZ extends JavaPlugin {
 				if (firstRun) {
 					
 					br();
-					
 					for (String s : firstRunMessages)
 						info(s);
-					
 					br();
 					info("You can also find this message at any time in '/plugins/CraftZ/README.txt'.");
 					br();
@@ -169,35 +152,31 @@ public class CraftZ extends JavaPlugin {
 		
 		
 		
-		this.getServer().getScheduler().runTaskTimer(this, new Runnable() {
+		Bukkit.getScheduler().runTaskTimer(this, new Runnable() {
 
 			@Override
 			public void run() {
 				
-				tickID++;
+				tick++;
 				
 				if (!failedWorldLoad) {
 					
 					ZombieSpawner.onServerTick();
-					AnimalSpawner.onServerTick(tickID);
+					AnimalSpawner.onServerTick(tick);
 					ChestRefiller.onServerTick();
-					PlayerManager.onServerTick(tickID);
-					
-					if (ConfigManager.getConfig("config").getBoolean("Config.world.real-time"))
-						Time.setToServerTime();
+					PlayerManager.onServerTick(tick);
 					
 					
 					
-					List<UUID> toRemove = new ArrayList<UUID>();
-					
-					for (UUID id : movingPlayers.keySet()) {
-						int mt = movingPlayers.get(id);
-						movingPlayers.put(id, ++mt);
-						if (mt > 8) toRemove.add(id);
-					}
-					
-					for (int i=0; i<toRemove.size(); i++) {
-						movingPlayers.remove(toRemove.get(i));
+					if (ConfigManager.getConfig("config").getBoolean("Config.world.real-time")) {
+						
+						int h = Calendar.getInstance().get(Calendar.HOUR_OF_DAY) - 6,
+							m = Calendar.getInstance().get(Calendar.MINUTE);
+						
+						int t = (int) (h * 1000    +    m * (1000.0 / 60));
+						
+					    CraftZ.world().setFullTime(t);
+					    
 					}
 					
 				}
@@ -229,7 +208,7 @@ public class CraftZ extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		
-		PlayerManager.saveAllPlayersToConfig();
+		PlayerManager.saveAllPlayers();
 		
 		info("++=================================++");
 		info("||  Plugin successfully disabled.  ||");
@@ -251,7 +230,7 @@ public class CraftZ extends JavaPlugin {
 			
 			if (args.length == 0) {
 				
-				if (sender.hasPermission("craftz.help") || sender.hasPermission("craftz.help")) {
+				if (sender.hasPermission("craftz.help")) {
 					
 					sender.sendMessage(ChatColor.GOLD + getMsg("Messages.help.title"));
 					sender.sendMessage("");
@@ -311,21 +290,18 @@ public class CraftZ extends JavaPlugin {
 					
 					if (sender.hasPermission("craftz.removeitems")) {
 						
-						int craftz_removed_items = 0;
-						String value_world_name = ConfigManager.getConfig("config").getString("Config.world.name");
-						List<Entity> craftz_entities = this.getServer().getWorld(value_world_name).getEntities();
-						for (int i=0; i<craftz_entities.toArray().length; i++) {
-							
-							Entity craftz_entity_ = craftz_entities.get(i);
-							if (craftz_entity_.getType() == EntityType.DROPPED_ITEM) {
-								craftz_entity_.remove();
-								craftz_removed_items++;
+						int ri = 0;
+						List<Entity> entities = world().getEntities();
+						for (int i=0; i<entities.size(); i++) {
+							Entity entity = entities.get(i);
+							if (entity.getType() == EntityType.DROPPED_ITEM) {
+								entity.remove();
+								ri++;
 							}
-							
 						}
 						
 						sender.sendMessage(CraftZ.getPrefix() + " " + ChatColor.GREEN + getMsg("Messages.cmd.removed-items")
-								.replace("%i", "" + ChatColor.AQUA + craftz_removed_items + ChatColor.GREEN));
+								.replace("%i", "" + ChatColor.AQUA + ri + ChatColor.GREEN));
 						
 					} else {
 						sender.sendMessage(noPerms);
@@ -365,7 +341,8 @@ public class CraftZ extends JavaPlugin {
 				
 				if (args[0].equalsIgnoreCase("setlobby")) {
 					
-					if (!(sender instanceof Player)) return true;
+					if (!(sender instanceof Player))
+						return true;
 					
 					Player p = (Player) sender;
 					
@@ -396,21 +373,13 @@ public class CraftZ extends JavaPlugin {
 				
 				if (args[0].equalsIgnoreCase("smasher")) {
 					
-					if (!(sender instanceof Player)) return true;
+					if (!(sender instanceof Player))
+						return true;
 					
 					Player p = (Player) sender;
 					
 					if (p.hasPermission("craftz.smasher")) {
-						
-						ItemStack stack = new ItemStack(Material.STICK);
-						ItemMeta m = stack.getItemMeta();
-						m.setDisplayName(ChatColor.GOLD + "Zombie Smasher");
-						stack.setItemMeta(m);
-						
-						p.getInventory().addItem(stack);
-//						Item i = p.getWorld().dropItem(p.getLocation(), stack);
-//						i.setPickupDelay(0);
-						
+						p.getInventory().addItem(ItemRenamer.rename(new ItemStack(Material.STICK), ChatColor.GOLD + "Zombie Smasher", null));
 					} else {
 						p.sendMessage(noPerms);
 					}
@@ -423,7 +392,8 @@ public class CraftZ extends JavaPlugin {
 				
 				if (args[0].equalsIgnoreCase("purge")) {
 					
-					if (!(sender instanceof Player)) return true;
+					if (!(sender instanceof Player))
+						return true;
 					
 					Player p = (Player) sender;
 					
@@ -461,7 +431,8 @@ public class CraftZ extends JavaPlugin {
 				
 				if (args[0].equalsIgnoreCase("sign")) {
 					
-					if (!(sender instanceof Player)) return true;
+					if (!(sender instanceof Player))
+						return true;
 					
 					Player p = (Player) sender;
 					
@@ -619,7 +590,7 @@ public class CraftZ extends JavaPlugin {
 				def_config.put("Config.world.world-changing.allow-new-chunks", true);
 				
 				// WEATHER
-				def_config.put("Config.world.weather.allowWeatherChanging", true);
+				def_config.put("Config.world.weather.allow-weather-changing", true);
 				
 			// PLAYERS
 			def_config.put("Config.players.use-scoreboard-for-stats", false);
@@ -745,6 +716,12 @@ public class CraftZ extends JavaPlugin {
 		 		+ "++===================================================++"
 		);
 		
+		FileConfiguration config = ConfigManager.getConfig("config");
+		if (config.contains("Config.world.weather.allowWeatherChanging")) { // rename old value
+			config.set("Config.world.weather.allow-weather-changing", config.getBoolean("Config.world.weather.allowWeatherChanging"));
+			config.set("Config.world.weather.allowWeatherChanging", null);
+		}
+		
 		
 		
 		
@@ -838,8 +815,9 @@ public class CraftZ extends JavaPlugin {
 		
 		FileConfiguration loot = ConfigManager.getConfig("loot");
 		if (!loot.contains("Loot.lists") || loot.getConfigurationSection("Loot.lists").getKeys(false).isEmpty()) {
+			// if there are no lists at all, create defaults
 			
-			String[] value_lists_all = {
+			String[] all = {
 				"web", "tnt", "2x'brown_mushroom'", "2x'red_mushroom'", "iron_axe", "flint_and_steel", "2x'apple'", "bow",
 				"4x'arrow'", "iron_sword", "2x'wood_sword'", "stone_sword", "3x'bowl'", "2x'mushroom_soup'",
 				"2x'wheat'", "bread",	"leather_helmet", "leather_chestplate", "leather_leggings", "leather_boots", "chainmail_helmet",
@@ -847,61 +825,61 @@ public class CraftZ extends JavaPlugin {
 				"paper", "sugar", "cookie", "melon", "ender_pearl", "blaze_rod", "glass_bottle", "carrot_item", "baked_potato",
 				"pumpkin_pie", "potion:5", "potion:16389"
 			};
-			loot.addDefault("Loot.lists.all", value_lists_all);
+			loot.addDefault("Loot.lists.all", all);
 			
 			loot.addDefault("Loot.lists-settings.all.max-stacks-filled", 2);
 			
 			
 			
-			String[] value_lists_military = {
+			String[] military = {
 				"web", "iron_axe", "bow", "4x'arrow'", "2x'wood_sword'", "2x'bowl'", "2x'mushroom_soup'", "3x'leather_helmet'",
 				"3x'leather_chestplate'", "3x'leather_leggings'", "3x'leather_boots'"
 			};
-			loot.addDefault("Loot.lists.military", value_lists_military);
+			loot.addDefault("Loot.lists.military", military);
 			
 			
 			
-			String[] value_lists_militaryEpic = {
+			String[] militaryEpic = {
 				"web", "tnt", "iron_axe", "bow", "4x'arrow'", "iron_sword", "2x'wood_sword'", "stone_sword", "2x'bowl'", "mushroom_soup",
 				"2x'leather_helmet'", "2x'leather_chestplate'", "2x'leather_leggings'", "2x'leather_boots'",
 				"chainmail_helmet", "chainmail_chestplate", "chainmail_leggings", "chainmail_boots",
 				"iron_helmet", "iron_chestplate", "iron_leggings", "iron_boots", "ender_pearl"
 			};
-			loot.addDefault("Loot.lists.military-epic", value_lists_militaryEpic);
+			loot.addDefault("Loot.lists.military-epic", militaryEpic);
 			
 			loot.addDefault("Loot.lists-settings.military-epic.time-before-refill", 240);
 			
 			
 			
-			String[] value_lists_civilian = {
+			String[] civilian = {
 				"2x'brown_mushroom'", "2x'red_mushroom'", "iron_axe", "flint_and_steel", "2x'apple'", "2x'arrow'", "wood_sword", "2x'bowl'",
 				"mushroom_soup", "wheat", "bread", "leather_helmet", "leather_chestplate",
 				"leather_leggings", "leather_boots", "cookie", "melon", "blaze_rod", "carrot_item", "baked_potato", "pumpkin_pie"
 			};
-			loot.addDefault("Loot.lists.civilian", value_lists_civilian);
+			loot.addDefault("Loot.lists.civilian", civilian);
 			
 			
 			
-			String[] value_lists_farms = {
+			String[] farms = {
 				"3x'brown_mushroom'", "3x'red_mushroom'", "iron_axe", "flint_and_steel", "4x'apple'", "bow", "4x'arrow'", "2x'wood_sword'",
 				"4x'bowl'", "2x'mushroom_soup'", "2x'wheat'", "2x'bread'", "leather_helmet", "leather_chestplate", "leather_leggings", "leather_boots",
 				"sugar", "cookie", "melon", "glass_bottle", "carrot_item", "baked_potato", "pumpkin_pie"
 			};
-			loot.addDefault("Loot.lists.farms", value_lists_farms);
+			loot.addDefault("Loot.lists.farms", farms);
 			
 			
 			
-			String[] value_lists_industrial = {
+			String[] industrial = {
 				"web", "4x'arrow'", "2x'wood_sword'", "wheat"
 			};
-			loot.addDefault("Loot.lists.industrial", value_lists_industrial);
+			loot.addDefault("Loot.lists.industrial", industrial);
 			
 			
 			
-			String[] value_lists_barracks = {
+			String[] barracks = {
 				"2x'brown_mushroom'", "2x'red_mushroom'", "apple", "arrow", "wood_sword", "bowl"
 			};
-			loot.addDefault("Loot.lists.barracks", value_lists_barracks);
+			loot.addDefault("Loot.lists.barracks", barracks);
 			
 			loot.addDefault("Loot.lists-settings.barracks.time-before-refill", 180);
 			loot.addDefault("Loot.lists-settings.barracks.min-stacks-filled", 2);
@@ -909,11 +887,11 @@ public class CraftZ extends JavaPlugin {
 			
 			
 			
-			String[] value_lists_medical = {
+			String[] medical = {
 				"2x'apple'", "2x'bowl'", "2x'mushroom_soup'", "paper", "2x'ink_sack:1'", "ink_sack:10", "2x'sugar'", "cookie", "2x'blaze_rod'",
 				"melon", "glass_bottle", "carrot_item", "2x'potion:5'", "potion:16389"
 			};
-			loot.addDefault("Loot.lists.medical", value_lists_medical);
+			loot.addDefault("Loot.lists.medical", medical);
 			
 		}
 		
@@ -931,12 +909,9 @@ public class CraftZ extends JavaPlugin {
 		DeadPlayer.loadDeadPlayers();
 		
 		if (world() == null) {
-			
 			severe("World '" + worldName() + "' not found! Please check config.yml. CraftZ will stop.");
 			failedWorldLoad = true;
-			
 			Bukkit.getPluginManager().disablePlugin(i);
-			
 		}
 		
 	}
@@ -1002,8 +977,7 @@ public class CraftZ extends JavaPlugin {
 		
 		List<Player> players = world.getPlayers();
 		for (int i=0; i<players.size(); i++) {
-			Player p = players.get(i);
-			p.sendMessage(msg);
+			players.get(i).sendMessage(msg);
 		}
 		
 	}

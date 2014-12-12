@@ -1,8 +1,6 @@
 package craftZ.util;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.bukkit.Location;
@@ -10,20 +8,8 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
+
 public class BlockChecker {
-	
-	public static final List<Material> TRANSPARENT = Collections.unmodifiableList(Arrays.asList(
-			Material.AIR,
-			Material.LONG_GRASS, Material.FLOWER_POT, Material.CROPS, Material.DEAD_BUSH, Material.DOUBLE_PLANT,
-			Material.WALL_SIGN, Material.SIGN_POST,
-			Material.REDSTONE_WIRE, Material.REDSTONE_TORCH_ON, Material.REDSTONE_TORCH_OFF,
-			Material.REDSTONE_COMPARATOR_ON, Material.REDSTONE_COMPARATOR_OFF,
-			Material.DIODE_BLOCK_ON, Material.DIODE_BLOCK_OFF,
-			Material.TORCH,
-			Material.TRIPWIRE, Material.TRIPWIRE_HOOK
-	));
-	
-	
 	
 	public static Block getFirst(Material material, World world, int x, int z) {
 		
@@ -40,39 +26,29 @@ public class BlockChecker {
 	
 	
 	
+	
 	public static Location getSafeSpawnLocationOver(Location loc) {
 		
-		for (int i=1; i<256 - loc.getBlockY(); i++) {
-			
-			Location tempLoc = loc.clone().add(0, i, 0);
-			Material tempMat = tempLoc.getBlock().getType();
-			Material tempOverMat = tempLoc.clone().add(0, 1, 0).getBlock().getType();
-			Material tempUnderMat = tempLoc.clone().subtract(0, 1, 0).getBlock().getType();
-			
-			if (TRANSPARENT.contains(tempMat) && TRANSPARENT.contains(tempOverMat) && !TRANSPARENT.contains(tempUnderMat))
-				return tempLoc;
-			
+		loc = loc.clone();
+		
+		for (int i=Math.max(loc.getBlockY(), 1); i<256; i++) { // 0 is not safe
+			loc.setY(i);
+			if (isSafe(loc) && isSafe(loc.clone().add(0, 1, 0)) && loc.clone().subtract(0, 1, 0).getBlock().getType().isSolid())
+				return loc;
 		}
 		
 		return null;
 		
 	}
 	
-	
-	
-	
 	public static Location getSafeSpawnLocationUnder(Location loc) {
 		
-		for (int i=0; i<256 - loc.getBlockY(); i++) {
-			
-			Location tempLoc = loc.clone().subtract(0, i, 0);
-			Material tempMat = tempLoc.getBlock().getType();
-			Material tempOverMat = tempLoc.clone().add(0, 1, 0).getBlock().getType();
-			Material tempUnderMat = tempLoc.clone().subtract(0, 1, 0).getBlock().getType();
-			
-			if (TRANSPARENT.contains(tempMat) && TRANSPARENT.contains(tempOverMat) && !TRANSPARENT.contains(tempUnderMat))
-				return tempLoc;
-			
+		loc = loc.clone();
+		
+		for (int i=255; i>0; i--) {
+			loc.setY(i);
+			if (isSafe(loc) && isSafe(loc.clone().add(0, 1, 0)) && loc.clone().subtract(0, 1, 0).getBlock().getType().isSolid())
+				return loc;
 		}
 		
 		return null;
@@ -84,26 +60,70 @@ public class BlockChecker {
 	
 	
 	public static boolean isTree(Block block) {
-
-		List<Block> logList = new ArrayList<Block>();
-		int i = 0;
 		
-		while (true) {
-			
-			Block above = block.getRelative(0, i, 0);
-			if (above == null)
-				return false;;
-			
-			if (above.getType() == Material.LOG)
-				logList.add(above);
-			else if (above.getType() != Material.LEAVES)
-				return false;
+		Location loc = block.getLocation();
+		int below = countBlocksBelow(loc, Material.LOG, Material.LOG_2),
+			above = countBlocksAbove(loc, Material.LOG, Material.LOG_2);
+		int logs = below + above;
+		
+		Material leaves = loc.clone().add(0, above + 1, 0).getBlock().getType();
+		return logs > 2 && (leaves == Material.LEAVES || leaves == Material.LEAVES_2);
+		
+	}
+	
+	
+	
+	
+	
+	public static boolean isSafe(Location loc) {
+		return isSafe(loc.getBlock().getType());
+	}
+	
+	public static boolean isSafe(Block block) {
+		return isSafe(block.getType());
+	}
+	
+	public static boolean isSafe(Material type) {
+		return !type.isSolid() && type != Material.LAVA && type != Material.STATIONARY_LAVA;
+	}
+	
+	
+	
+	
+	
+	public static int countBlocksBelow(Location loc, Material... types) {
+		
+		int amount = 0;
+		loc = loc.clone();
+		List<Material> tlist = Arrays.asList(types);
+		
+		for (int i=loc.getBlockY(); i>=0; i--) {
+			loc.setY(i);
+			if (tlist.contains(loc.getBlock().getType()))
+				amount++;
 			else
-				return true;
-			
-			i++;
-			
+				break;
 		}
+		
+		return amount;
+		
+	}
+	
+	public static int countBlocksAbove(Location loc, Material... types) {
+		
+		int amount = 0;
+		loc = loc.clone();
+		List<Material> tlist = Arrays.asList(types);
+		
+		for (int i=loc.getBlockY(); i<256; i++) {
+			loc.setY(i);
+			if (tlist.contains(loc.getBlock().getType()))
+				amount++;
+			else
+				break;
+		}
+		
+		return amount;
 		
 	}
 

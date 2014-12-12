@@ -7,6 +7,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -21,34 +22,35 @@ public class ProjectileHitListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onProjectileHit(ProjectileHitEvent event) {
 		
-		if (CraftZ.isWorld(event.getEntity().getWorld())) {
+		Projectile pr = event.getEntity();
+		Location loc = pr.getLocation();
+		
+		if (CraftZ.isWorld(pr.getWorld())) {
 			
-			event.getEntity().remove();
+			pr.remove();
 			
 			if (event.getEntityType() == EntityType.ENDER_PEARL) {
 				
 				if (!ConfigManager.getConfig("config").getBoolean("Config.players.weapons.grenade-enable", true))
 					return;
 				
-				Location eventLocation = event.getEntity().getLocation();
-				event.getEntity().getWorld().createExplosion(eventLocation, 0);
+				pr.getWorld().createExplosion(loc, 0);
 				
 				double range = ConfigManager.getConfig("config").getDouble("Config.players.weapons.grenade-range");
 				double power = ConfigManager.getConfig("config").getDouble("Config.players.weapons.grenade-power");
 				
-				List<Entity> tnt_nearbyEnts = event.getEntity().getNearbyEntities(range, range, range);
-				for (Entity targetEntity : tnt_nearbyEnts) {
+				List<Entity> nearby = pr.getNearbyEntities(range, range, range);
+				for (Entity ent : nearby) {
 					
-					boolean allowPlayer = ConfigManager.getConfig("config").getBoolean("Config.players.weapons.grenade-damage-players");
-					boolean allowMobs = ConfigManager.getConfig("config").getBoolean("Config.players.weapons.grenade-damage-mobs");
+					boolean allowPlayer = ConfigManager.getConfig("config").getBoolean("Config.players.weapons.grenade-damage-players"),
+							isPlayer = ent instanceof Player;
+					boolean allowMobs = ConfigManager.getConfig("config").getBoolean("Config.players.weapons.grenade-damage-mobs"),
+							isLiving = ent instanceof LivingEntity;
 					
-					if ((targetEntity instanceof Player && allowPlayer)
-							|| (targetEntity instanceof LivingEntity && allowMobs)) {
-						
-						LivingEntity targetLiving = (LivingEntity) targetEntity; // Player is also LivingEntity
-						double targetDistance = eventLocation.distance(targetLiving.getLocation());
-						targetLiving.damage((1D - targetDistance / range) * power);
-						
+					if (isLiving && (isPlayer ? allowPlayer : allowMobs)) {
+						LivingEntity lent = (LivingEntity) ent; // Player is also LivingEntity
+						double targetDistance = loc.distance(lent.getLocation());
+						lent.damage((1D - targetDistance / range) * power);
 					}
 					
 				}

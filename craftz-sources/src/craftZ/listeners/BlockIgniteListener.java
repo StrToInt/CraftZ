@@ -2,6 +2,7 @@ package craftZ.listeners;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -20,10 +21,12 @@ public class BlockIgniteListener implements Listener {
 			
 			if (!ConfigManager.getConfig("config").getBoolean("Config.world.world-changing.allow-burning")) {
 				
-				Block eventBlock = event.getBlock();
-				Material eventBlockType = eventBlock.getType();
-				if (eventBlockType != Material.OBSIDIAN) {
-					if (event.getPlayer() != null && !event.getPlayer().hasPermission("craftz.interact.blockPlace"))
+				Block block = event.getBlock();
+				Material type = block.getType();
+				Player p = event.getPlayer();
+				
+				if (type != Material.OBSIDIAN) { // handled by portal listener -- obsidian cannot be ignited anyway
+					if (p != null && !p.hasPermission("craftz.interact.blockPlace"))
 						event.setCancelled(true);
 					else
 						event.setCancelled(true);

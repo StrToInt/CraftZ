@@ -5,14 +5,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
@@ -45,20 +42,15 @@ public class ChestRefiller {
 		
 		cooldowns.put(chestEntry, 0);
 		
-		ConfigurationSection chestSec = WorldData.get().getConfigurationSection("Data.lootchests." + chestEntry);
+		ConfigurationSection sec = WorldData.get().getConfigurationSection("Data.lootchests." + chestEntry);
 		
-		if (chestSec == null)
+		if (sec == null)
 			return false;
 		
-		int rflLocX = chestSec.getInt("coords.x");
-		int rflLocY = chestSec.getInt("coords.y");
-		int rflLocZ = chestSec.getInt("coords.z");
-		World rflWorld = Bukkit.getWorld(ConfigManager.getConfig("config").getString("Config.world.name"));
-		Location rflLoc = new Location(rflWorld, rflLocX, rflLocY, rflLocZ);
+		Location loc = new Location(CraftZ.world(), sec.getInt("coords.x"), sec.getInt("coords.y"), sec.getInt("coords.z"));
+		Block block = loc.getBlock();
 		
-		Block block = rflLoc.getBlock();
-		
-		try { // Workaround for NPE when Bukkit calls CraftInventory.getSize()
+		try { // try-catch-clause is workaround for NPE when Bukkit calls CraftInventory.getSize() [got an idea why this happens, anybody?]
 			if (block.getState() instanceof Chest && !drop)
 				((Chest) block.getState()).getBlockInventory().clear();
 		} catch (NullPointerException ex) { }
@@ -73,29 +65,25 @@ public class ChestRefiller {
 	
 	
 	
-	public static void evalChestRefill(ConfigurationSection chestSec) {
+	public static void evalChestRefill(ConfigurationSection sec) {
 		
-		int rflLocX = chestSec.getInt("coords.x");
-		int rflLocY = chestSec.getInt("coords.y");
-		int rflLocZ = chestSec.getInt("coords.z");
-		String sface = chestSec.getString("face", "n");
-		World rflWorld = CraftZ.world();
-		Location rflLoc = new Location(rflWorld, rflLocX, rflLocY, rflLocZ);
+		String sface = sec.getString("face", "n").toLowerCase();
+		Location rflLoc = new Location(CraftZ.world(), sec.getInt("coords.x"), sec.getInt("coords.y"), sec.getInt("coords.z"));
+		String list = sec.getString("list");
 		
-		String lootList = chestSec.getString("list");
-		
-		if (lootList != null) {
+		if (list != null) {
 			
 			Block block = rflLoc.getBlock();
 			block.setType(Material.CHEST);
 			Chest chest = (Chest) block.getState();
 			
-			BlockFace face = sface.equalsIgnoreCase("s") ? BlockFace.SOUTH : (sface.equalsIgnoreCase("e") ? BlockFace.EAST
-					: (sface.equalsIgnoreCase("w") ? BlockFace.WEST : BlockFace.NORTH));
+			BlockFace face = sface.equals("s") ? BlockFace.SOUTH : (sface.equals("e") ? BlockFace.EAST
+					: (sface.equals("w") ? BlockFace.WEST : BlockFace.NORTH));
 			((org.bukkit.material.Chest) chest.getData()).setFacingDirection(face);
 			
-			List<String> bItems = ConfigManager.getConfig("loot").getStringList("Loot.lists." + lootList);
-			if (bItems == null || bItems.isEmpty()) return;
+			List<String> bItems = ConfigManager.getConfig("loot").getStringList("Loot.lists." + list);
+			if (bItems == null || bItems.isEmpty())
+				return;
 			List<String> items = new ArrayList<String>();
 			
 			for (int e=0; e<bItems.size(); e++) {
@@ -117,11 +105,11 @@ public class ChestRefiller {
 				
 			}
 			
-			int min = getPropertyInt("min-stacks-filled", lootList);
-			int max = getPropertyInt("max-stacks-filled", lootList);
+			int min = getPropertyInt("min-stacks-filled", list);
+			int max = getPropertyInt("max-stacks-filled", list);
 			
-			for (int i=0; i<(1 + min + new Random().nextInt(max - min)); i++) {
-				String itemString = items.get(new Random().nextInt(items.size()));
+			for (int i=0; i<(1 + min + CraftZ.RANDOM.nextInt(max - min)); i++) {
+				String itemString = items.get(CraftZ.RANDOM.nextInt(items.size()));
 				ItemStack stack = StackParser.fromString(itemString, false);
 				if (stack != null)
 					chest.getInventory().addItem(stack);
@@ -160,9 +148,9 @@ public class ChestRefiller {
 			if (entry.getValue() >= (ConfigManager.getConfig("loot").getInt("Loot.settings.time-before-refill") * 20)) {
 				
 				toRemove.add(entry.getKey());
-				ConfigurationSection chestSec = WorldData.get().getConfigurationSection("Data.lootchests." + entry.getKey());
-				if (chestSec != null)
-					evalChestRefill(chestSec);
+				ConfigurationSection sec = WorldData.get().getConfigurationSection("Data.lootchests." + entry.getKey());
+				if (sec != null)
+					evalChestRefill(sec);
 				
 			}
 			

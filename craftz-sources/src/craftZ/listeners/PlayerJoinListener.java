@@ -18,12 +18,14 @@ public class PlayerJoinListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		
-		if (CraftZ.isWorld(event.getPlayer().getWorld())) {
+		Player p = event.getPlayer();
+		
+		if (CraftZ.isWorld(p.getWorld())) {
 			
 			if (ConfigManager.getConfig("config").getBoolean("Config.chat.modify-join-and-quit-messages"))
-				event.setJoinMessage(ChatColor.RED + "Player " + event.getPlayer().getDisplayName() + " connected.");
+				event.setJoinMessage(ChatColor.RED + "Player " + p.getDisplayName() + " connected.");
 			
-			joinPlayer(event.getPlayer());
+			joinPlayer(p);
 			
 		}
 		
@@ -35,7 +37,7 @@ public class PlayerJoinListener implements Listener {
 	
 	public static void joinPlayer(Player p) {
 		
-		if (PlayerManager.wasInWorld(p)) {
+		if (PlayerManager.existsInConfig(p)) {
 			PlayerManager.loadPlayer(p, false);
 		} else {
 			
@@ -54,9 +56,8 @@ public class PlayerJoinListener implements Listener {
 	
 	
 	
-	public static class FirstTimeUse extends PlayerJoinListener {
+	public static class FirstTimeUse implements Listener {
 		
-		@Override
 		@EventHandler(priority = EventPriority.HIGHEST)
 		public void onPlayerJoin(PlayerJoinEvent event) {
 			
@@ -65,11 +66,8 @@ public class PlayerJoinListener implements Listener {
 			if (p.isOp()) {
 				
 				p.sendMessage("");
-				
-				for (String s : CraftZ.firstRunPlayerMessages) {
+				for (String s : CraftZ.firstRunPlayerMessages)
 					p.sendMessage(s);
-				}
-				
 				p.sendMessage("");
 				
 			} else {

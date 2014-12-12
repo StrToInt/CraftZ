@@ -4,7 +4,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -25,35 +24,31 @@ public class SignChangeListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onSignChange(SignChangeEvent event) {
 		
-		if (CraftZ.isWorld(event.getBlock().getWorld())) {
+		Block block = event.getBlock();
+		Location loc = block.getLocation();
+		Player p = event.getPlayer();
+		
+		if (CraftZ.isWorld(block.getWorld())) {
+			
 			
 			String line1 = event.getLine(0);
 			String line2 = event.getLine(1);
 			String line3 = event.getLine(2);
 			String line4 = event.getLine(3);
 			
-			Block block = event.getBlock();
-			Sign sign = (Sign) block.getState();
-			Player p = event.getPlayer();
-			
-			String signNotComplete = ChatColor.RED + CraftZ.getMsg("Messages.errors.sign-not-complete");
+			String signNotComplete = ChatColor.RED + CraftZ.getMsg("Messages.errors.sign-not-complete"),
+					noPerms = ChatColor.RED + CraftZ.getMsg("Messages.errors.not-enough-permissions"),
+					success = ChatColor.GREEN + CraftZ.getMsg("Messages.successfully-created");
 			boolean extended = ConfigManager.getConfig("config").getBoolean("Config.chat.extended-error-messages");
 			
 			
 			
 			ItemMeta meta = p.getItemInHand().getItemMeta();
-			if (meta.getDisplayName() != null && meta.getDisplayName().startsWith(ChatColor.DARK_PURPLE + "Pre-written Sign / ")) {
-				
-				line1 = meta.getLore().get(0);
-				line2 = meta.getLore().get(1);
-				line3 = meta.getLore().get(2);
-				line4 = meta.getLore().get(3);
-				
-				event.setLine(0, line1);
-				event.setLine(1, line2);
-				event.setLine(2, line3);
-				event.setLine(3, line4);
-				
+			if (meta.hasDisplayName() && meta.getDisplayName().startsWith(ChatColor.DARK_PURPLE + "Pre-written Sign / ")) {
+				event.setLine(0, line1 = meta.getLore().get(0));
+				event.setLine(1, line2 = meta.getLore().get(1));
+				event.setLine(2, line3 = meta.getLore().get(2));
+				event.setLine(3, line4 = meta.getLore().get(3));
 			}
 			
 			
@@ -93,13 +88,12 @@ public class SignChangeListener implements Listener {
 							return;
 						}
 						
-						String maxZombiesInRadius = line3.split(":")[0];
-						String maxZombiesRadius = line3.split(":")[1];
-						int maxZombiesInRadiusI = 0;
-						int maxZombiesRadiusI = 0;
+						int maxzIn = 0;
+						int maxzRadius = 0;
 						try {
-							maxZombiesInRadiusI = Integer.parseInt(maxZombiesInRadius);
-							maxZombiesRadiusI = Integer.parseInt(maxZombiesRadius);
+							String[] spl = line3.split(":");
+							maxzIn = Integer.parseInt(spl[0]);
+							maxzRadius = Integer.parseInt(spl[1]);
 						} catch(NumberFormatException ex) {
 							p.sendMessage(signNotComplete);
 							if (extended) {
@@ -109,30 +103,28 @@ public class SignChangeListener implements Listener {
 							return;
 						}
 						
-						Location signLoc = sign.getLocation();
-						int signLocX = (int) signLoc.getX();
-						int signLocY = (int) signLoc.getY();
-						int signLocZ = (int) signLoc.getZ();
+						int signX = loc.getBlockX();
+						int signY = loc.getBlockY();
+						int signZ = loc.getBlockZ();
 						
-						String name = "x" + signLocX + "y" + signLocY + "z" + signLocZ;
+						String name = "x" + signX + "y" + signY + "z" + signZ;
 						String path = "Data.zombiespawns." + name;
 						String path_coords = path + ".coords";
 						
-						WorldData.get().set(path_coords + ".x", signLocX);
-						WorldData.get().set(path_coords + ".y", signLocY);
-						WorldData.get().set(path_coords + ".z", signLocZ);
+						WorldData.get().set(path_coords + ".x", signX);
+						WorldData.get().set(path_coords + ".y", signY);
+						WorldData.get().set(path_coords + ".z", signZ);
 						
-						WorldData.get().set(path + ".max-zombies-in-radius", maxZombiesInRadiusI);
-						WorldData.get().set(path + ".max-zombies-radius", maxZombiesRadiusI);
+						WorldData.get().set(path + ".max-zombies-in-radius", maxzIn);
+						WorldData.get().set(path + ".max-zombies-radius", maxzRadius);
 						
 						WorldData.save();
-						
-						p.sendMessage(ChatColor.RED + CraftZ.getMsg("Messages.successfully-created"));
-						
 						ZombieSpawner.addSpawn(name);
 						
+						p.sendMessage(success);
+						
 					} else {
-						p.sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.errors.not-enough-permissions"));
+						p.sendMessage(noPerms);
 					}
 					
 				}
@@ -154,27 +146,26 @@ public class SignChangeListener implements Listener {
 							return;
 						}
 						
-						Location signLoc = sign.getLocation();
-						int signLocX = (int) signLoc.getX();
-						int signLocY = (int) signLoc.getY();
-						int signLocZ = (int) signLoc.getZ();
+						int signX = loc.getBlockX();
+						int signY = loc.getBlockY();
+						int signZ = loc.getBlockZ();
 						
-						String name = "x" + signLocX + "y" + signLocY + "z" + signLocZ;
+						String name = "x" + signX + "y" + signY + "z" + signZ;
 						String path = "Data.playerspawns." + name;
 						String path_coords = path + ".coords";
 						
-						WorldData.get().set(path_coords + ".x", signLocX);
-						WorldData.get().set(path_coords + ".y", signLocY);
-						WorldData.get().set(path_coords + ".z", signLocZ);
+						WorldData.get().set(path_coords + ".x", signX);
+						WorldData.get().set(path_coords + ".y", signY);
+						WorldData.get().set(path_coords + ".z", signZ);
 						
 						WorldData.get().set(path + ".name", line3);
 						
 						WorldData.save();
 						
-						p.sendMessage(ChatColor.RED + CraftZ.getMsg("Messages.successfully-created"));
+						p.sendMessage(success);
 						
 					} else {
-						p.sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.errors.not-enough-permissions"));
+						p.sendMessage(noPerms);
 					}
 					
 				}
@@ -196,15 +187,14 @@ public class SignChangeListener implements Listener {
 							return;
 						}
 						
-						int chestLocY = 0;
+						int chestY = 0;
 						String[] l3spl = line3.split(":");
 						
 						String l3y = l3spl[0];
 						
 						if (l3y.equals("%c%")) {
 							
-							Location bloc = block.getLocation();
-							Block b = BlockChecker.getFirst(Material.CHEST, bloc.getWorld(), bloc.getBlockX(), bloc.getBlockZ());
+							Block b = BlockChecker.getFirst(Material.CHEST, loc.getWorld(), loc.getBlockX(), loc.getBlockZ());
 							
 							if (b == null) {
 								p.sendMessage(signNotComplete);
@@ -215,13 +205,13 @@ public class SignChangeListener implements Listener {
 								return;
 							}
 							
-							chestLocY = b.getY();
-							event.setLine(2, line3.replace("%c%", "" + chestLocY));
+							chestY = b.getY();
+							event.setLine(2, line3.replace("%c%", "" + chestY));
 							
 						} else {
 							
 							try {
-								chestLocY = Integer.parseInt(l3y);
+								chestY = Integer.parseInt(l3y);
 							} catch(NumberFormatException ex) {
 								
 								p.sendMessage(signNotComplete);
@@ -252,18 +242,16 @@ public class SignChangeListener implements Listener {
 							return;
 						}
 						
-						Location signLoc = sign.getLocation();
-						int signLocX = (int) signLoc.getX();
-						int signLocY = (int) signLoc.getY();
-						int signLocZ = (int) signLoc.getZ();
+						int signX = loc.getBlockX();
+						int signY = loc.getBlockY();
+						int signZ = loc.getBlockZ();
 						
-						String name = "x" + signLocX + "y" + signLocY + "z" + signLocZ;
-						
+						String name = "x" + signX + "y" + signY + "z" + signZ;
 						String path = "Data.lootchests." + name;
 						
-						WorldData.get().set(path + ".coords.x", signLocX);
-						WorldData.get().set(path + ".coords.y", chestLocY);
-						WorldData.get().set(path + ".coords.z", signLocZ);
+						WorldData.get().set(path + ".coords.x", signX);
+						WorldData.get().set(path + ".coords.y", chestY);
+						WorldData.get().set(path + ".coords.z", signZ);
 						WorldData.get().set(path + ".face", l3f);
 						
 						WorldData.get().set(path + ".list", lootList);
@@ -271,10 +259,10 @@ public class SignChangeListener implements Listener {
 						WorldData.save();
 						ChestRefiller.resetChestAndStartRefill(name, false);
 						
-						p.sendMessage(ChatColor.RED + CraftZ.getMsg("Messages.successfully-created"));
+						p.sendMessage(success);
 						
 					} else {
-						p.sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.errors.not-enough-permissions"));
+						p.sendMessage(noPerms);
 					}
 					
 				}

@@ -15,10 +15,8 @@ public class WeatherChangeListener implements Listener {
 	public void onWeatherChange(WeatherChangeEvent event) {
 		
 		if (CraftZ.isWorld(event.getWorld())) {
-			
-			if (!ConfigManager.getConfig("config").getBoolean("Config.world.weather.allowWeatherChanging"))
+			if (!ConfigManager.getConfig("config").getBoolean("Config.world.weather.allow-weather-changing"))
 				event.setCancelled(true);
-		
 		}
 		
 	}

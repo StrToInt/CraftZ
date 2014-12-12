@@ -19,11 +19,10 @@ public class HangingBreakByEntityListener implements Listener {
 		if (CraftZ.isWorld(event.getEntity().getWorld())) {
 			
 			if (event.getRemover().getType() == EntityType.PLAYER) {
-				
 				Player p = (Player) event.getRemover();
-				if (!ConfigManager.getConfig("config").getBoolean("Config.players.interact.block-breaking") && !p.hasPermission("craftz.interact.blockBreak"))
+				if (!ConfigManager.getConfig("config").getBoolean("Config.players.interact.block-breaking")
+						&& !p.hasPermission("craftz.interact.blockBreak"))
 					event.setCancelled(true);
-				
 			}
 		
 		}

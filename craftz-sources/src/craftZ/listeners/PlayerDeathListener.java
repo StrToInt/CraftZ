@@ -84,13 +84,11 @@ public class PlayerDeathListener implements Listener {
 				p.setFoodLevel(20);
 				
 				Bukkit.getScheduler().runTask(CraftZ.i, new Runnable() {
-					
 					@Override
 					public void run() {
 						p.setVelocity(new Vector());
 						p.teleport(PlayerManager.getLobby());
 					}
-					
 				});
 				
 			}

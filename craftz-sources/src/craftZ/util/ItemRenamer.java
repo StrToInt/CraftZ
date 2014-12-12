@@ -81,9 +81,10 @@ public class ItemRenamer {
 	
 	public static void convertInventoryItemNames(Inventory inv, List<String> entries) {
 		
-		for (int i=0; i<inv.getSize(); i++)
+		for (int i=0; i<inv.getSize(); i++) {
 			if (inv.getItem(i) != null)
 				renameWithList(inv.getItem(i), entries);
+		}
 		
 	}
 	
@@ -92,10 +93,8 @@ public class ItemRenamer {
 	
 	
 	public static void convertPlayerInventory(Player p, List<String> entries) {
-		
 		if (CraftZ.isWorld(p.getWorld()))
 			convertInventoryItemNames(p.getInventory(), entries);
-		
 	}
 	
 }

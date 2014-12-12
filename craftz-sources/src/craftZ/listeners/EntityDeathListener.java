@@ -1,6 +1,5 @@
 package craftZ.listeners;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.ChatColor;
@@ -27,28 +26,26 @@ public class EntityDeathListener implements Listener {
 	public void onEntityDeath(EntityDeathEvent event) {
 		
 		if (CraftZ.isWorld(event.getEntity().getWorld())) {
-		
+			
 			LivingEntity entity = event.getEntity();
+			EntityType type = event.getEntityType();
 			List<ItemStack> drops = event.getDrops();
 			
 			event.setDroppedExp(0);
 			
 			
 			
-			if (event.getEntityType() == EntityType.ZOMBIE) {
+			if (type == EntityType.ZOMBIE) {
 				
 				drops.clear();
 				
 				
 				
-				if (DeadPlayer.getDeadPlayer(entity.getUniqueId()) != null) {
+				if (DeadPlayer.get(entity.getUniqueId()) != null) {
 					
-					DeadPlayer dp = DeadPlayer.getDeadPlayer(entity.getUniqueId());
-					
+					DeadPlayer dp = DeadPlayer.get(entity.getUniqueId());
 					drops.clear();
-					drops.addAll(dp.inventory);
-					drops.addAll(Arrays.asList(dp.armor));
-					
+					drops.addAll(dp.getDrops());
 					dp.remove();
 					DeadPlayer.saveDeadPlayers();
 					
@@ -57,11 +54,9 @@ public class EntityDeathListener implements Listener {
 					List<String> items = ConfigManager.getConfig("config").getStringList("Config.mobs.zombies.drops.items");
 					
 					for (String itemString : items) {
-						
 						ItemStack item = StackParser.fromString(itemString, true);
-						if (item != null && Math.random() >= 1 - ConfigManager.getConfig("config").getDouble("Config.mobs.zombies.drops.chance"))
+						if (item != null && CraftZ.RANDOM.nextDouble() < ConfigManager.getConfig("config").getDouble("Config.mobs.zombies.drops.chance"))
 							drops.add(item);
-						
 					}
 					
 				}

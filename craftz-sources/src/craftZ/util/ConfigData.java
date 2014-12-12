@@ -1,7 +1,9 @@
 package craftZ.util;
 
 import java.io.File;
+
 import org.bukkit.configuration.file.FileConfiguration;
+
 
 public class ConfigData {
 	
@@ -16,14 +18,32 @@ public class ConfigData {
 	
 	
 	
+	
+	
 	@Override
-	public boolean equals(Object anObject) {
-		
-		if (!(anObject instanceof ConfigData))
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((configFile == null) ? 0 : configFile.hashCode());
+		return result;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
 			return false;
-		
-		return configFile.equals(((ConfigData) anObject).configFile);
-		
+		if (getClass() != obj.getClass())
+			return false;
+		ConfigData other = (ConfigData) obj;
+		if (configFile == null) {
+			if (other.configFile != null)
+				return false;
+		} else if (!configFile.equals(other.configFile))
+			return false;
+		return true;
 	}
 	
 }

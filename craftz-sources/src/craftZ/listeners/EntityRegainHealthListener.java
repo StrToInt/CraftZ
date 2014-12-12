@@ -16,10 +16,8 @@ public class EntityRegainHealthListener implements Listener {
 	public void onEntityRegainHealth(EntityRegainHealthEvent event) {
 		
 		if (CraftZ.isWorld(event.getEntity().getWorld())) {
-		
 			if (event.getEntityType() == EntityType.PLAYER)
 				event.setCancelled(event.getRegainReason() == RegainReason.SATIATED);
-		
 		}
 		
 	}

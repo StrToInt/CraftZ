@@ -1,5 +1,6 @@
 package craftZ.listeners;
 
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -15,9 +16,10 @@ public class PlayerPickupItemListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerPickupItem(PlayerPickupItemEvent event) {
 		
-		if (CraftZ.isWorld(event.getPlayer().getWorld())) {
-			ItemRenamer.convertPlayerInventory(event.getPlayer(),
-					ConfigManager.getConfig("config").getStringList("Config.change-item-names.names"));
+		Player p = event.getPlayer();
+		
+		if (CraftZ.isWorld(p.getWorld())) {
+			ItemRenamer.convertPlayerInventory(p, ConfigManager.getConfig("config").getStringList("Config.change-item-names.names"));
 		}
 		
 	}

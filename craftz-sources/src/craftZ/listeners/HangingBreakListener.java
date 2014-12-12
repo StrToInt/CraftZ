@@ -16,7 +16,7 @@ public class HangingBreakListener implements Listener {
 		if (CraftZ.isWorld(event.getEntity().getWorld())) {
 			
 			//event.setCancelled(true);
-		
+			
 		}
 		
 	}

@@ -13,52 +13,48 @@ public class EntityChecker {
 	
 	public static List<Entity> getNearbyEntities(Location loc, double radius) {
 		
-		try {
-			
-			World locWorld = loc.getWorld();
-			Arrow tester = locWorld.spawn(loc, Arrow.class);
-			List<Entity> nearby = tester.getNearbyEntities(radius, radius, radius);
-			tester.remove();
-			return nearby;
-			
-		} catch(NullPointerException ex) { }
+		Arrow tester = loc.getWorld().spawn(loc, Arrow.class);
+		List<Entity> nearby = tester.getNearbyEntities(radius, radius, radius);
+		tester.remove();
 		
-		return null;
+		return nearby;
 		
 	}
 	
 	
 	
-	public static boolean areEntitiesNearby(Location loc, double radius, EntityType entityType, int howMuch) {
+	
+	
+	public static boolean areEntitiesNearby(Location loc, double radius, EntityType type, int amount) {
 		
 		List<Entity> nearby = getNearbyEntities(loc, radius);
 		
-		if (nearby == null) return false;
+		if (nearby == null)
+			return false;
 		
-		int howMuchFound = 0;
+		int found = 0;
 		
 		for (Entity ent : nearby) {
-			EntityType tempType = ent.getType();
-			if (tempType == entityType) howMuchFound++;
+			if (ent.getType() == type)
+				found++;
 		}
 		
-		if (howMuchFound >= howMuch)
-			return true;
-		else
-			return false;
+		return found >= amount;
 		
 	}
 	
 	
 	
-	public int getEntityCountInWorld(World world, EntityType entityType) {
+	
+	
+	public static int getEntityCountInWorld(World world, EntityType type) {
 		
 		List<Entity> entities = world.getEntities();
 		int count = 0;
 		
 		for (Entity ent : entities) {
-			EntityType entType = ent.getType();
-			if (entType == entityType) count++;
+			if (ent.getType() == type)
+				count++;
 		}
 		
 		return count;

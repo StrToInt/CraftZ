@@ -9,11 +9,10 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+
 public class ConfigManager {
 	
 	private static Map<String, ConfigData> configs = new HashMap<String, ConfigData>();
-	
-	
 	
 	
 	

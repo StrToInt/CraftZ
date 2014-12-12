@@ -27,8 +27,8 @@ public class Rewarder {
 			}
 			
 		} catch (NoClassDefFoundError err) { }
-
-		return (economy != null);
+		
+		return economy != null;
 		
 	}
 	

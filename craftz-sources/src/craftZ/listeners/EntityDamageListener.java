@@ -2,6 +2,7 @@ package craftZ.listeners;
 
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,25 +21,28 @@ public class EntityDamageListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onEntityDamage(EntityDamageEvent event) {
 		
-		if (event.getEntityType() == EntityType.PLAYER && PlayerManager.isInsideOfLobby((Player) event.getEntity())) {
+		Entity entity = event.getEntity();
+		EntityType type = event.getEntityType();
+		
+		if (type == EntityType.PLAYER && PlayerManager.isInsideOfLobby((Player) entity)) {
 			event.setCancelled(true);
 			return;
 		}
 		
 		
 		
-		if (CraftZ.isWorld(event.getEntity().getWorld())) {
+		if (CraftZ.isWorld(entity.getWorld())) {
 			
-			if (event.getEntityType() == EntityType.ZOMBIE && event.getCause() == DamageCause.FIRE_TICK) {
+			if (type == EntityType.ZOMBIE && event.getCause() == DamageCause.FIRE_TICK) {
 				event.setCancelled(true);
-				event.getEntity().setFireTicks(0);
+				entity.setFireTicks(0);
 			} else {
 				
-				if (event.getEntityType() == EntityType.PLAYER) {
+				if (type == EntityType.PLAYER) {
 					
-					Player p = (Player) event.getEntity();
+					Player p = (Player) entity;
 					
-					if (PlayerManager.isNotPlaying(p.getUniqueId())) {
+					if (!PlayerManager.isPlaying(p)) {
 						event.setCancelled(true);
 						return;
 					}
@@ -46,14 +50,14 @@ public class EntityDamageListener implements Listener {
 					if (ConfigManager.getConfig("config").getBoolean("Config.players.medical.bleeding.enable")
 							&& p.getGameMode() != GameMode.CREATIVE && !event.isCancelled()) {
 						
-						if (Math.random() >= 1 - ConfigManager.getConfig("config").getDouble("Config.players.medical.bleeding.chance")) {
+						if (CraftZ.RANDOM.nextDouble() < ConfigManager.getConfig("config").getDouble("Config.players.medical.bleeding.chance")) {
 							PlayerManager.getData(p).bleeding = true;
 							p.sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.bleeding"));
 						}
 						
 					}
 					
-					int height = (int) (event.getDamage() + 3);
+					double height = event.getDamage() + 3;
 					if (event.getCause() == DamageCause.FALL && ConfigManager.getConfig("config").getBoolean("Config.players.medical.bonebreak.enable")
 							&& height >= ConfigManager.getConfig("config").getInt("Config.players.medical.bonebreak.height")) {
 						PlayerManager.getData(p).bonesBroken = true;
@@ -61,40 +65,37 @@ public class EntityDamageListener implements Listener {
 					}
 					
 				}
+				
+				
+				
                 if (event.getEntityType() == EntityType.ARMOR_STAND && event.getCause() == DamageCause.FIRE_TICK) {
-                    event.setCancelled(true);       // prevent armor stand from burning away before it's "done"
+                    event.setCancelled(true); // prevent armor stand from burning away before it's "done"
                 }
-//				boolean value_mobs_blood = false;//ConfigManager.getConfig("config").getBoolean("Config.mobs.blood-particles-when-damaged");
-//				if (!event.isCancelled() && value_mobs_blood) {
+                
+                
+                
+//				if (!event.isCancelled() && ConfigManager.getConfig("config").getBoolean("Config.mobs.blood-particles-when-damaged")) {
 //					
-//					if (!eventEntityType.isAlive() || (eventEntityType == EntityType.PLAYER
-//							&& ((Player) eventEntity).getGameMode() == GameMode.CREATIVE)) {
+//					if (!type.isAlive() || (type == EntityType.PLAYER && ((Player) entity).getGameMode() == GameMode.CREATIVE)) {
 //						return;
 //					}
 //					
-//					int bloodCount = 0;
+//					Location loc = entity.getLocation();
+//					World w = entity.getWorld();
 //					
-//					if (eventEntityType == EntityType.ZOMBIE)
-//						bloodCount = (int) (event.getDamage() * 2);
-//					else
-//						bloodCount = (int) (event.getDamage() * 6);
-//					
+//					int bloodCount = (int) (event.getDamage() * (type == EntityType.ZOMBIE ? 2 : 6));
 //					for (int i=0; i<bloodCount; i++) {
 //						
-////						eventWorld.playEffect(eventEntity.getLocation(), Effect.STEP_SOUND,
-////								Material.REDSTONE_WIRE.getId());
-//						
-//						final Item blood = eventWorld.dropItemNaturally(eventEntity.getLocation(), new ItemStack(Material.WOOL, 1, (short) 14));
+//						w.playEffect(loc, Effect.STEP_SOUND, Material.REDSTONE_WIRE.getId());
+//						final Item blood = entity.getWorld().dropItemNaturally(entity.getLocation(), new ItemStack(Material.WOOL, 1, DyeColor.RED.getData()));
 //						
 //						blood.setPickupDelay(Integer.MAX_VALUE);
 //						
-//						plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-//							
+//						Bukkit.getScheduler().scheduleSyncDelayedTask(CraftZ.i, new Runnable() {
 //							@Override
 //							public void run() {
 //								blood.remove();
 //							}
-//							
 //						}, 1 + new Random().nextInt(6));
 //						
 //					}

@@ -1,17 +1,12 @@
 package craftZ.util;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -24,7 +19,8 @@ import craftZ.CraftZ;
 
 public class PlayerManager {
 	
-	private static HashMap<UUID, AdditionalCraftZData> players = new HashMap<UUID, AdditionalCraftZData>();
+	private static Map<UUID, PlayerData> players = new HashMap<UUID, PlayerData>();
+	private static Map<UUID, Integer> movingPlayers = new HashMap<UUID, Integer>();
 	
 	
 	
@@ -34,25 +30,50 @@ public class PlayerManager {
 	
 	
 	
+	
+	
 	public static ConfigurationSection getConfig() {
 		return WorldData.get();
+	}
+	
+	public static void saveConfig() {
+		WorldData.save();
 	}
 	
 	
 	
 	
 	
-	public static void savePlayerToConfig(Player p) {
+	public static boolean hasPlayer(Player p) {
+		return hasPlayer(p.getUniqueId());
+	}
+	
+	public static boolean hasPlayer(UUID uuid) {
+		return players.containsKey(uuid);
+	}
+	
+	
+	
+	
+	
+	public static void savePlayer(Player p) {
 		
-		if (players.containsKey(p.getUniqueId())) {
-			
-			AdditionalCraftZData d = getData(p);
-			getConfig().set("Data.players." + p.getUniqueId(), d.thirst + "|" + d.zombiesKilled + "|" + d.playersKilled + "|" + d.minutesSurvived
-					+ "|" + (d.bleeding ? "1" : "0") + "|" + (d.poisoned ? "1" : "0") + "|" + (d.bonesBroken ? "1" : "0"));
-			
-			WorldData.save();
-			
+		if (hasPlayer(p)) {
+			getConfig().set("Data.players." + p.getUniqueId(), getData(p).toString());
+			saveConfig();
 		}
+		
+	}
+	
+	public static void saveAllPlayers() {
+		
+		for (Player p : CraftZ.world().getPlayers()) {
+			if (hasPlayer(p)) {
+				getConfig().set("Data.players." + p.getUniqueId(), getData(p).toString());
+			}
+		}
+		
+		saveConfig();
 		
 	}
 	
@@ -62,7 +83,7 @@ public class PlayerManager {
 	
 	public static void loadPlayer(Player p, boolean forceRespawn) {
 		
-		if (players.containsKey(p.getUniqueId()) && !forceRespawn) {
+		if (hasPlayer(p) && !forceRespawn) {
 			return;
 		}
 		
@@ -70,7 +91,7 @@ public class PlayerManager {
 		
 		p.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 30, 1000));
 		
-		if (wasInWorld(p) && !forceRespawn) {
+		if (existsInConfig(p) && !forceRespawn) {
 			
 			putPlayer(p, false);
 			p.setLevel(players.get(p.getUniqueId()).thirst);
@@ -82,90 +103,30 @@ public class PlayerManager {
 				p.getInventory().setArmorContents(new ItemStack[4]);
 			}
 			
-			p.setHealth(20);
+			p.setHealth(p.getMaxHealth());
 			p.setFoodLevel(20);
 			spawnPlayerAtRandomSpawn(p);
 			
 			putPlayer(p, true);
 			
-			savePlayerToConfig(p);
+			savePlayer(p);
 			
 			p.setLevel(players.get(p.getUniqueId()).thirst);
 			
 		}
 		
-		ScoreboardHelper.createPlayer(p);
+		ScoreboardHelper.addPlayer(p);
 		
 	}
-	
-	
-	
-	
 	
 	private static void putPlayer(Player p, boolean defaults) {
 		
 		if (defaults) {
-			players.put(p.getUniqueId(), new AdditionalCraftZData(20, 0, 0, 0, false, false, false));
+			players.put(p.getUniqueId(), new PlayerData(20, 0, 0, 0, false, false, false));
 		} else {
-			
-			String confData = getConfig().getString("Data.players." + p.getUniqueId());
-			String[] spl = confData.split("\\|");
-			
-			int thirst = spl.length > 0 ? Integer.valueOf(spl[0]) : 20;
-			int zombies = spl.length > 1 ? Integer.valueOf(spl[1]) : 0;
-			int playersk = spl.length > 2 ? Integer.valueOf(spl[2]) : 0;
-			int minutes = spl.length > 3 ? Integer.valueOf(spl[3]) : 0;
-			boolean bleeding = spl.length > 4 ? spl[4].equals("1") : false;
-			boolean bonesBroken = spl.length > 5 ? spl[5].equals("1") : false;
-			boolean poisoned = spl.length > 6 ? spl[6].equals("1") : false;
-			
-			players.put(p.getUniqueId(), new AdditionalCraftZData(thirst, zombies, playersk, minutes, bleeding, bonesBroken, poisoned));
-			
+			String s = getConfig().getString("Data.players." + p.getUniqueId());
+			players.put(p.getUniqueId(), PlayerData.fromString(s));
 		}
-		
-		
-	}
-	
-	
-	
-	
-	
-	public static void spawnPlayerAtRandomSpawn(Player p) {
-		
-		if (!getConfig().contains("Data.playerspawns")) return;
-		
-		Set<String> spts_players_set = getConfig().getConfigurationSection("Data.playerspawns").getKeys(false);
-		
-		if (spts_players_set != null && !spts_players_set.isEmpty()) {
-			
-			Object[] spts_players = spts_players_set.toArray();
-			int taken = new Random().nextInt(spts_players.length);
-			
-			ConfigurationSection configSec = getConfig().getConfigurationSection("Data.playerspawns." + spts_players[taken]);
-			if (configSec == null) return;
-			
-			int spnLocX = configSec.getInt("coords.x");
-			int spnLocY = configSec.getInt("coords.y");
-			int spnLocZ = configSec.getInt("coords.z");
-			World spnWorld = CraftZ.world();
-			Location spnLoc = new Location(spnWorld, spnLocX, spnLocY, spnLocZ);
-			
-			p.teleport(BlockChecker.getSafeSpawnLocationOver(spnLoc));
-			
-			p.sendMessage(ChatColor.YELLOW + CraftZ.getMsg("Messages.spawned").replaceAll("%s", configSec.getString("name")));
-			
-		}
-		
-	}
-	
-	
-	
-	
-	
-	public static void saveAllPlayersToConfig() {
-		
-		for (Player p : CraftZ.world().getPlayers())
-			savePlayerToConfig(p);
 		
 	}
 	
@@ -176,7 +137,7 @@ public class PlayerManager {
 	public static void resetPlayer(Player p) {
 		
 		getConfig().set("Data.players." + p.getUniqueId(), null);
-		WorldData.save();
+		saveConfig();
 		
 		ScoreboardHelper.removePlayer(p.getUniqueId());
 		players.remove(p.getUniqueId());
@@ -187,13 +148,45 @@ public class PlayerManager {
 	
 	
 	
-	public static AdditionalCraftZData getData(UUID p) {
-		if (!players.containsKey(p)) loadPlayer(p(p), false);
+	public static void spawnPlayerAtRandomSpawn(Player p) {
+		
+		if (!getConfig().contains("Data.playerspawns"))
+			return;
+		
+		ConfigurationSection sec = getConfig().getConfigurationSection("Data.playerspawns");
+		if (sec == null)
+			return;
+		Set<String> spawnsset = sec.getKeys(false);
+		String[] spawns = spawnsset.toArray(new String[spawnsset.size()]);
+		
+		if (spawns.length < 1)
+			return;
+		
+		int spawn = CraftZ.RANDOM.nextInt(spawns.length);
+		
+		ConfigurationSection ssec = getConfig().getConfigurationSection("Data.playerspawns." + spawns[spawn]);
+		if (ssec == null)
+			return;
+		
+		Location loc = new Location(CraftZ.world(), ssec.getInt("coords.x"), ssec.getInt("coords.y"), ssec.getInt("coords.z"));
+		p.teleport(BlockChecker.getSafeSpawnLocationOver(loc));
+		p.sendMessage(ChatColor.YELLOW + CraftZ.getMsg("Messages.spawned").replaceAll("%s", ssec.getString("name")));
+		
+	}
+	
+	
+	
+	
+	
+	public static PlayerData getData(UUID p) {
+		if (!players.containsKey(p))
+			loadPlayer(p(p), false);
 		return players.get(p);
 	}
 	
-	public static AdditionalCraftZData getData(Player p) {
-		if (!players.containsKey(p.getUniqueId())) loadPlayer(p, false);
+	public static PlayerData getData(Player p) {
+		if (!players.containsKey(p.getUniqueId()))
+			loadPlayer(p, false);
 		return players.get(p.getUniqueId());
 	}
 	
@@ -203,23 +196,31 @@ public class PlayerManager {
 	
 	public static void onServerTick(long tickID) {
 		
-		List<UUID> toRemove = new ArrayList<UUID>();
-		
-		for (UUID id : players.keySet()) {
+		for (Iterator<Entry<UUID, PlayerData>> it=players.entrySet().iterator(); it.hasNext(); ) {
 			
-			if (isNotPlaying(id)) {
-				toRemove.add(id);
+			Entry<UUID, PlayerData> entry = it.next();
+			UUID id = entry.getKey();
+			
+			if (!isPlaying(id)) {
+				
+				Player p = p(id);
+				if (p != null) savePlayer(p);
+				
+				ScoreboardHelper.removePlayer(id);
+				
+				it.remove();
 				continue;
+				
 			}
 			
 			
 			
 			Player p = p(id);
-			AdditionalCraftZData data = players.get(id);
+			PlayerData data = players.get(id);
 			
 			
 			
-			PlayerVisibilityBar.updatePlayerVisibilityBar(p);
+			updateVisibility(p);
 			
 			
 			
@@ -291,7 +292,9 @@ public class PlayerManager {
 			
 			if (tickID % 200 == 0) {
 				
-				if (data.bleeding) p.damage(1);
+				if (data.bleeding) {
+					p.damage(1);
+				}
 				
 				if (data.poisoned) {
 					p.damage(1);
@@ -304,24 +307,43 @@ public class PlayerManager {
 			
 			
 			
-			if (data.bonesBroken)
+			if (data.bonesBroken) {
 				p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 40, 2), true);
+			}
 			
 		}
 		
 		
 		
-		for (UUID id : toRemove) {
+		
+		
+		for (Iterator<Entry<UUID, Integer>> it=movingPlayers.entrySet().iterator(); it.hasNext(); ) {
 			
-			Player p = p(id);
-			if (p != null) savePlayerToConfig(p);
+			Entry<UUID, Integer> entry = it.next();
+			int v = entry.getValue() + 1;
+			entry.setValue(v);
 			
-			ScoreboardHelper.removePlayer(id);
-			
-			players.remove(id);
+			if (v > 8)
+				it.remove();
 			
 		}
 		
+	}
+	
+	
+	
+	
+	
+	public static void onPlayerMove(Player p, double distance) {
+		
+		if (distance > 0) {
+			movingPlayers.put(p.getUniqueId(), 0);
+		}
+		
+	}
+	
+	public static boolean isMoving(Player p) {
+		return movingPlayers.containsKey(p.getUniqueId());
 	}
 	
 	
@@ -365,11 +387,14 @@ public class PlayerManager {
 	public static Location getLobby() {
 		
 		Location lobby = CraftZ.world().getSpawnLocation();
-		String w = ConfigManager.getConfig("config").getString("Config.world.lobby.world");
-		if (w != null) lobby.setWorld(Bukkit.getWorld(w));
-		lobby.setX(ConfigManager.getConfig("config").getDouble("Config.world.lobby.x"));
-		lobby.setY(ConfigManager.getConfig("config").getDouble("Config.world.lobby.y"));
-		lobby.setZ(ConfigManager.getConfig("config").getDouble("Config.world.lobby.z"));
+		ConfigurationSection sec = ConfigManager.getConfig("config").getConfigurationSection("Config.world.lobby");
+		
+		String w = sec.getString("world");
+		if (w != null)
+			lobby.setWorld(Bukkit.getWorld(w));
+		lobby.setX(sec.getDouble("x"));
+		lobby.setY(sec.getDouble("y"));
+		lobby.setZ(sec.getDouble("z"));
 		
 		return lobby;
 		
@@ -379,11 +404,45 @@ public class PlayerManager {
 	
 	
 	
-	public static boolean wasInWorld(Player p) {
+	public static void updateVisibility(Player p) {
+		
+		float visibility = 0.32F;
+		
+		boolean mov = isMoving(p);
+		
+		if (!mov)
+			visibility -= 0.25f;
+		
+		if (p.isSneaking())
+			visibility -= mov ? 0.15f : 0.3f;
+		if (p.isSprinting())
+			visibility = 0.6f;
+		if (p.isInsideVehicle())
+			visibility = mov ? 1.0f : visibility*4;
+		
+		if (p.getLocation().getBlock().getType() != Material.AIR)
+			visibility -= 0.15f;
+		
+		if (p.isSleeping())
+			visibility /= 4;
+		
+		p.setExp(visibility > 0f ? visibility : 0f);
+		
+	}
+	
+	public static float getVisibility(Player p) {
+		return p.getExp();
+	}
+	
+	
+	
+	
+	
+	public static boolean existsInConfig(Player p) {
 		return getConfig().contains("Data.players." + p.getUniqueId());
 	}
 	
-	public static boolean isInWorld(Player p) {
+	public static boolean existsInWorld(Player p) {
 		return players.containsKey(p.getUniqueId());
 	}
 	
@@ -391,7 +450,7 @@ public class PlayerManager {
 	
 	
 	
-	public static int getPlayCount() {
+	public static int getPlayerCount() {
 		return players.size();
 	}
 	
@@ -402,24 +461,15 @@ public class PlayerManager {
 	public static Player randomPlayer() {
 		
 		List<Player> players = CraftZ.world().getPlayers();
-		if (players.isEmpty()) return null;
+		if (players.isEmpty())
+			return null;
 		Collections.shuffle(players);
 		
-		Player chosen = players.get(0);
-		
-		if (!isInsideOfLobby(chosen)) return chosen;
-		
-		boolean otherExists = false;
-		for (Player p : players) {
-			
-			if (!isInsideOfLobby(p)) {
-				otherExists = true;
-				break;
-			}
-			
+		for (int i=0; i<players.size(); i++) {
+			Player chosen = players.get(i);
+			if (!isInsideOfLobby(chosen))
+				return chosen;
 		}
-		
-		if (otherExists) return randomPlayer();
 		
 		return null;
 		
@@ -429,9 +479,13 @@ public class PlayerManager {
 	
 	
 	
-	public static boolean isNotPlaying(UUID id) {
+	public static boolean isPlaying(Player p) {
+		return players.containsKey(p.getUniqueId()) && CraftZ.isWorld(p.getWorld()) && !isInsideOfLobby(p);
+	}
+	
+	public static boolean isPlaying(UUID id) {
 		Player p = p(id);
-		return p == null || !CraftZ.isWorld(p.getWorld()) || isInsideOfLobby(p) || !players.containsKey(id);
+		return p != null && players.containsKey(id) && CraftZ.isWorld(p.getWorld()) && !isInsideOfLobby(p);
 	}
 	
 }

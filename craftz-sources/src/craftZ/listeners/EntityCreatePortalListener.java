@@ -1,6 +1,7 @@
 package craftZ.listeners;
 
 import org.bukkit.ChatColor;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -16,15 +17,17 @@ public class EntityCreatePortalListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPortalCreate(EntityCreatePortalEvent event) {
 		
-		if (CraftZ.isWorld(event.getEntity().getWorld())) {
+		LivingEntity entity = event.getEntity();
+		
+		if (CraftZ.isWorld(entity.getWorld()) && entity instanceof Player) {
 			
 			if (!ConfigManager.getConfig("config").getBoolean("Config.players.interact.block-placing")) {
 				
-				Player eventPlayer = (Player) event.getEntity();
+				Player p = (Player) entity;
 				
-				if (!eventPlayer.hasPermission("craftz.build")) {
+				if (!p.hasPermission("craftz.build")) {
 					event.setCancelled(true);
-					eventPlayer.sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.errors.not-enough-permissions"));
+					p.sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.errors.not-enough-permissions"));
 				}
 				
 			}
