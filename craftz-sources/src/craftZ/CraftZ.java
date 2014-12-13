@@ -3,7 +3,6 @@ package craftZ;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -12,23 +11,14 @@ import java.util.Random;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Effect;
-import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Zombie;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import craftZ.cmd.*;
 import craftZ.listeners.*;
 import craftZ.util.*;
 
@@ -61,6 +51,7 @@ public class CraftZ extends JavaPlugin {
 	public static final Random RANDOM = new Random();
 	public static CraftZ i;
 	public static boolean firstRun, failedWorldLoad;
+	private static CraftZCommandManager cmd;
 	public static long tick = 0;
 	
 	
@@ -78,6 +69,20 @@ public class CraftZ extends JavaPlugin {
 			ConfigManager.getConfig("config").set("Config.never-ever-modify.first-run", false);
 			ConfigManager.saveConfig("config");
 		}
+		
+		
+		
+		cmd = new CraftZCommandManager();
+		getCommand("craftz").setExecutor(cmd);
+		
+		cmd.setDefault(new CMD_Help());
+		cmd.registerCommand(new CMD_Reload(), "reload");
+		cmd.registerCommand(new CMD_RemoveItems(), "removeitems", "remitems");
+		cmd.registerCommand(new CMD_Spawn(), "spawn");
+		cmd.registerCommand(new CMD_SetLobby(), "setlobby");
+		cmd.registerCommand(new CMD_Smasher(), "smasher");
+		cmd.registerCommand(new CMD_Purge(), "purge");
+		cmd.registerCommand(new CMD_Sign(), "sign");
 		
 		
 		
@@ -213,278 +218,6 @@ public class CraftZ extends JavaPlugin {
 		info("++=================================++");
 		info("||  Plugin successfully disabled.  ||");
 		info("++=================================++");
-		
-	}
-	
-	
-	
-	
-	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String cmdlabel, String[] args) {
-		
-		String noPerms = ChatColor.DARK_RED + getMsg("Messages.errors.not-enough-permissions");
-		
-		
-		
-		if (cmd.getName().equals("craftz")) {
-			
-			if (args.length == 0) {
-				
-				if (sender.hasPermission("craftz.help")) {
-					
-					sender.sendMessage(ChatColor.GOLD + getMsg("Messages.help.title"));
-					sender.sendMessage("");
-					
-					sender.sendMessage(ChatColor.YELLOW + getMsg("Messages.help.help-command"));
-					
-					if (sender.hasPermission("craftz.removeitems"))
-						sender.sendMessage(ChatColor.YELLOW + getMsg("Messages.help.removeitems-command"));
-					
-					if (sender.hasPermission("craftz.reload"))
-						sender.sendMessage(ChatColor.YELLOW + getMsg("Messages.help.reload-command"));
-					
-					if (sender.hasPermission("craftz.spawn"))
-						sender.sendMessage(ChatColor.YELLOW + getMsg("Messages.help.spawn-command"));
-					
-					if (sender.hasPermission("craftz.setlobby"))
-						sender.sendMessage(ChatColor.YELLOW + getMsg("Messages.help.setlobby-command"));
-					
-					if (sender.hasPermission("craftz.smasher"))
-						sender.sendMessage(ChatColor.YELLOW + getMsg("Messages.help.smasher-command"));
-					
-					if (sender.hasPermission("craftz.purge"))
-						sender.sendMessage(ChatColor.YELLOW + getMsg("Messages.help.purge-command"));
-					
-					if (sender.hasPermission("craftz.sign"))
-						sender.sendMessage(ChatColor.YELLOW + getMsg("Messages.help.sign-command"));
-					
-				} else {
-					sender.sendMessage(noPerms);
-				}
-				
-				return true;
-				
-			}
-			
-			
-			
-			
-			if (args.length > 0) {
-								
-				if (args[0].equalsIgnoreCase("reload")) {
-					
-					if (sender.hasPermission("craftz.reload")) {
-						reloadConfigs();
-						sender.sendMessage(ChatColor.GREEN + getMsg("Messages.cmd.reloaded"));
-					} else {
-						sender.sendMessage(noPerms);
-					}
-					
-					return true;
-					
-				}
-				
-				
-				
-				if (args[0].equalsIgnoreCase("removeitems") || args[0].equalsIgnoreCase("remitems")) {
-					
-					if (sender.hasPermission("craftz.removeitems")) {
-						
-						int ri = 0;
-						List<Entity> entities = world().getEntities();
-						for (int i=0; i<entities.size(); i++) {
-							Entity entity = entities.get(i);
-							if (entity.getType() == EntityType.DROPPED_ITEM) {
-								entity.remove();
-								ri++;
-							}
-						}
-						
-						sender.sendMessage(CraftZ.getPrefix() + " " + ChatColor.GREEN + getMsg("Messages.cmd.removed-items")
-								.replace("%i", "" + ChatColor.AQUA + ri + ChatColor.GREEN));
-						
-					} else {
-						sender.sendMessage(noPerms);
-					}
-					
-					return true;
-					
-				}
-				
-				
-				
-				if (args[0].equalsIgnoreCase("spawn")) {
-					
-					if (!(sender instanceof Player)) {
-						return true;
-					}
-					
-					Player p = (Player) sender;
-					
-					if (p.hasPermission("craftz.spawn")) {
-						
-						if (PlayerManager.isInsideOfLobby(p)) {
-							PlayerManager.loadPlayer(p, true);
-						} else {
-							p.sendMessage(ChatColor.DARK_RED + getMsg("Messages.errors.not-in-lobby"));
-						}
-						
-					} else {
-						p.sendMessage(noPerms);
-					}
-					
-					return true;
-					
-				}
-				
-				
-				
-				if (args[0].equalsIgnoreCase("setlobby")) {
-					
-					if (!(sender instanceof Player))
-						return true;
-					
-					Player p = (Player) sender;
-					
-					if (p.hasPermission("craftz.setlobby")) {
-						
-						String world = p.getWorld().getName();
-						int x = p.getLocation().getBlockX();
-						int y = p.getLocation().getBlockY();
-						int z = p.getLocation().getBlockZ();
-						
-						ConfigManager.getConfig("config").set("Config.world.lobby.world", world);
-						ConfigManager.getConfig("config").set("Config.world.lobby.x", x);
-						ConfigManager.getConfig("config").set("Config.world.lobby.y", y);
-						ConfigManager.getConfig("config").set("Config.world.lobby.z", z);
-						ConfigManager.saveConfig("config");
-						
-						p.sendMessage(ChatColor.AQUA + getMsg("Messages.cmd.setlobby"));
-						
-					} else {
-						p.sendMessage(noPerms);
-					}
-					
-					return true;
-					
-				}
-				
-				
-				
-				if (args[0].equalsIgnoreCase("smasher")) {
-					
-					if (!(sender instanceof Player))
-						return true;
-					
-					Player p = (Player) sender;
-					
-					if (p.hasPermission("craftz.smasher")) {
-						p.getInventory().addItem(ItemRenamer.rename(new ItemStack(Material.STICK), ChatColor.GOLD + "Zombie Smasher", null));
-					} else {
-						p.sendMessage(noPerms);
-					}
-					
-					return true;
-					
-				}
-				
-				
-				
-				if (args[0].equalsIgnoreCase("purge")) {
-					
-					if (!(sender instanceof Player))
-						return true;
-					
-					Player p = (Player) sender;
-					
-					if (p.hasPermission("craftz.purge")) {
-						
-						World w = world();
-						List<Entity> ents = w.getEntities();
-						int n = 0;						
-						for (Entity ent : ents) {
-							
-							if (ent instanceof Zombie) {
-								Zombie z = (Zombie) ent;
-								for (double ya=0; ya<2; ya+=0.2) {
-									for (int i=0; i<9; i++)
-										w.playEffect(z.getLocation().add(0, ya, 0), Effect.SMOKE, i);
-								}
-								ent.remove();
-								n++;
-							}
-							
-						}
-						
-						p.sendMessage(CraftZ.getPrefix() + " " + ChatColor.GREEN + getMsg("Messages.cmd.purged")
-								.replace("%z", "" + ChatColor.AQUA + n + ChatColor.GREEN));
-						
-					} else {
-						p.sendMessage(noPerms);
-					}
-					
-					return true;
-					
-				}
-				
-				
-				
-				if (args[0].equalsIgnoreCase("sign")) {
-					
-					if (!(sender instanceof Player))
-						return true;
-					
-					Player p = (Player) sender;
-					
-					if (p.hasPermission("craftz.sign")) {
-						
-						if (args.length > 1) {
-							
-							String line2 = args[1];
-							String line3 = args.length > 2 ? args[2] : "";
-							String line4 = args.length > 3 ? args[3] : "";
-							
-							String desc = "Unknown";
-							if (line2.equalsIgnoreCase("lootchest")) {
-								desc = "Loot '" + line4 + "'";
-							} else if (line2.equalsIgnoreCase("playerspawn")) {
-								desc = "Player Spawn '" + line3 + "'";
-							} else if (line2.equalsIgnoreCase("zombiespawn")) {
-								desc = "Zombie Spawn " + line3;
-							}
-							
-							ItemStack sign = new ItemStack(Material.SIGN);
-							ItemMeta meta = sign.getItemMeta();
-							meta.setDisplayName(ChatColor.DARK_PURPLE + "Pre-written Sign / " + desc);
-							meta.setLore(Arrays.asList("[CraftZ]", line2, line3, line4));
-							sign.setItemMeta(meta);
-							
-							p.getInventory().addItem(sign);
-							
-						} else {
-							sender.sendMessage(ChatColor.RED + getMsg("Messages.errors.tooFewArguments"));
-						}
-						
-					} else {
-						p.sendMessage(noPerms);
-					}
-					
-					return true;
-					
-				}
-				
-				
-				
-				sender.sendMessage(ChatColor.RED + getMsg("Messages.errors.cmd-not-existing"));
-				return true;
-					
-			}
-			
-		}
-			
-		
-		
-		return true;
 		
 	}
 	
@@ -775,8 +508,8 @@ public class CraftZ extends JavaPlugin {
 			def_messages.put("Messages.cmd.sign", "A pre-written sign was given to you.");
 			
 			// ERRORS
-			def_messages.put("Messages.errors.mustBePlayer", "You must be a player to use this command.");
-			def_messages.put("Messages.errors.tooFewArguments", "Too few arguments given.");
+			def_messages.put("Messages.errors.must-be-player", "You must be a player to use this command.");
+			def_messages.put("Messages.errors.too-few-arguments", "Too few arguments given.");
 			def_messages.put("Messages.errors.sign-not-complete", "The sign is not complete.");
 			def_messages.put("Messages.errors.sign-facing-wrong", "The facing direction you defined is wrong. It may be n, s, e or w.");
 			def_messages.put("Messages.errors.not-enough-permissions", "You don't have the required permission to do this.");

@@ -92,6 +92,7 @@ public class WorldData {
 		ConfigurationSection plSec = get(world).getConfigurationSection("Data.players");
 		if (plSec == null) {
 			info(" -  World data for '" + world + "' seems to be empty, no conversion needed");
+			return;
 		}
 		
 		for (String key : plSec.getKeys(false)) {
