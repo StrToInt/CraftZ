@@ -5,6 +5,7 @@ import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
@@ -218,13 +219,15 @@ public class PlayerManager {
 			Player p = p(id);
 			PlayerData data = players.get(id);
 			
+			boolean survival = p.getGameMode() != GameMode.CREATIVE && p.getGameMode() != GameMode.SPECTATOR;
+			
 			
 			
 			updateVisibility(p);
 			
 			
 			
-			if (ConfigManager.getConfig("config").getBoolean("Config.players.medical.thirst.enable")) {
+			if (survival && ConfigManager.getConfig("config").getBoolean("Config.players.medical.thirst.enable")) {
 				
 				Biome biome = p.getLocation().getBlock().getBiome();
 				boolean desert = biome == Biome.DESERT || biome == Biome.DESERT_HILLS || biome == Biome.DESERT_MOUNTAINS;
@@ -271,7 +274,7 @@ public class PlayerManager {
 			
 			if (tickID % 30 == 0) {
 				
-				if (ConfigManager.getConfig("config").getBoolean("Config.world.world-border.enable")) {
+				if (survival && ConfigManager.getConfig("config").getBoolean("Config.world.world-border.enable")) {
 					
 					double dmg = getWorldBorderDamage(p, ConfigManager.getConfig("config").getDouble("Config.world.world-border.radius"), getLobby());
 					
@@ -290,7 +293,7 @@ public class PlayerManager {
 			
 			
 			
-			if (tickID % 200 == 0) {
+			if (survival && tickID % 200 == 0) {
 				
 				if (data.bleeding) {
 					p.damage(1);
@@ -307,7 +310,7 @@ public class PlayerManager {
 			
 			
 			
-			if (data.bonesBroken) {
+			if (survival && data.bonesBroken) {
 				p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 40, 2), true);
 			}
 			
