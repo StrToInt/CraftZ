@@ -83,6 +83,7 @@ public class CraftZ extends JavaPlugin {
 		cmd.registerCommand(new CMD_Smasher(), "smasher");
 		cmd.registerCommand(new CMD_Purge(), "purge");
 		cmd.registerCommand(new CMD_Sign(), "sign");
+		cmd.registerCommand(new CMD_Top(), "top");
 		
 		
 		
@@ -499,6 +500,7 @@ public class CraftZ extends JavaPlugin {
 			def_messages.put("Messages.help.smasher-command", "/craftz smasher: Get the ultimate zombie smasher!");
 			def_messages.put("Messages.help.purge-command", "/craftz purge: Purge all zombies from the world.");
 			def_messages.put("Messages.help.sign-command", "/craftz sign <line2> <line3> <line4>: Get a pre-written sign.");
+			def_messages.put("Messages.help.top-command", "/craftz top: Take a look at the highscores.");
 			
 			// COMMAND
 			def_messages.put("Messages.cmd.removed-items", "Removed %i items.");
@@ -506,6 +508,9 @@ public class CraftZ extends JavaPlugin {
 			def_messages.put("Messages.cmd.setlobby", "The lobby center is set at your location. For lobby radius, see configuration file.");
 			def_messages.put("Messages.cmd.purged", "All %z loaded zombies were purged from the world.");
 			def_messages.put("Messages.cmd.sign", "A pre-written sign was given to you.");
+			def_messages.put("Messages.cmd.top.minutes-survived", "LONGEST TIME SURVIVED");
+			def_messages.put("Messages.cmd.top.zombies-killed", "MOST ZOMBIE KILLS IN 1 LIFE");
+			def_messages.put("Messages.cmd.top.players-killed", "MOST PLAYER KILLS IN 1 LIFE");
 			
 			// ERRORS
 			def_messages.put("Messages.errors.must-be-player", "You must be a player to use this command.");
@@ -629,6 +634,20 @@ public class CraftZ extends JavaPlugin {
 		}
 		
 		ConfigManager.saveConfig("loot");
+		
+		
+		
+		
+		
+		// HIGHSCORES
+		Map<String, Object> def_highscores = new HashMap<String, Object>();
+		
+		ConfigManager.newConfig("highscores", i, def_highscores);
+		ConfigManager.getConfig("highscores").options().header(
+				  "++========================================================++\n"
+		 		+ "|| Highscore database for the CraftZ plugin by JangoBrick ||\n"
+		 		+ "++========================================================++"
+		);
 		
 	}
 	

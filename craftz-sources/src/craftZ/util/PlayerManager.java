@@ -137,6 +137,11 @@ public class PlayerManager {
 	
 	public static void resetPlayer(Player p) {
 		
+		if (hasPlayer(p)) {
+			PlayerData data = getData(p);
+			addToHighscores(p, data);
+		}
+		
 		getConfig().set("Data.players." + p.getUniqueId(), null);
 		saveConfig();
 		
@@ -489,6 +494,77 @@ public class PlayerManager {
 	public static boolean isPlaying(UUID id) {
 		Player p = p(id);
 		return p != null && players.containsKey(id) && CraftZ.isWorld(p.getWorld()) && !isInsideOfLobby(p);
+	}
+	
+	
+	
+	
+	
+	public static Map<String, Integer> getHighscores(String category) {
+		
+		LinkedHashMap<String, Integer> scores = new LinkedHashMap<String, Integer>();
+		
+		ConfigurationSection sec = ConfigManager.getConfig("highscores").getConfigurationSection("Highscores." + category);
+		if (sec != null) {
+			for (String player : sec.getKeys(false)) {
+				scores.put(player, sec.getInt(player));
+			}
+		}
+		
+		return scores;
+		
+	}
+	
+	
+	
+	
+	
+	public static SortedSet<Map.Entry<String, Integer>> sortHighscores(Map<String, Integer> scoresMap) {
+		
+		SortedSet<Map.Entry<String, Integer>> scores = new TreeSet<Map.Entry<String, Integer>>(new Comparator<Map.Entry<String, Integer>>() {
+			@Override
+			public int compare(Map.Entry<String, Integer> e1, Map.Entry<String, Integer> e2) {
+				int res = e2.getValue().compareTo(e1.getValue());
+				return res != 0 ? res : 1;
+			}
+		});
+		
+		scores.addAll(scoresMap.entrySet());
+		
+		return scores;
+		
+	}
+	
+	
+	
+	
+	
+	public static void addToHighscores(Player p, PlayerData data) {
+		
+		addToHighscores(p, data.minutesSurvived, "minutes-survived");
+		addToHighscores(p, data.zombiesKilled, "zombies-killed");
+		addToHighscores(p, data.playersKilled, "players-killed");
+		
+	}
+	
+	public static void addToHighscores(Player p, int v, String category) {
+		
+		Map<String, Integer> scores = getHighscores(category);
+		SortedSet<Map.Entry<String, Integer>> scoresSorted = sortHighscores(scores);
+		
+		Map.Entry<String, Integer> scoresLast = scores.isEmpty() ? null : scoresSorted.last();
+		if (scores.size() < 10 || scoresLast.getValue() < v) {
+			scores.put(p.getName(), v);
+			scores.remove(scoresLast);
+		}
+		
+		if (scores.size() > 10) {
+			scores.remove(scoresLast);
+		}
+		
+		ConfigManager.getConfig("highscores").createSection("Highscores." + category, scores);
+		ConfigManager.saveConfig("highscores");
+		
 	}
 	
 }

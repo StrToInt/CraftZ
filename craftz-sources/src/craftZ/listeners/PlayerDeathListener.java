@@ -21,9 +21,9 @@ public class PlayerDeathListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerDeath(PlayerDeathEvent event) {
 		
-		if (CraftZ.isWorld(event.getEntity().getWorld())) {
-			
-			final Player p = event.getEntity();
+		final Player p = event.getEntity();
+		
+		if (CraftZ.isWorld(p.getWorld())) {
 			
 			if (ConfigManager.getConfig("config").getBoolean("Config.chat.modify-death-messages"))
 				event.setDeathMessage(p.getDisplayName() + " was killed.");

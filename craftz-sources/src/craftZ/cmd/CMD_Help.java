@@ -36,6 +36,9 @@ public class CMD_Help extends CraftZCommand {
 			if (hasPerm("craftz.sign"))
 				send(ChatColor.YELLOW + getMsg("Messages.help.sign-command"));
 			
+			if (hasPerm("craftz.top"))
+				send(ChatColor.YELLOW + getMsg("Messages.help.top-command"));
+			
 		} else {
 			return NO_PERMISSION;
 		}
