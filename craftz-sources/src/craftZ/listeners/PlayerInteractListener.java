@@ -138,7 +138,7 @@ public class PlayerInteractListener implements Listener {
 
             if (action == Action.RIGHT_CLICK_BLOCK) {
             	
-                if (type == Material.LOG && ConfigManager.getConfig("config").getBoolean("Config.players.campfires.enable")) {
+                if ((type == Material.LOG || type == Material.LOG_2) && ConfigManager.getConfig("config").getBoolean("Config.players.campfires.enable")) {
                     
                 	if (!block.getType().isTransparent() && block.getType().isSolid() && block.getLocation().add(0, 1, 0).getBlock().getType() == Material.AIR) {
                         
@@ -179,13 +179,15 @@ public class PlayerInteractListener implements Listener {
                     
                 }
 				
+                
+                
 				if (type == Material.IRON_AXE) {
 					
 					if (ConfigManager.getConfig("config").getBoolean("Config.players.wood-harvesting.enable")) {
 						
 						if (BlockChecker.isTree(block)) {
 							
-							if (!p.getInventory().contains(Material.LOG)) {
+							if (!p.getInventory().contains(Material.LOG) && !p.getInventory().contains(Material.LOG_2)) {
 								
 								Item itm = p.getWorld().dropItem(p.getLocation(), new ItemStack(Material.LOG, 1));
 								itm.setPickupDelay(0);
