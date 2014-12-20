@@ -59,7 +59,7 @@ public class CreatureSpawnListener implements Listener {
 				}
 				
 				if (type == EntityType.ZOMBIE) {
-					if (reason != SpawnReason.CUSTOM && reason != SpawnReason.SPAWNER_EGG) {
+					if (reason != SpawnReason.CUSTOM && reason != SpawnReason.SPAWNER_EGG && reason != SpawnReason.DISPENSE_EGG) {
 						event.setCancelled(true);
 					} else {
 						ZombieSpawner.equipZombie((Zombie) entity);
