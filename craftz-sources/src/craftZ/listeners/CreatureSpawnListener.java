@@ -21,7 +21,7 @@ public class CreatureSpawnListener implements Listener {
 		EntityType.SKELETON, EntityType.CREEPER, EntityType.SPIDER, EntityType.ENDERMAN, EntityType.GHAST,
 		EntityType.SILVERFISH, EntityType.SLIME, EntityType.SQUID, EntityType.PIG_ZOMBIE, EntityType.MAGMA_CUBE,
 		EntityType.CAVE_SPIDER, EntityType.BLAZE, EntityType.OCELOT, EntityType.BAT, EntityType.WITCH,
-		EntityType.WOLF, EntityType.MUSHROOM_COW, EntityType.HORSE
+		EntityType.WOLF, EntityType.MUSHROOM_COW, EntityType.HORSE, EntityType.ENDERMITE, EntityType.RABBIT
 	};
 	
 	public static final EntityType[] animals = {

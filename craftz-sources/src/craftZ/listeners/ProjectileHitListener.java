@@ -27,12 +27,12 @@ public class ProjectileHitListener implements Listener {
 		
 		if (CraftZ.isWorld(pr.getWorld())) {
 			
-			pr.remove();
-			
 			if (event.getEntityType() == EntityType.ENDER_PEARL) {
 				
 				if (!ConfigManager.getConfig("config").getBoolean("Config.players.weapons.grenade-enable", true))
 					return;
+				
+				pr.remove();
 				
 				pr.getWorld().createExplosion(loc, 0);
 				
@@ -49,8 +49,8 @@ public class ProjectileHitListener implements Listener {
 					
 					if (isLiving && (isPlayer ? allowPlayer : allowMobs)) {
 						LivingEntity lent = (LivingEntity) ent; // Player is also LivingEntity
-						double targetDistance = loc.distance(lent.getLocation());
-						lent.damage((1D - targetDistance / range) * power);
+						double d = 1.0 - loc.distance(lent.getLocation()) / range;
+						lent.damage(d * 4 * power + (d > 0.75 ? power : 0));
 					}
 					
 				}

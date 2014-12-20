@@ -20,12 +20,13 @@ public class EntityExplodeListener implements Listener {
 	public void onEntityExplode(EntityExplodeEvent event) {
 		
 		Entity entity = event.getEntity();
-		EntityType type = event.getEntityType();
 		Location loc = event.getLocation();
 		
-		if (CraftZ.isWorld(loc.getWorld())) {
+		if (entity != null && CraftZ.isWorld(loc.getWorld())) {
 			
-			if (entity != null && type == EntityType.PRIMED_TNT) {
+			EntityType type = event.getEntityType();
+			
+			if (type == EntityType.PRIMED_TNT) {
 				
 				event.setCancelled(true);
 				
@@ -36,8 +37,8 @@ public class EntityExplodeListener implements Listener {
 					
 					if (ent instanceof LivingEntity) {
 						LivingEntity lent = (LivingEntity) ent;
-						double dist = loc.distance(lent.getLocation()) / 2;
-						lent.damage(20 / dist * 2);
+						double d = 1.0 - loc.distance(lent.getLocation()) / 20.0;
+						lent.damage(20 * d);
 					}
 					
 				}
