@@ -40,7 +40,7 @@ public class InventoryCloseListener implements Listener {
 					
 					Sign sign = (Sign) b.getState();
 					if (sign.getLine(2).equals("" + y)) {
-						ChestRefiller.resetChestAndStartRefill("x" + loc.getBlockX() + "y" + i + "z" + loc.getBlockZ(), true);
+						ChestRefiller.startRefill(ChestRefiller.getData(loc), true);
 					}
 					
 				}

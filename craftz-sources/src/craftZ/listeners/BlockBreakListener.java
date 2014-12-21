@@ -15,7 +15,8 @@ import org.bukkit.event.block.BlockBreakEvent;
 import craftZ.CraftZ;
 import craftZ.util.ChestRefiller;
 import craftZ.util.ConfigManager;
-import craftZ.util.WorldData;
+import craftZ.util.PlayerManager;
+import craftZ.util.ZombieSpawner;
 
 public class BlockBreakListener implements Listener {
 	
@@ -55,20 +56,14 @@ public class BlockBreakListener implements Listener {
 					return;
 				
 				Location signLoc = sign.getLocation();
-				int signX = (int) signLoc.getX();
-				int signY = (int) signLoc.getY();
-				int signZ = (int) signLoc.getZ();
 				
 				if (sign.getLine(1).equalsIgnoreCase("zombiespawn")) {
 					
 					if (p.hasPermission("craftz.buildZombieSpawn")) {
-						
-						WorldData.get().set("Data.zombiespawns.x" + signX + "y" + signY + "z" + signZ, null);
-						WorldData.save();
-						
+						ZombieSpawner.removeSpawn(ZombieSpawner.makeID(signLoc));
 						p.sendMessage(ChatColor.RED + CraftZ.getMsg("Messages.destroyed-sign"));
-						
 					} else {
+						event.setCancelled(true);
 						event.getPlayer().sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.errors.not-enough-permissions"));
 					}
 					
@@ -79,13 +74,10 @@ public class BlockBreakListener implements Listener {
 				if (sign.getLine(1).equalsIgnoreCase("playerspawn")) {
 					
 					if (event.getPlayer().hasPermission("craftz.buildPlayerSpawn")) {
-						
-						WorldData.get().set("Data.playerspawns.x" + signX + "y" + signY + "z" + signZ, null);
-						WorldData.save();
-						
+						PlayerManager.removeSpawn(PlayerManager.makeSpawnID(signLoc));
 						event.getPlayer().sendMessage(ChatColor.RED + CraftZ.getMsg("Messages.destroyed-sign"));
-						
 					} else {
+						event.setCancelled(true);
 						event.getPlayer().sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.errors.not-enough-permissions"));
 					}
 					
@@ -96,13 +88,10 @@ public class BlockBreakListener implements Listener {
 				if (sign.getLine(1).equalsIgnoreCase("lootchest")) {
 					
 					if (event.getPlayer().hasPermission("craftz.buildLootChest")) {
-						
-						WorldData.get().set("Data.lootchests.x" + signX + "y" + signY + "z" + signZ, null);
-						WorldData.save();
-						
+						ChestRefiller.removeChest(ChestRefiller.makeID(signLoc));
 						event.getPlayer().sendMessage(ChatColor.RED + CraftZ.getMsg("Messages.destroyed-sign"));
-						
 					} else {
+						event.setCancelled(true);
 						event.getPlayer().sendMessage(ChatColor.DARK_RED + CraftZ.getMsg("Messages.errors.not-enough-permissions"));
 					}
 					
@@ -129,7 +118,7 @@ public class BlockBreakListener implements Listener {
 						
 						Sign sign = (Sign) b.getState();
 						if (sign.getLine(2).equals("" + cloc.getBlockY())) {
-							ChestRefiller.resetChestAndStartRefill("x" + loc.getBlockX() + "y" + i + "z" + loc.getBlockZ(), true);
+							ChestRefiller.startRefill(ChestRefiller.getData(loc), true);
 						}
 						
 					}

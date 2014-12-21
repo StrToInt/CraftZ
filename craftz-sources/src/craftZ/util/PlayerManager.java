@@ -10,12 +10,14 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import craftZ.CraftZ;
+import craftZ.Dynmap;
 
 
 public class PlayerManager {
@@ -154,6 +156,50 @@ public class PlayerManager {
 	
 	
 	
+	public static String makeSpawnID(Location signLoc) {
+		return "x" + signLoc.getBlockX() + "y" + signLoc.getBlockY() + "z" + signLoc.getBlockZ();
+	}
+	
+	public static ConfigurationSection getSpawnData(String signID) {
+		return WorldData.get().getConfigurationSection("Data.playerspawns." + signID);
+	}
+	
+	public static ConfigurationSection getSpawnData(Location signLoc) {
+		return WorldData.get().getConfigurationSection("Data.playerspawns." + makeSpawnID(signLoc));
+	}
+	
+	
+	
+	
+	
+	public static void addSpawn(Location signLoc, String name) {
+		
+		String id = makeSpawnID(signLoc);
+		String path = "Data.playerspawns." + id;
+		
+		WorldData.get().set(path + ".coords.x", signLoc.getBlockX());
+		WorldData.get().set(path + ".coords.y", signLoc.getBlockY());
+		WorldData.get().set(path + ".coords.z", signLoc.getBlockZ());
+		WorldData.get().set(path + ".name", name);
+		WorldData.save();
+		
+		Dynmap.createMarker(Dynmap.SET_PLAYERSPAWNS, "playerspawn_" + id, "Spawn: " + name, signLoc, Dynmap.ICON_PLAYERSPAWN);
+		
+	}
+	
+	public static void removeSpawn(String signID) {
+		
+		WorldData.get().set("Data.playerspawns." + signID, null);
+		WorldData.save();
+		
+		Dynmap.removeMarker(Dynmap.SET_PLAYERSPAWNS, "playerspawn_" + signID);
+		
+	}
+	
+	
+	
+	
+	
 	public static void spawnPlayerAtRandomSpawn(Player p) {
 		
 		if (!getConfig().contains("Data.playerspawns"))
@@ -174,7 +220,7 @@ public class PlayerManager {
 		if (ssec == null)
 			return;
 		
-		Location loc = new Location(CraftZ.world(), ssec.getInt("coords.x"), ssec.getInt("coords.y"), ssec.getInt("coords.z"));
+		Location loc = CraftZ.centerOfBlock(CraftZ.world(), ssec.getInt("coords.x"), ssec.getInt("coords.y"), ssec.getInt("coords.z"));
 		p.teleport(BlockChecker.getSafeSpawnLocationOver(loc));
 		p.sendMessage(ChatColor.YELLOW + CraftZ.getMsg("Messages.spawned").replaceAll("%s", ssec.getString("name")));
 		
@@ -564,6 +610,51 @@ public class PlayerManager {
 		
 		ConfigManager.getConfig("highscores").createSection("Highscores." + category, scores);
 		ConfigManager.saveConfig("highscores");
+		
+	}
+	
+	
+	
+	
+	
+	public static void onDynmapEnabled() {
+		
+		FileConfiguration config = ConfigManager.getConfig("config");
+		
+		
+		
+		Dynmap.clearSet(Dynmap.SET_WORLDBORDER);
+		
+		if (config.getBoolean("Config.dynmap.show-worldborder") && config.getBoolean("Config.world.world-border.enable")) {
+			
+			double r = config.getDouble("Config.world.world-border.radius");
+			Dynmap.createCircleMarker(Dynmap.SET_WORLDBORDER, "worldborder", "World Border", 6, 0.4, 0xEE2222, getLobby(), r, r);
+			
+		}
+		
+		
+		
+		Dynmap.clearSet(Dynmap.SET_PLAYERSPAWNS);
+		
+		if (config.getBoolean("Config.dynmap.show-playerspawns")) {
+			
+			ConfigurationSection sec = getConfig().getConfigurationSection("Data.playerspawns");
+			if (sec != null) {
+				
+				for (String signID : sec.getKeys(false)) {
+					
+					ConfigurationSection data = sec.getConfigurationSection(signID);
+					
+					Location loc = CraftZ.centerOfBlock(CraftZ.world(), data.getInt("coords.x"), data.getInt("coords.y"), data.getInt("coords.z"));
+					String id = "playerspawn_" + signID;
+					String label = "Spawn: " + data.getString("name");
+					Dynmap.createMarker(Dynmap.SET_PLAYERSPAWNS, id, label, loc, Dynmap.ICON_PLAYERSPAWN);
+					
+				}
+				
+			}
+			
+		}
 		
 	}
 	

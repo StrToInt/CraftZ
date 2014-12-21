@@ -15,7 +15,7 @@ import craftZ.CraftZ;
 import craftZ.util.BlockChecker;
 import craftZ.util.ChestRefiller;
 import craftZ.util.ConfigManager;
-import craftZ.util.WorldData;
+import craftZ.util.PlayerManager;
 import craftZ.util.ZombieSpawner;
 
 
@@ -58,7 +58,7 @@ public class SignChangeListener implements Listener {
 				if (line2.equals("")) {
 					p.sendMessage(signNotComplete);
 					if (extended) {
-						p.sendMessage(ChatColor.RED + "You have to define the sign type!");
+						p.sendMessage(ChatColor.RED + "You have to define the sign type.");
 					}
 					block.breakNaturally();
 					return;
@@ -82,7 +82,7 @@ public class SignChangeListener implements Listener {
 						if (!line3.contains(":")) {
 							p.sendMessage(signNotComplete);
 							if (extended) {
-								p.sendMessage(ChatColor.RED + "Line 3 must contain 2 values separated by a semicolon!");
+								p.sendMessage(ChatColor.RED + "Line 3 must contain 2 values separated by a semicolon.");
 							}
 							block.breakNaturally();
 							return;
@@ -103,23 +103,7 @@ public class SignChangeListener implements Listener {
 							return;
 						}
 						
-						int signX = loc.getBlockX();
-						int signY = loc.getBlockY();
-						int signZ = loc.getBlockZ();
-						
-						String name = "x" + signX + "y" + signY + "z" + signZ;
-						String path = "Data.zombiespawns." + name;
-						String path_coords = path + ".coords";
-						
-						WorldData.get().set(path_coords + ".x", signX);
-						WorldData.get().set(path_coords + ".y", signY);
-						WorldData.get().set(path_coords + ".z", signZ);
-						
-						WorldData.get().set(path + ".max-zombies-in-radius", maxzIn);
-						WorldData.get().set(path + ".max-zombies-radius", maxzRadius);
-						
-						WorldData.save();
-						ZombieSpawner.addSpawn(name);
+						ZombieSpawner.addSpawn(loc, maxzIn, maxzRadius);
 						
 						p.sendMessage(success);
 						
@@ -128,8 +112,6 @@ public class SignChangeListener implements Listener {
 					}
 					
 				}
-				
-				
 				
 				
 				
@@ -146,21 +128,7 @@ public class SignChangeListener implements Listener {
 							return;
 						}
 						
-						int signX = loc.getBlockX();
-						int signY = loc.getBlockY();
-						int signZ = loc.getBlockZ();
-						
-						String name = "x" + signX + "y" + signY + "z" + signZ;
-						String path = "Data.playerspawns." + name;
-						String path_coords = path + ".coords";
-						
-						WorldData.get().set(path_coords + ".x", signX);
-						WorldData.get().set(path_coords + ".y", signY);
-						WorldData.get().set(path_coords + ".z", signZ);
-						
-						WorldData.get().set(path + ".name", line3);
-						
-						WorldData.save();
+						PlayerManager.addSpawn(loc, line3);
 						
 						p.sendMessage(success);
 						
@@ -172,8 +140,6 @@ public class SignChangeListener implements Listener {
 				
 				
 				
-				
-				
 				if (line2.equalsIgnoreCase("lootchest")) {
 					
 					if (p.hasPermission("craftz.buildLootChest")) {
@@ -181,7 +147,7 @@ public class SignChangeListener implements Listener {
 						if (line3.equals("")) {
 							p.sendMessage(signNotComplete);
 							if (extended) {
-								p.sendMessage(ChatColor.RED + "Line 3 cannot be empty: please put the y-coordinate (and possibly the facing) of the lootchest there.");
+								p.sendMessage(ChatColor.RED + "Line 3 cannot be empty: please put the y-coordinate of the lootchest there (or use %c%).");
 							}
 							block.breakNaturally();
 							return;
@@ -242,22 +208,7 @@ public class SignChangeListener implements Listener {
 							return;
 						}
 						
-						int signX = loc.getBlockX();
-						int signY = loc.getBlockY();
-						int signZ = loc.getBlockZ();
-						
-						String name = "x" + signX + "y" + signY + "z" + signZ;
-						String path = "Data.lootchests." + name;
-						
-						WorldData.get().set(path + ".coords.x", signX);
-						WorldData.get().set(path + ".coords.y", chestY);
-						WorldData.get().set(path + ".coords.z", signZ);
-						WorldData.get().set(path + ".face", l3f);
-						
-						WorldData.get().set(path + ".list", lootList);
-						
-						WorldData.save();
-						ChestRefiller.resetChestAndStartRefill(name, false);
+						ChestRefiller.addChest(ChestRefiller.makeID(loc), lootList, new Location(loc.getWorld(), loc.getX(), chestY, loc.getZ()), l3f);
 						
 						p.sendMessage(success);
 						

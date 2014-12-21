@@ -5,8 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.Map.Entry;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -14,9 +13,11 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 
 import craftZ.CraftZ;
+import craftZ.Dynmap;
 
 
 public class ChestRefiller {
@@ -25,11 +26,17 @@ public class ChestRefiller {
 	
 	
 	
-	public static void resetAllChestsAndStartRefill() {
+	public static void loadChests() {
 		
-		if (WorldData.get().getConfigurationSection("Data.lootchests") != null) {
-			for (String chestEntry : WorldData.get().getConfigurationSection("Data.lootchests").getKeys(false))
-				resetChestAndStartRefill(chestEntry, false);
+		cooldowns.clear();
+		
+		ConfigurationSection sec = WorldData.get().getConfigurationSection("Data.lootchests");
+		if (sec != null) {
+			
+			for (String signID : sec.getKeys(false)) {
+				startRefill(sec.getConfigurationSection(signID), false);
+			}
+			
 		}
 		
 	}
@@ -38,16 +45,57 @@ public class ChestRefiller {
 	
 	
 	
-	public static boolean resetChestAndStartRefill(String chestEntry, boolean drop) {
+	public static String makeID(Location signLoc) {
+		return "x" + signLoc.getBlockX() + "y" + signLoc.getBlockY() + "z" + signLoc.getBlockZ();
+	}
+	
+	public static ConfigurationSection getData(String signID) {
+		return WorldData.get().getConfigurationSection("Data.lootchests." + signID);
+	}
+	
+	public static ConfigurationSection getData(Location signLoc) {
+		return WorldData.get().getConfigurationSection("Data.lootchests." + makeID(signLoc));
+	}
+	
+	
+	
+	
+	
+	public static void addChest(String signID, String list, Location loc, String face) {
 		
-		cooldowns.put(chestEntry, 0);
+		String path = "Data.lootchests." + signID;
 		
-		ConfigurationSection sec = WorldData.get().getConfigurationSection("Data.lootchests." + chestEntry);
+		WorldData.get().set(path + ".coords.x", loc.getBlockX());
+		WorldData.get().set(path + ".coords.y", loc.getBlockY());
+		WorldData.get().set(path + ".coords.z", loc.getBlockZ());
+		WorldData.get().set(path + ".face", face);
+		WorldData.get().set(path + ".list", list);
+		WorldData.save();
 		
-		if (sec == null)
-			return false;
+		startRefill(ChestRefiller.getData(signID), false);
 		
-		Location loc = new Location(CraftZ.world(), sec.getInt("coords.x"), sec.getInt("coords.y"), sec.getInt("coords.z"));
+		Dynmap.createMarker(Dynmap.SET_LOOT, "loot_" + signID, "Loot: " + list, loc, Dynmap.ICON_LOOT);
+		
+	}
+	
+	public static void removeChest(String signID) {
+		
+		WorldData.get().set("Data.lootchests." + signID, null);
+		WorldData.save();
+		
+		Dynmap.removeMarker(Dynmap.SET_LOOT, "loot_" + signID);
+		
+	}
+	
+	
+	
+	
+	
+	public static boolean startRefill(ConfigurationSection data, boolean drop) {
+		
+		cooldowns.put(data.getName(), 0);
+		
+		Location loc = new Location(CraftZ.world(), data.getInt("coords.x"), data.getInt("coords.y"), data.getInt("coords.z"));
 		Block block = loc.getBlock();
 		
 		try { // try-catch-clause is workaround for NPE when Bukkit calls CraftInventory.getSize() [got an idea why this happens, anybody?]
@@ -65,11 +113,14 @@ public class ChestRefiller {
 	
 	
 	
-	public static void evalChestRefill(ConfigurationSection sec) {
+	public static void refill(ConfigurationSection data) {
 		
-		String sface = sec.getString("face", "n").toLowerCase();
-		Location rflLoc = new Location(CraftZ.world(), sec.getInt("coords.x"), sec.getInt("coords.y"), sec.getInt("coords.z"));
-		String list = sec.getString("list");
+		if (data == null)
+			return;
+		
+		String sface = data.getString("face", "n").toLowerCase();
+		Location rflLoc = new Location(CraftZ.world(), data.getInt("coords.x"), data.getInt("coords.y"), data.getInt("coords.z"));
+		String list = data.getString("list");
 		
 		if (list != null) {
 			
@@ -126,9 +177,9 @@ public class ChestRefiller {
 	
 	
 	public static int getPropertyInt(String name, String list) {
-		return ConfigManager.getConfig("loot").contains("Loot.lists-settings." + list + "." + name)
-				? ConfigManager.getConfig("loot").getInt("Loot.lists-settings." + list + "." + name)
-				: ConfigManager.getConfig("loot").getInt("Loot.settings." + name);
+		FileConfiguration c = ConfigManager.getConfig("loot");
+		String ls = "Loot.lists-settings." + list + "." + name;
+		return list != null && c.contains(ls) ? c.getInt(ls) : c.getInt("Loot.settings." + name);
 	}
 	
 	
@@ -137,27 +188,51 @@ public class ChestRefiller {
 	
 	public static void onServerTick() {
 		
-		Set<String> toRemove = new TreeSet<String>();
-		Iterator<Map.Entry<String, Integer>> it = cooldowns.entrySet().iterator();
-		
-		while (it.hasNext()) {
+		for (Iterator<Entry<String, Integer>> it = cooldowns.entrySet().iterator(); it.hasNext(); ) {
 			
-			Map.Entry<String, Integer> entry = it.next();
+			Entry<String, Integer> entry = it.next();
+			ConfigurationSection data = getData(entry.getKey());
 			
 			entry.setValue(entry.getValue() + 1);
-			if (entry.getValue() >= (ConfigManager.getConfig("loot").getInt("Loot.settings.time-before-refill") * 20)) {
-				
-				toRemove.add(entry.getKey());
-				ConfigurationSection sec = WorldData.get().getConfigurationSection("Data.lootchests." + entry.getKey());
-				if (sec != null)
-					evalChestRefill(sec);
-				
+			
+			if (data == null) {
+				it.remove();
+				Dynmap.removeMarker(Dynmap.SET_LOOT, entry.getKey());
+			} else if (entry.getValue() >= (getPropertyInt("time-before-refill", data.getString("list")) * 20)) {
+				it.remove();
+				refill(data);
 			}
 			
 		}
 		
-		for (String str : toRemove)
-			cooldowns.remove(str);
+	}
+	
+	
+	
+	
+	
+	public static void onDynmapEnabled() {
+		
+		Dynmap.clearSet(Dynmap.SET_LOOT);
+		
+		if (!ConfigManager.getConfig("config").getBoolean("Config.dynmap.show-lootchests"))
+			return;
+		
+		ConfigurationSection sec = WorldData.get().getConfigurationSection("Data.lootchests");
+		if (sec != null) {
+			
+			for (String signID : sec.getKeys(false)) {
+				
+				ConfigurationSection data = sec.getConfigurationSection(signID);
+				
+				Location loc = CraftZ.centerOfBlock(CraftZ.world(), data.getInt("coords.x"), data.getInt("coords.y"), data.getInt("coords.z"));
+				String id = "loot_" + signID;
+				String label = "Loot: " + data.getString("list");
+				Dynmap.createMarker(Dynmap.SET_LOOT, id, label, loc, Dynmap.ICON_LOOT);
+				
+			}
+			
+		}
 		
 	}
 	

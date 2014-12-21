@@ -134,8 +134,9 @@ public class PlayerInteractListener implements Listener {
 				}
 
             }
-
-
+			
+			
+			
             if (action == Action.RIGHT_CLICK_BLOCK) {
             	
                 if ((type == Material.LOG || type == Material.LOG_2) && ConfigManager.getConfig("config").getBoolean("Config.players.campfires.enable")) {
@@ -224,13 +225,14 @@ public class PlayerInteractListener implements Listener {
 				
 				
 				
-				if (item == null)
-					return;
-				
-				ItemMeta meta = item.getItemMeta();
-				if (meta.hasDisplayName() && meta.getDisplayName().startsWith(ChatColor.DARK_PURPLE + "Pre-written Sign / ")
-						&& item.getAmount() == 2 && p.getGameMode() != GameMode.CREATIVE) { // do not consume pre-written sign
-					item.setAmount(item.getAmount()+1);
+				if (item != null) {
+					
+					ItemMeta meta = item.getItemMeta();
+					if (meta.hasDisplayName() && meta.getDisplayName().startsWith(ChatColor.DARK_PURPLE + "Pre-written Sign / ")
+							&& item.getAmount() == 2 && p.getGameMode() != GameMode.CREATIVE) { // do not consume pre-written sign
+						item.setAmount(item.getAmount()+1);
+					}
+					
 				}
 				
 			}

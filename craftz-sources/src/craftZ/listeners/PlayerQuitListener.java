@@ -22,7 +22,7 @@ public class PlayerQuitListener implements Listener {
 		if (CraftZ.isWorld(p.getWorld())) {
 			
 			if (ConfigManager.getConfig("config").getBoolean("Config.chat.modify-join-and-quit-messages"))
-				event.setQuitMessage(ChatColor.RED + "Player " + p.getDisplayName() + " disconnected.");
+				event.setQuitMessage(ChatColor.RED + "Player " + p.getDisplayName() + ChatColor.RESET + ChatColor.RED + " disconnected.");
 			PlayerManager.savePlayer(p);
 		
 		}

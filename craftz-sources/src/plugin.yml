@@ -4,7 +4,7 @@ author: JangoBrick
 main: craftZ.CraftZ
 load: STARTUP
 
-softdepend: ["Vault"]
+softdepend: ["Vault", "dynmap"]
 
 commands:
   craftz:

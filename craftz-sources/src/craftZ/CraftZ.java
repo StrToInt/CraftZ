@@ -4,13 +4,14 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.Calendar;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -142,8 +143,8 @@ public class CraftZ extends JavaPlugin {
 				if (!failedWorldLoad) {
 					
 					ScoreboardHelper.setup();
-					ChestRefiller.resetAllChestsAndStartRefill();
-					ZombieSpawner.addSpawns();
+					ChestRefiller.loadChests();
+					ZombieSpawner.loadSpawns();
 					DeadPlayer.loadDeadPlayers();
 					
 					for (Player p : world().getPlayers()) {
@@ -191,20 +192,20 @@ public class CraftZ extends JavaPlugin {
 			
 		}, 1L, 1L);
 		
+		
+		
+		if (Rewarder.setup()) {
+			info("Successfully hooked into Vault. Players can receive rewards.");
+		}
+		
+		Dynmap.setup();
+		
 	
 		
 		info("++=============================================++");
 		info("||  Visit dev.bukkit.org/bukkit-plugins/craftz ||");
 		info("||  Plugin successfully enabled.               ||");
 		info("++=============================================++");
-		
-		
-		
-		if (Rewarder.setup()) {
-			info("Successfully hooked into Vault. Players can receive rewards.");
-		} else {
-			warn("Not able to hook into Vault. Players will not receive rewards.");
-		}
 		
 	}
 	
@@ -301,7 +302,7 @@ public class CraftZ extends JavaPlugin {
 	private static void loadConfigs() {
 		
 		// CONFIG
-		Map<String, Object> def_config = new HashMap<String, Object>();
+		Map<String, Object> def_config = new LinkedHashMap<String, Object>();
 		
 		def_config.put("Config.never-ever-modify.first-run", true);
 			
@@ -443,6 +444,12 @@ public class CraftZ extends JavaPlugin {
 					"blaze_rod=Morphine Auto Injector", "watch=Radio"
 			});
 			
+			// DYNMAP
+			def_config.put("Config.dynmap.enable", true);
+			def_config.put("Config.dynmap.show-lootchests", true);
+			def_config.put("Config.dynmap.show-playerspawns", true);
+			def_config.put("Config.dynmap.show-worldborder", true);
+			
 		ConfigManager.newConfig("config", i, def_config);
 		ConfigManager.getConfig("config").options().header(
 				  "++===================================================++\n"
@@ -461,7 +468,7 @@ public class CraftZ extends JavaPlugin {
 		
 		
 		// Messages
-		Map<String, Object> def_messages = new HashMap<String, Object>();
+		Map<String, Object> def_messages = new LinkedHashMap<String, Object>();
 		
 		def_messages.put("Messages.harvested-tree", "A pile of wood has been successfully added to your inventory.");
 		def_messages.put("Messages.already-have-wood", "You already have wood.");
@@ -533,7 +540,7 @@ public class CraftZ extends JavaPlugin {
 		
 		
 		// LOOT
-		Map<String, Object> def_loot = new HashMap<String, Object>();
+		Map<String, Object> def_loot = new LinkedHashMap<String, Object>();
 			
 			// SETTINGS
 			def_loot.put("Loot.settings.time-before-refill", 120);
@@ -640,7 +647,7 @@ public class CraftZ extends JavaPlugin {
 		
 		
 		// HIGHSCORES
-		Map<String, Object> def_highscores = new HashMap<String, Object>();
+		Map<String, Object> def_highscores = new LinkedHashMap<String, Object>();
 		
 		ConfigManager.newConfig("highscores", i, def_highscores);
 		ConfigManager.getConfig("highscores").options().header(
@@ -658,7 +665,14 @@ public class CraftZ extends JavaPlugin {
 	public static void reloadConfigs() {
 		
 		ConfigManager.reloadConfigs();
+		WorldData.reload();
+		
+		ChestRefiller.loadChests();
+		ZombieSpawner.loadSpawns();
+		
 		DeadPlayer.loadDeadPlayers();
+		
+		onDynmapEnabled();
 		
 		if (world() == null) {
 			severe("World '" + worldName() + "' not found! Please check config.yml. CraftZ will stop.");
@@ -731,6 +745,33 @@ public class CraftZ extends JavaPlugin {
 		for (int i=0; i<players.size(); i++) {
 			players.get(i).sendMessage(msg);
 		}
+		
+	}
+	
+	
+	
+	
+	
+	public static Location centerOfBlock(Location loc) {
+		return new Location(loc.getWorld(), centerOf(loc.getBlockX()), centerOf(loc.getBlockY()), centerOf(loc.getBlockZ()));
+	}
+	
+	public static Location centerOfBlock(World world, double x, double y, double z) {
+		return centerOfBlock(new Location(world, x, y, z));
+	}
+	
+	private static double centerOf(int coord) {
+		return coord < 0 ? coord - 0.5 : coord + 0.5;
+	}
+	
+	
+	
+	
+	
+	public static void onDynmapEnabled() {
+		
+		ChestRefiller.onDynmapEnabled();
+		PlayerManager.onDynmapEnabled();
 		
 	}
 	
