@@ -5,8 +5,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.weather.WeatherChangeEvent;
 
+import craftZ.ConfigManager;
 import craftZ.CraftZ;
-import craftZ.util.ConfigManager;
 
 
 public class WeatherChangeListener implements Listener {

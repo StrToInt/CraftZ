@@ -1,4 +1,4 @@
-package craftZ.util;
+package craftZ;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -15,7 +15,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import craftZ.CraftZ;
+import craftZ.util.BlockChecker;
+import craftZ.util.EntityChecker;
 
 
 public class ZombieSpawner implements Listener {

@@ -8,9 +8,9 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 
+import craftZ.ConfigManager;
 import craftZ.CraftZ;
-import craftZ.util.ConfigManager;
-import craftZ.util.PlayerManager;
+import craftZ.PlayerManager;
 
 
 public class PlayerChangedWorldListener implements Listener {

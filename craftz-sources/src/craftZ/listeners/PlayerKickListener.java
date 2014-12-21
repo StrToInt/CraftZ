@@ -7,9 +7,9 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerKickEvent;
 
+import craftZ.ConfigManager;
 import craftZ.CraftZ;
-import craftZ.util.ConfigManager;
-import craftZ.util.PlayerManager;
+import craftZ.PlayerManager;
 
 
 public class PlayerKickListener implements Listener {

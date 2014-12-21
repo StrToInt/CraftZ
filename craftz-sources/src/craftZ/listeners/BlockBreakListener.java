@@ -12,11 +12,11 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 
+import craftZ.ChestRefiller;
+import craftZ.ConfigManager;
 import craftZ.CraftZ;
-import craftZ.util.ChestRefiller;
-import craftZ.util.ConfigManager;
-import craftZ.util.PlayerManager;
-import craftZ.util.ZombieSpawner;
+import craftZ.PlayerManager;
+import craftZ.ZombieSpawner;
 
 public class BlockBreakListener implements Listener {
 	

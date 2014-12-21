@@ -11,9 +11,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
+import craftZ.ConfigManager;
 import craftZ.CraftZ;
-import craftZ.util.ConfigManager;
-import craftZ.util.PlayerManager;
+import craftZ.PlayerManager;
 
 
 public class EntityDamageListener implements Listener {

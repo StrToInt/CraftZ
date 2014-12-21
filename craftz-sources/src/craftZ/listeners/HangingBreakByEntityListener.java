@@ -7,8 +7,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 
+import craftZ.ConfigManager;
 import craftZ.CraftZ;
-import craftZ.util.ConfigManager;
 
 
 public class HangingBreakByEntityListener implements Listener {

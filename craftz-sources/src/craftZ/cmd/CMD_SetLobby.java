@@ -4,7 +4,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import craftZ.util.ConfigManager;
+import craftZ.ConfigManager;
 
 
 public class CMD_SetLobby extends CraftZCommand {

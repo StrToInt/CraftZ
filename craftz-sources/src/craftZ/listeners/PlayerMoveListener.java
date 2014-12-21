@@ -7,7 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 import craftZ.CraftZ;
-import craftZ.util.PlayerManager;
+import craftZ.PlayerManager;
 
 
 public class PlayerMoveListener implements Listener {

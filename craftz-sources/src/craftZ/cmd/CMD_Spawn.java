@@ -2,7 +2,7 @@ package craftZ.cmd;
 
 import org.bukkit.ChatColor;
 
-import craftZ.util.PlayerManager;
+import craftZ.PlayerManager;
 
 
 public class CMD_Spawn extends CraftZCommand {

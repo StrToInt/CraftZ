@@ -11,8 +11,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.InventoryHolder;
 
+import craftZ.ChestRefiller;
 import craftZ.CraftZ;
-import craftZ.util.ChestRefiller;
 
 
 public class InventoryCloseListener implements Listener {

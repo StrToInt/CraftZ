@@ -9,7 +9,7 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 
 import craftZ.CraftZ;
-import craftZ.util.PlayerManager;
+import craftZ.PlayerManager;
 
 
 public class PlayerItemConsumeListener implements Listener {

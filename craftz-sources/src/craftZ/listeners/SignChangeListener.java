@@ -11,12 +11,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import craftZ.ChestRefiller;
+import craftZ.ConfigManager;
 import craftZ.CraftZ;
+import craftZ.PlayerManager;
+import craftZ.ZombieSpawner;
 import craftZ.util.BlockChecker;
-import craftZ.util.ChestRefiller;
-import craftZ.util.ConfigManager;
-import craftZ.util.PlayerManager;
-import craftZ.util.ZombieSpawner;
 
 
 public class SignChangeListener implements Listener {

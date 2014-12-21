@@ -5,7 +5,7 @@ import java.util.SortedSet;
 
 import org.bukkit.ChatColor;
 
-import craftZ.util.PlayerManager;
+import craftZ.PlayerManager;
 
 
 

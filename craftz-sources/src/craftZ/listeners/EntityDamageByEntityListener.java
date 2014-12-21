@@ -16,9 +16,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.Dye;
 
+import craftZ.ConfigManager;
 import craftZ.CraftZ;
-import craftZ.util.ConfigManager;
-import craftZ.util.PlayerManager;
+import craftZ.PlayerManager;
 import craftZ.util.Rewarder.RewardType;
 
 

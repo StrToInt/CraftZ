@@ -19,10 +19,10 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
+import craftZ.ConfigManager;
 import craftZ.CraftZ;
+import craftZ.PlayerManager;
 import craftZ.util.BlockChecker;
-import craftZ.util.ConfigManager;
-import craftZ.util.PlayerManager;
 
 public class PlayerInteractListener implements Listener {
 	

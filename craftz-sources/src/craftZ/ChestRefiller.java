@@ -1,4 +1,4 @@
-package craftZ.util;
+package craftZ;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,8 +16,9 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 
-import craftZ.CraftZ;
-import craftZ.Dynmap;
+import craftZ.util.Dynmap;
+import craftZ.util.ItemRenamer;
+import craftZ.util.StackParser;
 
 
 public class ChestRefiller {

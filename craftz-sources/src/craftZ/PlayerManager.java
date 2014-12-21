@@ -1,4 +1,4 @@
-package craftZ.util;
+package craftZ;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -16,8 +16,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import craftZ.CraftZ;
-import craftZ.Dynmap;
+import craftZ.util.BlockChecker;
+import craftZ.util.Dynmap;
+import craftZ.util.ItemRenamer;
+import craftZ.util.PlayerData;
+import craftZ.util.ScoreboardHelper;
 
 
 public class PlayerManager {

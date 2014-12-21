@@ -7,9 +7,9 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import craftZ.ConfigManager;
 import craftZ.CraftZ;
-import craftZ.util.ConfigManager;
-import craftZ.util.PlayerManager;
+import craftZ.PlayerManager;
 
 
 public class PlayerQuitListener implements Listener {

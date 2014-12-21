@@ -1,4 +1,4 @@
-package craftZ;
+package craftZ.util;
 
 import java.io.InputStream;
 
@@ -13,6 +13,8 @@ import org.dynmap.markers.Marker;
 import org.dynmap.markers.MarkerAPI;
 import org.dynmap.markers.MarkerIcon;
 import org.dynmap.markers.MarkerSet;
+
+import craftZ.CraftZ;
 
 
 public class Dynmap {

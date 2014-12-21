@@ -1,4 +1,4 @@
-package craftZ.util;
+package craftZ;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,6 +8,8 @@ import java.util.Map;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import craftZ.util.ConfigData;
 
 
 public class ConfigManager {

@@ -10,9 +10,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 
+import craftZ.ConfigManager;
 import craftZ.CraftZ;
-import craftZ.util.ConfigManager;
-import craftZ.util.ZombieSpawner;
+import craftZ.ZombieSpawner;
 
 
 public class CreatureSpawnListener implements Listener {

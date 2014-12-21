@@ -1,4 +1,4 @@
-package craftZ.util;
+package craftZ;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -6,7 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 
-import craftZ.CraftZ;
+import craftZ.util.BlockChecker;
 
 
 public class AnimalSpawner {

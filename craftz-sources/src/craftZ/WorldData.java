@@ -1,4 +1,4 @@
-package craftZ.util;
+package craftZ;
 
 import static craftZ.CraftZ.info;
 
@@ -15,7 +15,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.google.common.io.Files;
 
-import craftZ.CraftZ;
+import craftZ.util.ConfigData;
+import craftZ.util.PlayerData;
 
 
 public class WorldData {

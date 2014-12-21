@@ -13,6 +13,9 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 
+import craftZ.ConfigManager;
+import craftZ.PlayerManager;
+
 public class ScoreboardHelper {
 	
 	private static final String OBJECTIVE = "stats", OBJECTIVE_DISPLAY = "Stats";

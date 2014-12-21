@@ -1,4 +1,4 @@
-package craftZ.util;
+package craftZ;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,6 +10,8 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.ItemStack;
+
+import craftZ.util.StackParser;
 
 
 public class DeadPlayer {

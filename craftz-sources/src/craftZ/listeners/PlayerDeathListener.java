@@ -9,10 +9,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.util.Vector;
 
+import craftZ.ConfigManager;
 import craftZ.CraftZ;
-import craftZ.util.ConfigManager;
-import craftZ.util.DeadPlayer;
-import craftZ.util.PlayerManager;
+import craftZ.DeadPlayer;
+import craftZ.PlayerManager;
 import craftZ.util.Rewarder.RewardType;
 
 

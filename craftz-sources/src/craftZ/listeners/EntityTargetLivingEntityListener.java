@@ -8,7 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 
 import craftZ.CraftZ;
-import craftZ.util.PlayerManager;
+import craftZ.PlayerManager;
 
 
 public class EntityTargetLivingEntityListener implements Listener {
