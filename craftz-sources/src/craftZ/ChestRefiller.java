@@ -84,7 +84,7 @@ public class ChestRefiller {
 		WorldData.get().set("Data.lootchests." + signID, null);
 		WorldData.save();
 		
-		Dynmap.removeMarker(Dynmap.SET_LOOT, "loot_" + signID);
+		Dynmap.removeMarker(Dynmap.getMarker(Dynmap.SET_LOOT, "loot_" + signID));
 		
 	}
 	
@@ -198,7 +198,7 @@ public class ChestRefiller {
 			
 			if (data == null) {
 				it.remove();
-				Dynmap.removeMarker(Dynmap.SET_LOOT, entry.getKey());
+				Dynmap.removeMarker(Dynmap.getMarker(Dynmap.SET_LOOT, entry.getKey()));
 			} else if (entry.getValue() >= (getPropertyInt("time-before-refill", data.getString("list")) * 20)) {
 				it.remove();
 				refill(data);
@@ -228,8 +228,37 @@ public class ChestRefiller {
 				
 				Location loc = CraftZ.centerOfBlock(CraftZ.world(), data.getInt("coords.x"), data.getInt("coords.y"), data.getInt("coords.z"));
 				String id = "loot_" + signID;
+				String list = data.getString("list");
 				String label = "Loot: " + data.getString("list");
-				Dynmap.createMarker(Dynmap.SET_LOOT, id, label, loc, Dynmap.ICON_LOOT);
+				Object icon = Dynmap.createUserIcon("loot_" + list, label, "loot_" + list, Dynmap.ICON_LOOT);
+				
+				Object m = Dynmap.createMarker(Dynmap.SET_LOOT, id, label, loc, icon);
+				
+				
+				
+				String s = "<center>";
+				s += "<b>X</b>: " + loc.getBlockX() + " &nbsp; <b>Y</b>: " + loc.getBlockY() + " &nbsp; <b>Z</b>: " + loc.getBlockZ();
+				s += "</center><hr />";
+				
+				List<String> bItems = ConfigManager.getConfig("loot").getStringList("Loot.lists." + list);
+				if (bItems == null || bItems.isEmpty())
+					continue;
+				
+				for (int e=0; e<bItems.size(); e++) {
+					
+					String str = bItems.get(e);
+					if (str.contains("x")) {
+						str = str.split("x", 2)[1];
+					}
+					
+					ItemStack stack = StackParser.fromString(str, false);
+					if (stack != null && stack.getType() != Material.AIR) {
+						s += Dynmap.getItemImage(stack.getType());
+					}
+					
+				}
+				
+				Dynmap.setMarkerDescription(m, s);
 				
 			}
 			

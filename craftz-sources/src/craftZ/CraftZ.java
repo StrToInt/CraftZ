@@ -200,6 +200,8 @@ public class CraftZ extends JavaPlugin {
 		
 		Dynmap.setup();
 		
+		Dynmap.unpackIcons("loot_military", "loot_military-epic", "loot_civilian", "loot_farms", "loot_industrial", "loot_barracks", "loot_medical");
+		
 	
 		
 		info("++=============================================++");

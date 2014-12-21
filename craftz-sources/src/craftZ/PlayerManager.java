@@ -195,7 +195,7 @@ public class PlayerManager {
 		WorldData.get().set("Data.playerspawns." + signID, null);
 		WorldData.save();
 		
-		Dynmap.removeMarker(Dynmap.SET_PLAYERSPAWNS, "playerspawn_" + signID);
+		Dynmap.removeMarker(Dynmap.getMarker(Dynmap.SET_PLAYERSPAWNS, "playerspawn_" + signID));
 		
 	}
 	

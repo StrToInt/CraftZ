@@ -1,9 +1,17 @@
 package craftZ.util;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginEnableEvent;
@@ -23,6 +31,22 @@ public class Dynmap {
 	
 	public static Object ICON_LOOT, ICON_PLAYERSPAWN;
 	public static Object SET_LOOT, SET_PLAYERSPAWNS, SET_WORLDBORDER;
+	
+	private static Map<Material, String> itemImageMap = new HashMap<Material, String>();
+	static {
+		itemImageMap.put(Material.LEATHER_HELMET, "leather-cap");
+		itemImageMap.put(Material.LEATHER_CHESTPLATE, "leather-tunic");
+		itemImageMap.put(Material.LEATHER_LEGGINGS, "leather-pants");
+		itemImageMap.put(Material.WEB, "web-block");
+		itemImageMap.put(Material.WOOD_SWORD, "wooden-sword");
+		itemImageMap.put(Material.WOOD_PICKAXE, "wooden-pickaxe");
+		itemImageMap.put(Material.WOOD_AXE, "wooden-axe");
+		itemImageMap.put(Material.WOOD_HOE, "wooden-hoe");
+		itemImageMap.put(Material.WOOD_SPADE, "wooden-shovel");
+		itemImageMap.put(Material.MUSHROOM_SOUP, "mushroom-stew");
+		itemImageMap.put(Material.CARROT_ITEM, "carrot");
+		itemImageMap.put(Material.WORKBENCH, "crafting-table");
+	}
 	
 	
 	
@@ -45,8 +69,8 @@ public class Dynmap {
 		Dynmap.api = api;
 		CraftZ.info("Successfully hooked into Dynmap.");
 		
-		ICON_LOOT = createIcon("loot", "Loot", CraftZ.class.getResourceAsStream("/icon_loot.png"));
-		ICON_PLAYERSPAWN = createIcon("playerspawn", "Spawn", CraftZ.class.getResourceAsStream("/icon_playerspawn.png"));
+		ICON_LOOT = createIcon("loot", "Loot", CraftZ.i.getResource("icon_loot.png"));
+		ICON_PLAYERSPAWN = createIcon("playerspawn", "Spawn", CraftZ.i.getResource("icon_playerspawn.png"));
 		
 		SET_LOOT = createSet("loot", "Loot");
 		SET_PLAYERSPAWNS = createSet("playerspawns", "Spawns");
@@ -88,6 +112,10 @@ public class Dynmap {
 	
 	
 	public static Object createIcon(String id, String label, InputStream pngStream) {
+		return createIcon(id, label, pngStream, false);
+	}
+	
+	public static Object createIcon(String id, String label, InputStream pngStream, boolean deleteExisting) {
 		
 		if (!hasAccess())
 			return null;
@@ -98,8 +126,67 @@ public class Dynmap {
 		label = CraftZ.getPrefix() + " " + label;
 		
 		MarkerIcon icon = mapi.getMarkerIcon(id);
+		if (icon != null && deleteExisting)
+			icon.deleteIcon();
 		
-		return icon != null ? icon : mapi.createMarkerIcon(id, label, pngStream);
+		return !deleteExisting && icon != null ? icon : mapi.createMarkerIcon(id, label, pngStream);
+		
+	}
+	
+	public static Object createUserIcon(String id, String label, String name, Object defaultIconHandle) {
+		
+		File f = new File(CraftZ.i.getDataFolder(), "mapicons/" + name + ".png");
+		
+		try {
+			return createIcon(id, label, new FileInputStream(f), true);
+		} catch (FileNotFoundException ex) {
+			InputStream cstream = CraftZ.i.getResource("icon_" + name + ".png");
+			if (cstream != null)
+				return createIcon(id, label, cstream);
+		}
+		
+		return defaultIconHandle;
+		
+	}
+	
+	
+	
+	
+	
+	public static void unpackIcons(String... icons) {
+		
+		File dir = new File(CraftZ.i.getDataFolder(), "mapicons");
+		dir.mkdirs();
+		
+		for (String icon : icons) {
+			
+			try {
+				
+				InputStream in = CraftZ.i.getResource("icon_" + icon + ".png");
+				if (in == null) {
+					CraftZ.severe("Default icon '" + icon + "' ('icon_" + icon + ".png') not found!");
+					continue;
+				}
+				File f = new File(dir, icon + ".png");
+				if (f.exists())
+					continue;
+				OutputStream out = new FileOutputStream(f);
+				
+				int readBytes;
+				byte[] buffer = new byte[4096];
+				while ((readBytes = in.read(buffer)) > 0) {
+					out.write(buffer, 0, readBytes);
+				}
+				
+				in.close();
+				out.flush();
+				out.close();
+				
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+			
+		}
 		
 	}
 	
@@ -124,19 +211,59 @@ public class Dynmap {
 		
 	}
 	
-	public static void removeMarker(Object setHandle, String id) {
+	public static void removeMarker(Object markerHandle) {
 		
 		if (!hasAccess())
 			return;
+		
+		Marker m = (Marker) markerHandle;
+		if (m != null) {
+			m.deleteMarker();
+		}
+		
+	}
+	
+	public static Object getMarker(Object setHandle, String id) {
+		
+		if (!hasAccess())
+			return null;
 		
 		MarkerSet set = (MarkerSet) setHandle;
 		
 		id = "craftz_" + id;
 		
-		Marker m = set.findMarker(id);
+		return set.findMarker(id);
+		
+	}
+	
+	
+	
+	
+	
+	public static void setMarkerDescription(Object markerHandle, String s) {
+		
+		if (!hasAccess())
+			return;
+		
+		Marker m = (Marker) markerHandle;
 		if (m != null) {
-			m.deleteMarker();
+			m.setDescription(s);
 		}
+		
+	}
+	
+	
+	
+	
+	
+	public static String getItemImage(Material material) {
+		
+		String n = itemImageMap.containsKey(material) ? itemImageMap.get(material) : material.name().toLowerCase().replace('_', '-');
+		String url = "http://www.minecraftinformation.com/images/" + n + ".png";
+		String rn = material.name().toLowerCase().replace('_', ' ');
+		String onerror = "this.parentNode.replaceChild(document.createTextNode(\"[" + rn + "]\"), this)";
+		
+		return "<img src='" + url + "' onerror='" + onerror + "' style='width: 32px;' />";
 		
 	}
 	
