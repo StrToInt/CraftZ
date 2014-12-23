@@ -21,7 +21,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import craftZ.cmd.*;
 import craftZ.listeners.*;
-import craftZ.util.*;
+import craftZ.util.Dynmap;
+import craftZ.util.Rewarder;
+import craftZ.util.ScoreboardHelper;
 
 
 public class CraftZ extends JavaPlugin {
@@ -142,10 +144,16 @@ public class CraftZ extends JavaPlugin {
 				
 				if (!failedWorldLoad) {
 					
+					WorldData.setup();
+					
 					ScoreboardHelper.setup();
-					ChestRefiller.loadChests();
-					ZombieSpawner.loadSpawns();
-					DeadPlayer.loadDeadPlayers();
+					
+					int lc = ChestRefiller.loadChests();
+					int ps = PlayerManager.loadSpawns();
+					int zs = ZombieSpawner.loadSpawns();
+					int dp = DeadPlayer.loadDeadPlayers();
+					
+					info("Loaded " + lc + " chests, " + ps + " player spawns, " + zs + " zombie spawns, " + dp + " dead players");
 					
 					for (Player p : world().getPlayers()) {
 						PlayerJoinListener.joinPlayer(p);
@@ -491,6 +499,7 @@ public class CraftZ extends JavaPlugin {
 		def_messages.put("Messages.thirsty-dehydrating", "Get something to drink, you are dehydrating!");
         def_messages.put("Messages.placed-fireplace", "You built a bright warm fireplace.");
         def_messages.put("Messages.cannot-place-fireplace", "You cannot place a fireplace here.");
+        def_messages.put("Messages.radio-channel", "Selected channel: %c");
 			
 			// KILLED
 			def_messages.put("Messages.killed.zombie", "Killed the zombie! Total zombie kills: %k");

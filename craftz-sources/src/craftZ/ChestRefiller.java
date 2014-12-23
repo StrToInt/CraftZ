@@ -27,7 +27,7 @@ public class ChestRefiller {
 	
 	
 	
-	public static void loadChests() {
+	public static int loadChests() {
 		
 		cooldowns.clear();
 		
@@ -39,6 +39,8 @@ public class ChestRefiller {
 			}
 			
 		}
+		
+		return cooldowns.size();
 		
 	}
 	

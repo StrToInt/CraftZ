@@ -31,8 +31,8 @@ public class WorldData {
 		tryUpdate();
 		
 		dir = new File(CraftZ.i.getDataFolder(), "worlds");
-		if (!dir.exists() || !dir.isDirectory())
-			return;
+		if (!dir.exists())
+			dir.mkdirs();
 		
 		for (File file : dir.listFiles()) {
 			if (file.getName().toLowerCase().endsWith(".yml"))

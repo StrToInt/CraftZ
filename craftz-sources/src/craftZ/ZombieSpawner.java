@@ -26,7 +26,7 @@ public class ZombieSpawner implements Listener {
 	
 	
 	
-	public static void loadSpawns() {
+	public static int loadSpawns() {
 		
 		cooldowns.clear();
 		
@@ -38,6 +38,8 @@ public class ZombieSpawner implements Listener {
 			}
 			
 		}
+		
+		return cooldowns.size();
 		
 	}
 	

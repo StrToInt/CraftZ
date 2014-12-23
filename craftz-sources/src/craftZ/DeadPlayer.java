@@ -172,13 +172,15 @@ public class DeadPlayer {
 	
 	
 	
-	public static void loadDeadPlayers() {
+	public static int loadDeadPlayers() {
 		
 		deadPlayers.clear();
 		List<String> strings = WorldData.get().getStringList("Data.dead");
 		
 		for (String s : strings)
 			deadPlayers.add(new DeadPlayer(s));
+		
+		return deadPlayers.size();
 		
 	}
 	

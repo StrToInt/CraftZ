@@ -159,6 +159,21 @@ public class PlayerManager {
 	
 	
 	
+	public static int loadSpawns() {
+		
+		ConfigurationSection sec = getConfig().getConfigurationSection("Data.playerspawns");
+		if (sec == null)
+			return 0;
+		Set<String> spawnsset = sec.getKeys(false);
+		
+		return spawnsset.size();
+		
+	}
+	
+	
+	
+	
+	
 	public static String makeSpawnID(Location signLoc) {
 		return "x" + signLoc.getBlockX() + "y" + signLoc.getBlockY() + "z" + signLoc.getBlockZ();
 	}
@@ -255,11 +270,14 @@ public class PlayerManager {
 			
 			Entry<UUID, PlayerData> entry = it.next();
 			UUID id = entry.getKey();
+			PlayerData data = entry.getValue();
+			
+			Player p = p(id);
 			
 			if (!isPlaying(id)) {
 				
-				Player p = p(id);
-				if (p != null) savePlayer(p);
+				if (p != null)
+					savePlayer(p);
 				
 				ScoreboardHelper.removePlayer(id);
 				
@@ -267,11 +285,6 @@ public class PlayerManager {
 				continue;
 				
 			}
-			
-			
-			
-			Player p = p(id);
-			PlayerData data = players.get(id);
 			
 			boolean survival = p.getGameMode() != GameMode.CREATIVE && p.getGameMode() != GameMode.SPECTATOR;
 			
@@ -600,6 +613,13 @@ public class PlayerManager {
 		
 		Map<String, Integer> scores = getHighscores(category);
 		SortedSet<Map.Entry<String, Integer>> scoresSorted = sortHighscores(scores);
+		
+		if (scores.containsKey(p.getName())) {
+			int score = scores.get(p.getName());
+			if (v < score) {
+				return;
+			}
+		}
 		
 		Map.Entry<String, Integer> scoresLast = scores.isEmpty() ? null : scoresSorted.last();
 		if (scores.size() < 10 || scoresLast.getValue() < v) {

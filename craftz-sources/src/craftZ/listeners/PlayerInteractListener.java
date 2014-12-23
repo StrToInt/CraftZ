@@ -225,7 +225,7 @@ public class PlayerInteractListener implements Listener {
 				
 				
 				
-				if (item != null) {
+				if (item != null && item.hasItemMeta()) {
 					
 					ItemMeta meta = item.getItemMeta();
 					if (meta.hasDisplayName() && meta.getDisplayName().startsWith(ChatColor.DARK_PURPLE + "Pre-written Sign / ")
@@ -244,19 +244,27 @@ public class PlayerInteractListener implements Listener {
 				ItemMeta meta = item.getItemMeta();
 				
 				int channel = 0;
-				try {
-					channel = Integer.parseInt(meta.getLore().get(0).replace("Channel ", ""));
-				} catch (Exception ex) { }
+				if (meta != null && meta.hasLore()) {
+					List<String> lore = meta.getLore();
+					if (!lore.isEmpty()) {
+						try {
+							channel = Integer.parseInt(ChatColor.stripColor(lore.get(0)).replace("Channel ", ""));
+						} catch (NumberFormatException ex) { }
+					}
+				}
 				
 				if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
 					channel++;
 				} else if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
 					channel--;
 				}
-				channel = Math.max(Math.min(channel, ConfigManager.getConfig("config").getInt("Config.chat.ranged.radio-channels")), 0);
 				
-				meta.setLore(Arrays.asList("Channel " + channel));
+				channel = Math.max(Math.min(channel, ConfigManager.getConfig("config").getInt("Config.chat.ranged.radio-channels")), 1);
+				
+				meta.setLore(Arrays.asList("" + ChatColor.RESET + ChatColor.GRAY + "Channel " + channel));
 				item.setItemMeta(meta);
+				
+				p.sendMessage(CraftZ.getMsg("Messages.radio-channel").replace("%c", "" + channel));
 				
 			}
 		

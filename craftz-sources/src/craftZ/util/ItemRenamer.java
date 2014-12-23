@@ -14,6 +14,16 @@ import craftZ.CraftZ;
 
 public class ItemRenamer {
 	
+	public static ItemStack rename(ItemStack input, String name) {
+		
+		ItemMeta meta = input.getItemMeta();
+		meta.setDisplayName(name);
+		input.setItemMeta(meta);
+		
+		return input;
+		
+	}
+	
 	public static ItemStack rename(ItemStack input, String name, List<String> lore) {
 		
 		ItemMeta meta = input.getItemMeta();
@@ -30,8 +40,9 @@ public class ItemRenamer {
 	
 	
 	public static void renameWithList(ItemStack input, List<String> entries) {
-		if (!getNameFromList(input, entries).equals(""))
-			rename(input, ChatColor.RESET + getNameFromList(input, entries), null);
+		String n = getNameFromList(input, entries);
+		if (!n.equals(""))
+			rename(input, ChatColor.RESET + n);
 	}
 	
 	
