@@ -402,6 +402,7 @@ public class CraftZ extends JavaPlugin {
 					
 					// DROPS
 					def_config.put("Config.mobs.zombies.enable-drops", true);
+					def_config.put("Config.mobs.zombies.pull-players-down", true);
 					def_config.put("Config.mobs.zombies.drops.chance", 0.3);
 					def_config.put("Config.mobs.zombies.drops.items", new String[] { "arrow", "2x'rotten_flesh'" }); // new String[] { "262", "2x367" }
 					

@@ -14,11 +14,15 @@ public class EntityChecker {
 	public static List<Entity> getNearbyEntities(Location loc, double radius) {
 		
 		Arrow tester = loc.getWorld().spawn(loc, Arrow.class);
-		List<Entity> nearby = tester.getNearbyEntities(radius, radius, radius);
+		List<Entity> nearby = getNearbyEntities(tester, radius);
 		tester.remove();
 		
 		return nearby;
 		
+	}
+	
+	public static List<Entity> getNearbyEntities(Entity entity, double radius) {
+		return entity.getNearbyEntities(radius, radius, radius);
 	}
 	
 	

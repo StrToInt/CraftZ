@@ -11,6 +11,8 @@ import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -18,6 +20,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import craftZ.util.BlockChecker;
 import craftZ.util.Dynmap;
+import craftZ.util.EntityChecker;
 import craftZ.util.ItemRenamer;
 import craftZ.util.PlayerData;
 import craftZ.util.ScoreboardHelper;
@@ -379,6 +382,25 @@ public class PlayerManager {
 			
 			if (survival && data.bonesBroken) {
 				p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 40, 2), true);
+			}
+			
+			
+			
+			if (survival && ConfigManager.getConfig("config").getBoolean("Config.mobs.zombies.pull-players-down")
+					&& tickID % 20 == 0 && Math.random() < 0.15) {
+				
+				List<Entity> entities = EntityChecker.getNearbyEntities(p, 2.5);
+				for (Entity ent : entities) {
+					
+					if (ent.getType() == EntityType.ZOMBIE) {
+						Location zloc = ent.getLocation(), ploc = p.getLocation();
+						if (zloc.getY() + 1 < ploc.getY()) {
+							p.setVelocity(zloc.toVector().subtract(ploc.toVector()).normalize().multiply(0.5 + Math.random()*0.4));
+						}
+					}
+					
+				}
+				
 			}
 			
 		}
