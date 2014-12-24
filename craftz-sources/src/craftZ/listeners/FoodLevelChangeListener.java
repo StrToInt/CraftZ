@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 
 import craftZ.CraftZ;
+import craftZ.PlayerManager;
 
 
 public class FoodLevelChangeListener implements Listener {
@@ -21,13 +22,10 @@ public class FoodLevelChangeListener implements Listener {
 				
 				Player p = (Player) event.getEntity();
 				
-				if (event.getFoodLevel() > p.getFoodLevel()) {
-					
-					if (p.getHealth() + 2 <= p.getMaxHealth())
-						p.setHealth(p.getHealth() + 2);
-					else
-						p.setHealth(p.getMaxHealth());
-					
+				if (PlayerManager.isInsideOfLobby(p)) {
+					event.setCancelled(true);
+				} else if (event.getFoodLevel() > p.getFoodLevel()) {
+					p.setHealth(Math.min(p.getHealth() + 2, p.getMaxHealth()));
 				}
 				
 			}

@@ -326,7 +326,7 @@ public class PlayerManager {
 			
 			
 			
-			if (tickID % 1200 == 0) {
+			if (survival && tickID % 1200 == 0) {
 				data.minutesSurvived++;
 			}
 			
