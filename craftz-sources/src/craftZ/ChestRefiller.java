@@ -169,7 +169,7 @@ public class ChestRefiller {
 					chest.getInventory().addItem(stack);
 			}
 			
-			ItemRenamer.convertInventoryItemNames(chest.getInventory(), ConfigManager.getConfig("config").getStringList("Config.change-item-names.names"));
+			ItemRenamer.convertInventory(chest, ItemRenamer.DEFAULT_MAP);
 			
 		}
 		

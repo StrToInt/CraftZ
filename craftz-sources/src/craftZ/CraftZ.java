@@ -22,6 +22,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import craftZ.cmd.*;
 import craftZ.listeners.*;
 import craftZ.util.Dynmap;
+import craftZ.util.ItemRenamer;
 import craftZ.util.Rewarder;
 import craftZ.util.ScoreboardHelper;
 
@@ -65,6 +66,8 @@ public class CraftZ extends JavaPlugin {
 		i = this;
 		
 		loadConfigs();
+		ItemRenamer.reloadDefaultNameMap();
+		
 		registerEvents();
 		
 		firstRun = ConfigManager.getConfig("config").getBoolean("Config.never-ever-modify.first-run");
@@ -449,10 +452,13 @@ public class CraftZ extends JavaPlugin {
 			
 			// ITEMNAMES
 			def_config.put("Config.change-item-names.enable", true);
-			def_config.put("Config.change-item-names.names", new String[] {
-					"paper=Bandage", "ink_sack:1=Blood Bag", "ink_sack:10=Antibiotics", "shears=Toolbox", "ender_pearl=Grenade",
-					"blaze_rod=Morphine Auto Injector", "watch=Radio"
-			});
+			def_config.put("Config.change-item-names.names.paper", "Bandage");
+			def_config.put("Config.change-item-names.names.ink_sack:1", "Blood Bag");
+			def_config.put("Config.change-item-names.names.ink_sack:10", "Antibiotics");
+			def_config.put("Config.change-item-names.names.shears", "Toolbox");
+			def_config.put("Config.change-item-names.names.ender_pearl", "Grenade");
+			def_config.put("Config.change-item-names.names.blaze_rod", "Morphine Auto Injector");
+			def_config.put("Config.change-item-names.names.watch", "Radio");
 			
 			// DYNMAP
 			def_config.put("Config.dynmap.enable", true);
@@ -468,10 +474,25 @@ public class CraftZ extends JavaPlugin {
 		);
 		
 		FileConfiguration config = ConfigManager.getConfig("config");
+		
 		if (config.contains("Config.world.weather.allowWeatherChanging")) { // rename old value
 			config.set("Config.world.weather.allow-weather-changing", config.getBoolean("Config.world.weather.allowWeatherChanging"));
 			config.set("Config.world.weather.allowWeatherChanging", null);
 		}
+		
+		Object nameso = config.get("Config.change-item-names.names");
+		if (nameso != null && nameso instanceof List<?>) {
+			List<?> names = (List<?>) nameso;
+			for (Object o : names) {
+				String s = "" + o;
+				if (!s.contains("="))
+					continue;
+				String[] spl = s.split("=", 2);
+				config.set("Config.change-item-names.names." + spl[0], spl[1]);
+			}
+		}
+		
+		ConfigManager.saveConfig("config");
 		
 		
 		
@@ -684,6 +705,8 @@ public class CraftZ extends JavaPlugin {
 		DeadPlayer.loadDeadPlayers();
 		
 		onDynmapEnabled();
+		
+		ItemRenamer.reloadDefaultNameMap();
 		
 		if (world() == null) {
 			severe("World '" + worldName() + "' not found! Please check config.yml. CraftZ will stop.");

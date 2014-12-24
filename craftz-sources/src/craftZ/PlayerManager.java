@@ -333,7 +333,7 @@ public class PlayerManager {
 			
 			
 			if (tickID % 10 == 0) {
-				ItemRenamer.convertPlayerInventory(p, ConfigManager.getConfig("config").getStringList("Config.change-item-names.names"));
+				ItemRenamer.convertInventory(p, ItemRenamer.DEFAULT_MAP);
 				ScoreboardHelper.update();
 			}
 			

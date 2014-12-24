@@ -35,7 +35,7 @@ public class CMD_Sign extends CraftZCommand {
 					desc = "Zombie Spawn " + line3;
 				}
 				
-				p.getInventory().addItem(ItemRenamer.rename(new ItemStack(Material.SIGN),
+				p.getInventory().addItem(ItemRenamer.setNameAndLore(new ItemStack(Material.SIGN),
 						ChatColor.DARK_PURPLE + "Pre-written Sign / " + desc,
 						Arrays.asList("[CraftZ]", line2, line3, line4)));
 				

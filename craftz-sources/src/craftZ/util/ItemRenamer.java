@@ -1,20 +1,28 @@
 package craftZ.util;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import craftZ.CraftZ;
+import craftZ.ConfigManager;
 
 
 public class ItemRenamer {
 	
-	public static ItemStack rename(ItemStack input, String name) {
+	public static Map<String, String> DEFAULT_MAP;
+	
+	
+	
+	public static ItemStack setName(ItemStack input, String name) {
 		
 		ItemMeta meta = input.getItemMeta();
 		meta.setDisplayName(name);
@@ -24,7 +32,17 @@ public class ItemRenamer {
 		
 	}
 	
-	public static ItemStack rename(ItemStack input, String name, List<String> lore) {
+	public static ItemStack setLore(ItemStack input, List<String> lore) {
+		
+		ItemMeta meta = input.getItemMeta();
+		meta.setLore(lore);
+		input.setItemMeta(meta);
+		
+		return input;
+		
+	}
+	
+	public static ItemStack setNameAndLore(ItemStack input, String name, List<String> lore) {
 		
 		ItemMeta meta = input.getItemMeta();
 		meta.setDisplayName(name);
@@ -39,45 +57,33 @@ public class ItemRenamer {
 	
 	
 	
-	public static void renameWithList(ItemStack input, List<String> entries) {
-		String n = getNameFromList(input, entries);
+	public static void renameWithMap(ItemStack input, Map<String, String> entries) {
+		
+		if (input == null)
+			return;
+		
+		String n = getName(input, entries);
 		if (!n.equals(""))
-			rename(input, ChatColor.RESET + n);
+			setName(input, ChatColor.RESET + n);
+		
 	}
 	
 	
 	
 	
 	
-	@SuppressWarnings("deprecation")
-	public static String getNameFromList(ItemStack input, List<String> entries) {
+	public static String getName(ItemStack input, Map<String, String> entries) {
 		
-		for (String entry : entries) {
+		if (input == null || entries == null)
+			return "";
+		
+		for (Iterator<Entry<String, String>> it=entries.entrySet().iterator(); it.hasNext(); ) {
 			
-			if (entry.contains("=")) {
-				
-				String idStr = entry.split("=")[0];
-				Material mat = Material.AIR;
-				short data = 0;
-				
-				try {
-					
-					if (idStr.contains(":")) {
-						Material mat1 = Material.matchMaterial(idStr.split(":")[0]);
-						mat = mat1 != null ? mat1 : Material.getMaterial(Integer.parseInt(idStr.split(":")[0]));
-						data = Short.parseShort(idStr.split(":")[1]);
-					} else {
-						Material mat1 = Material.matchMaterial(idStr);
-						mat = mat1 != null ? mat1 : Material.getMaterial(Integer.parseInt(idStr));
-					}
-					
-				} catch (NumberFormatException ex) {
-					continue;
-				}
-				
-				if (input.getType() == mat && input.getDurability() == data)
-					return entry.split("=")[1];
-				
+			Entry<String, String> entry = it.next();
+			
+			ItemStack stack = StackParser.fromString(entry.getKey(), false);
+			if (input.isSimilar(stack)) {
+				return entry.getValue();
 			}
 			
 		}
@@ -90,11 +96,14 @@ public class ItemRenamer {
 	
 	
 	
-	public static void convertInventoryItemNames(Inventory inv, List<String> entries) {
+	public static void convertInventory(InventoryHolder invHolder, Map<String, String> entries) {
+		convertInventory(invHolder.getInventory(), entries);
+	}
+	
+	public static void convertInventory(Inventory inv, Map<String, String> entries) {
 		
-		for (int i=0; i<inv.getSize(); i++) {
-			if (inv.getItem(i) != null)
-				renameWithList(inv.getItem(i), entries);
+		for (ListIterator<ItemStack> it=inv.iterator(); it.hasNext(); ) {
+			renameWithMap(it.next(), entries);
 		}
 		
 	}
@@ -103,9 +112,22 @@ public class ItemRenamer {
 	
 	
 	
-	public static void convertPlayerInventory(Player p, List<String> entries) {
-		if (CraftZ.isWorld(p.getWorld()))
-			convertInventoryItemNames(p.getInventory(), entries);
+	public static void reloadDefaultNameMap() {
+		DEFAULT_MAP = toStringMap(ConfigManager.getConfig("config").getConfigurationSection("Config.change-item-names.names").getValues(false));
+	}
+	
+	
+	
+	
+	
+	public static Map<String, String> toStringMap(Map<?, ?> map) {
+		
+		Map<String, String> smap = new HashMap<String, String>();
+		for (Entry<?, ?> entry : map.entrySet())
+			smap.put("" + entry.getKey(), "" + entry.getValue());
+		
+		return smap;
+		
 	}
 	
 }

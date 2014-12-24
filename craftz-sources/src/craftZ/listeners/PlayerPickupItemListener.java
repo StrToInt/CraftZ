@@ -9,7 +9,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 
-import craftZ.ConfigManager;
 import craftZ.CraftZ;
 import craftZ.util.ItemRenamer;
 
@@ -42,7 +41,7 @@ public class PlayerPickupItemListener implements Listener {
 				
 			}
 			
-			ItemRenamer.convertPlayerInventory(p, ConfigManager.getConfig("config").getStringList("Config.change-item-names.names"));
+			ItemRenamer.convertInventory(p, ItemRenamer.DEFAULT_MAP);
 			
 		}
 		
