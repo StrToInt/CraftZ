@@ -267,8 +267,8 @@ public class CraftZ extends JavaPlugin {
 		
 		// CREATURE
 		rl(new CreatureSpawnListener());
-		rl(new EntityDamageByEntityListener());
 		rl(new EntityDamageListener());
+		rl(new EntityDamageByEntityListener());
 		rl(new EntityDeathListener());
 		rl(new SheepDyeWoolListener());
 		rl(new EntityRegainHealthListener());

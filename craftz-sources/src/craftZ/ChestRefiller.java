@@ -245,6 +245,8 @@ public class ChestRefiller {
 	
 	public static void onServerTick() {
 		
+		List<ConfigurationSection> refill = new ArrayList<ConfigurationSection>();
+		
 		for (Iterator<Entry<String, Integer>> it = refillCooldowns.entrySet().iterator(); it.hasNext(); ) {
 			
 			Entry<String, Integer> entry = it.next();
@@ -257,9 +259,13 @@ public class ChestRefiller {
 				Dynmap.removeMarker(Dynmap.getMarker(Dynmap.SET_LOOT, entry.getKey()));
 			} else if (entry.getValue() <= 0) {
 				it.remove();
-				refill(data);
+				refill.add(data);
 			}
 			
+		}
+		
+		for (ConfigurationSection data : refill) {
+			refill(data);
 		}
 		
 		

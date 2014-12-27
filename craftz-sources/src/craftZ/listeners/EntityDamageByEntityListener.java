@@ -153,7 +153,8 @@ public class EntityDamageByEntityListener implements Listener {
 			
 			
 			
-			if (event.getDamager() instanceof Zombie && event.getEntity() instanceof Player) {
+			if (event.getDamager() instanceof Zombie && event.getEntity() instanceof Player
+					&& !event.isCancelled() && event.getDamage() > 0) {
 				
 				if (ConfigManager.getConfig("config").getBoolean("Config.players.medical.poisoning.enable")) {
 					
