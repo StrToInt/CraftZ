@@ -1,9 +1,7 @@
 package craftZ.listeners;
 
 import org.bukkit.Location;
-import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
-import org.bukkit.block.Sign;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -28,21 +26,10 @@ public class InventoryCloseListener implements Listener {
 			if (holder instanceof Chest) {
 				
 				Chest chest = (Chest) holder;
-				Location loc = chest.getLocation();
-				int y = loc.getBlockY();
 				
-				for (int i=0; i<256; i++) {
-					
-					loc.setY(i);
-					Block b = loc.getBlock();
-					if (!(b.getState() instanceof Sign))
-						continue;
-					
-					Sign sign = (Sign) b.getState();
-					if (sign.getLine(2).equals("" + y)) {
-						ChestRefiller.startRefill(ChestRefiller.getData(loc), true);
-					}
-					
+				Location signLoc = ChestRefiller.findSign(chest.getLocation());
+				if (signLoc != null) {
+					ChestRefiller.startRefill(ChestRefiller.getData(signLoc), true);
 				}
 				
 			}

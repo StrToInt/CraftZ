@@ -12,24 +12,29 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
+import org.bukkit.block.Sign;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
 import craftZ.util.Dynmap;
+import craftZ.util.EntityChecker;
 import craftZ.util.ItemRenamer;
 import craftZ.util.StackParser;
 
 
 public class ChestRefiller {
 	
-	private static Map<String, Integer> cooldowns = new HashMap<String, Integer>();
+	private static Map<String, Integer> refillCooldowns = new HashMap<String, Integer>();
+	private static Map<Location, Integer> despawnCooldowns = new HashMap<Location, Integer>();
 	
 	
 	
 	public static int loadChests() {
 		
-		cooldowns.clear();
+		refillCooldowns.clear();
+		despawnCooldowns.clear();
 		
 		ConfigurationSection sec = WorldData.get().getConfigurationSection("Data.lootchests");
 		if (sec != null) {
@@ -40,7 +45,7 @@ public class ChestRefiller {
 			
 		}
 		
-		return cooldowns.size();
+		return refillCooldowns.size();
 		
 	}
 	
@@ -96,7 +101,11 @@ public class ChestRefiller {
 	
 	public static boolean startRefill(ConfigurationSection data, boolean drop) {
 		
-		cooldowns.put(data.getName(), 0);
+		if (data == null)
+			return false;
+		
+		refillCooldowns.put(data.getName(), getPropertyInt("time-before-refill", data.getString("list")) * 20);
+		despawnCooldowns.remove(data.getName());
 		
 		Location loc = new Location(CraftZ.world(), data.getInt("coords.x"), data.getInt("coords.y"), data.getInt("coords.z"));
 		Block block = loc.getBlock();
@@ -122,12 +131,18 @@ public class ChestRefiller {
 			return;
 		
 		String sface = data.getString("face", "n").toLowerCase();
-		Location rflLoc = new Location(CraftZ.world(), data.getInt("coords.x"), data.getInt("coords.y"), data.getInt("coords.z"));
+		Location loc = new Location(CraftZ.world(), data.getInt("coords.x"), data.getInt("coords.y"), data.getInt("coords.z"));
 		String list = data.getString("list");
+		
+		double mpv = getPropertyInt("max-player-vicinity", data.getString("list"));
+		if (mpv > 0 && EntityChecker.areEntitiesNearby(loc, mpv, EntityType.PLAYER, 1)) {
+			startRefill(data, false);
+			return;
+		}
 		
 		if (list != null) {
 			
-			Block block = rflLoc.getBlock();
+			Block block = loc.getBlock();
 			block.setType(Material.CHEST);
 			Chest chest = (Chest) block.getState();
 			
@@ -171,6 +186,10 @@ public class ChestRefiller {
 			
 			ItemRenamer.convertInventory(chest, ItemRenamer.DEFAULT_MAP);
 			
+			if (getPropertyBoolean("despawn", list)) {
+				despawnCooldowns.put(loc, getPropertyInt("time-before-despawn", list) * 20);
+			}
+			
 		}
 		
 	}
@@ -185,27 +204,99 @@ public class ChestRefiller {
 		return list != null && c.contains(ls) ? c.getInt(ls) : c.getInt("Loot.settings." + name);
 	}
 	
+	public static boolean getPropertyBoolean(String name, String list) {
+		FileConfiguration c = ConfigManager.getConfig("loot");
+		String ls = "Loot.lists-settings." + list + "." + name;
+		return list != null && c.contains(ls) ? c.getBoolean(ls) : c.getBoolean("Loot.settings." + name);
+	}
+	
+	
+	
+	
+	
+	public static Location findSign(Location chestLoc) {
+		
+		Location loc = chestLoc.clone();
+		int y = loc.getBlockY();
+		
+		for (int i=0; i<256; i++) {
+			
+			loc.setY(i);
+			Block b = loc.getBlock();
+			if (!(b.getState() instanceof Sign))
+				continue;
+			
+			Sign sign = (Sign) b.getState();
+			String line3 = sign.getLine(2);
+			String[] l3spl = line3.split(":");
+			if (l3spl[0].equals("" + y)) {
+				return loc;
+			}
+			
+		}
+		
+		return null;
+		
+	}
+	
 	
 	
 	
 	
 	public static void onServerTick() {
 		
-		for (Iterator<Entry<String, Integer>> it = cooldowns.entrySet().iterator(); it.hasNext(); ) {
+		for (Iterator<Entry<String, Integer>> it = refillCooldowns.entrySet().iterator(); it.hasNext(); ) {
 			
 			Entry<String, Integer> entry = it.next();
 			ConfigurationSection data = getData(entry.getKey());
 			
-			entry.setValue(entry.getValue() + 1);
+			entry.setValue(entry.getValue() - 1);
 			
 			if (data == null) {
 				it.remove();
 				Dynmap.removeMarker(Dynmap.getMarker(Dynmap.SET_LOOT, entry.getKey()));
-			} else if (entry.getValue() >= (getPropertyInt("time-before-refill", data.getString("list")) * 20)) {
+			} else if (entry.getValue() <= 0) {
 				it.remove();
 				refill(data);
 			}
 			
+		}
+		
+		
+		
+		List<ConfigurationSection> start = new ArrayList<ConfigurationSection>();
+		
+		for (Iterator<Entry<Location, Integer>> it = despawnCooldowns.entrySet().iterator(); it.hasNext(); ) {
+			
+			Entry<Location, Integer> entry = it.next();
+			Location loc = entry.getKey();
+			
+			Block block = loc.getBlock();
+			if (block.getType() != Material.CHEST) {
+				it.remove();
+			} else {
+				
+				entry.setValue(entry.getValue() - 1);
+				if (entry.getValue() <= 0) {
+					
+					it.remove();
+					
+					Location signLoc = findSign(loc);
+					if (signLoc == null)
+						continue;
+					ConfigurationSection data = getData(signLoc);
+					if (data == null)
+						continue;
+					start.add(data);
+					
+				}
+				
+			}
+			
+		}
+		
+		for (ConfigurationSection data : start) {
+			startRefill(data, getPropertyBoolean("drop-on-despawn", data.getString("list")));
 		}
 		
 	}

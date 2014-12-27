@@ -8,6 +8,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -478,7 +479,10 @@ public class PlayerManager {
 	
 	public static Location getLobby() {
 		
-		Location lobby = CraftZ.world().getSpawnLocation();
+		World cw = CraftZ.world();
+		if (cw == null)
+			return null;
+		Location lobby = cw.getSpawnLocation();
 		ConfigurationSection sec = ConfigManager.getConfig("config").getConfigurationSection("Config.world.lobby");
 		
 		String w = sec.getString("world");

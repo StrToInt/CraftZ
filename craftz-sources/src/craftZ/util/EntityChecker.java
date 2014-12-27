@@ -39,11 +39,14 @@ public class EntityChecker {
 		int found = 0;
 		
 		for (Entity ent : nearby) {
-			if (ent.getType() == type)
+			if (ent.getType() == type) {
 				found++;
+				if (found >= amount)
+					return true;
+			}
 		}
 		
-		return found >= amount;
+		return false;
 		
 	}
 	

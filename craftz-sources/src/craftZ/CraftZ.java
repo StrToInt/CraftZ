@@ -579,6 +579,10 @@ public class CraftZ extends JavaPlugin {
 			def_loot.put("Loot.settings.time-before-refill", 120);
 			def_loot.put("Loot.settings.min-stacks-filled", 1);
 			def_loot.put("Loot.settings.max-stacks-filled", 3);
+			def_loot.put("Loot.settings.despawn", true);
+			def_loot.put("Loot.settings.time-before-despawn", 300);
+			def_loot.put("Loot.settings.drop-on-despawn", false);
+			def_loot.put("Loot.settings.max-player-vicinity", -1);
 			
 			
 		

@@ -274,7 +274,7 @@ public class Dynmap {
 	public static Object createCircleMarker(Object setHandle, String id, String label, int weight, double opacity, int color,
 			Location loc, double xr, double zr) {
 		
-		if (!hasAccess())
+		if (!hasAccess() || loc == null)
 			return null;
 		
 		MarkerSet set = (MarkerSet) setHandle;
