@@ -1,19 +1,27 @@
 package craftZ.listeners;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
 
 import craftZ.ConfigManager;
 import craftZ.CraftZ;
 import craftZ.PlayerManager;
+import craftZ.util.ItemRenamer;
 
 
 public class EntityDamageListener implements Listener {
@@ -74,33 +82,34 @@ public class EntityDamageListener implements Listener {
                 
                 
                 
-//				if (!event.isCancelled() && ConfigManager.getConfig("config").getBoolean("Config.mobs.blood-particles-when-damaged")) {
-//					
-//					if (!type.isAlive() || (type == EntityType.PLAYER && ((Player) entity).getGameMode() == GameMode.CREATIVE)) {
-//						return;
-//					}
-//					
-//					Location loc = entity.getLocation();
-//					World w = entity.getWorld();
-//					
-//					int bloodCount = (int) (event.getDamage() * (type == EntityType.ZOMBIE ? 2 : 6));
-//					for (int i=0; i<bloodCount; i++) {
-//						
-//						w.playEffect(loc, Effect.STEP_SOUND, Material.REDSTONE_WIRE.getId());
-//						final Item blood = entity.getWorld().dropItemNaturally(entity.getLocation(), new ItemStack(Material.WOOL, 1, DyeColor.RED.getData()));
-//						
-//						blood.setPickupDelay(Integer.MAX_VALUE);
-//						
-//						Bukkit.getScheduler().scheduleSyncDelayedTask(CraftZ.i, new Runnable() {
-//							@Override
-//							public void run() {
-//								blood.remove();
-//							}
-//						}, 1 + new Random().nextInt(6));
-//						
-//					}
-//					
-//				}
+				if (!event.isCancelled() && ConfigManager.getConfig("config").getBoolean("Config.mobs.blood-particles-when-damaged")) {
+					
+					if (!type.isAlive() || (type == EntityType.PLAYER && ((Player) entity).getGameMode() == GameMode.CREATIVE)) {
+						return;
+					}
+					
+					Location loc = entity.getLocation();
+					World w = entity.getWorld();
+					
+					int bloodCount = (int) (Math.min(event.getDamage() * (type == EntityType.ZOMBIE ? 1 : 2), 100));
+					for (int i=0; i<bloodCount; i++) {
+						
+						ItemStack stack = ItemRenamer.setName(new ItemStack(Material.REDSTONE), "blood" + CraftZ.RANDOM.nextInt());
+						final Item blood = w.dropItemNaturally(loc, stack);
+						
+						blood.setPickupDelay(Integer.MAX_VALUE);
+						blood.setMetadata("isBlood", new FixedMetadataValue(CraftZ.i, true));
+						
+						Bukkit.getScheduler().scheduleSyncDelayedTask(CraftZ.i, new Runnable() {
+							@Override
+							public void run() {
+								blood.remove();
+							}
+						}, 4 + CraftZ.RANDOM.nextInt(6));
+						
+					}
+					
+				}
 				
 			}
 		

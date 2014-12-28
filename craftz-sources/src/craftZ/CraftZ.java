@@ -14,14 +14,18 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import craftZ.cmd.*;
 import craftZ.listeners.*;
 import craftZ.util.Dynmap;
+import craftZ.util.EntityChecker;
 import craftZ.util.ItemRenamer;
 import craftZ.util.Rewarder;
 import craftZ.util.ScoreboardHelper;
@@ -160,6 +164,13 @@ public class CraftZ extends JavaPlugin {
 					
 					for (Player p : world().getPlayers()) {
 						PlayerJoinListener.joinPlayer(p);
+					}
+					
+					for (Entity ent : world().getEntities()) {
+						MetadataValue value;
+						if (ent.getType() == EntityType.DROPPED_ITEM && (value = EntityChecker.getMeta(ent, "isBlood")) != null && value.asBoolean()) {
+							ent.remove();
+						}
 					}
 					
 				}

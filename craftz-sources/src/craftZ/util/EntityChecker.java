@@ -7,6 +7,9 @@ import org.bukkit.World;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.metadata.MetadataValue;
+
+import craftZ.CraftZ;
 
 
 public class EntityChecker {
@@ -65,6 +68,25 @@ public class EntityChecker {
 		}
 		
 		return count;
+		
+	}
+	
+	
+	
+	
+	
+	public static MetadataValue getMeta(Entity ent, String key) {
+		
+		if (!ent.hasMetadata(key))
+			return null;
+		
+		List<MetadataValue> values = ent.getMetadata(key);
+		for (MetadataValue value : values) {
+			if (value.getOwningPlugin().getName().equals(CraftZ.i.getName()))
+				return value;
+		}
+		
+		return null;
 		
 	}
 	
