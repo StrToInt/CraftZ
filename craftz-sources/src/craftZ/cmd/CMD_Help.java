@@ -1,43 +1,44 @@
 package craftZ.cmd;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+
+import craftZ.CraftZ;
 
 
 public class CMD_Help extends CraftZCommand {
 
+	public CMD_Help() {
+		super("");
+	}
+	
+	
+	
+	
+	
 	@Override
 	public int execute() {
 		
 		if (hasPerm("craftz.help")) {
 			
-			send(ChatColor.GOLD + getMsg("Messages.help.title"));
 			send("");
 			
-			send(ChatColor.YELLOW + getMsg("Messages.help.help-command"));
+			send("" + ChatColor.GOLD + ChatColor.BOLD + getMsg("Messages.help.title"));
 			
-			if (hasPerm("craftz.removeitems"))
-				send(ChatColor.YELLOW + getMsg("Messages.help.removeitems-command"));
+			CraftZCommandManager cmdm = CraftZ.getCommandManager();
+			Set<String> cmds = cmdm.getCommands(false);
 			
-			if (hasPerm("craftz.reload"))
-				send(ChatColor.YELLOW + getMsg("Messages.help.reload-command"));
+			printCommand("help", this);
+			for (String label : cmds) {
+				printCommand(label, cmdm.getCommandExecutor(label));
+			}
 			
-			if (hasPerm("craftz.spawn"))
-				send(ChatColor.YELLOW + getMsg("Messages.help.spawn-command"));
-			
-			if (hasPerm("craftz.setlobby"))
-				send(ChatColor.YELLOW + getMsg("Messages.help.setlobby-command"));
-			
-			if (hasPerm("craftz.smasher"))
-				send(ChatColor.YELLOW + getMsg("Messages.help.smasher-command"));
-			
-			if (hasPerm("craftz.purge"))
-				send(ChatColor.YELLOW + getMsg("Messages.help.purge-command"));
-			
-			if (hasPerm("craftz.sign"))
-				send(ChatColor.YELLOW + getMsg("Messages.help.sign-command"));
-			
-			if (hasPerm("craftz.top"))
-				send(ChatColor.YELLOW + getMsg("Messages.help.top-command"));
+			send("");
 			
 		} else {
 			return NO_PERMISSION;
@@ -45,6 +46,44 @@ public class CMD_Help extends CraftZCommand {
 		
 		return SUCCESS;
 		
+	}
+	
+	
+	
+	
+	
+	private void printCommand(String label, CraftZCommand cmd) {
+		
+		int exec = cmd.canExecute(sender);
+		
+		if (exec == MUST_BE_PLAYER) {
+			send(ChatColor.GRAY + cmd.getUsage(label));
+			send("    " + ChatColor.DARK_GRAY + ChatColor.ITALIC + getMsg("Messages.help.commands." + label));
+		} else if (exec == SUCCESS) {
+			send(ChatColor.YELLOW + cmd.getUsage(label));
+			send("    " + ChatColor.GOLD + ChatColor.ITALIC + getMsg("Messages.help.commands." + label));
+		}
+		
+	}
+	
+	
+	
+	
+	
+	@Override
+	public int canExecute(CommandSender sender) {
+		if (!sender.hasPermission("craftz.help"))
+			return NO_PERMISSION;
+		return SUCCESS;
+	}
+	
+	
+	
+	
+	
+	@Override
+	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+		return new ArrayList<String>();
 	}
 	
 }

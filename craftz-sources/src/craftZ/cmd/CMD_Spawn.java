@@ -1,11 +1,25 @@
 package craftZ.cmd;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import craftZ.PlayerManager;
 
 
 public class CMD_Spawn extends CraftZCommand {
+	
+	public CMD_Spawn() {
+		super("{cmd}");
+	}
+	
+	
+	
+	
 	
 	@Override
 	public int execute() {
@@ -28,6 +42,28 @@ public class CMD_Spawn extends CraftZCommand {
 		
 		return SUCCESS;
 		
+	}
+	
+	
+	
+	
+	
+	@Override
+	public int canExecute(CommandSender sender) {
+		if (!(sender instanceof Player))
+			return MUST_BE_PLAYER;
+		if (!sender.hasPermission("craftz.spawn"))
+			return NO_PERMISSION;
+		return SUCCESS;
+	}
+	
+	
+	
+	
+	
+	@Override
+	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+		return new ArrayList<String>();
 	}
 	
 }

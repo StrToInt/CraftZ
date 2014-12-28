@@ -1,8 +1,11 @@
 package craftZ.cmd;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
@@ -11,10 +14,18 @@ import craftZ.CraftZ;
 
 public class CMD_RemoveItems extends CraftZCommand {
 	
+	public CMD_RemoveItems() {
+		super("{cmd}");
+	}
+	
+	
+	
+	
+	
 	@Override
 	public int execute() {
 		
-		if (hasPerm("craftz.removeitems")) {
+		if (hasPerm("craftz.remitems") || hasPerm("craftz.removeitems")) {
 			
 			int ri = 0;
 			List<Entity> entities = CraftZ.world().getEntities();
@@ -35,6 +46,26 @@ public class CMD_RemoveItems extends CraftZCommand {
 		
 		return SUCCESS;
 		
+	}
+	
+	
+	
+	
+	
+	@Override
+	public int canExecute(CommandSender sender) {
+		if (!sender.hasPermission("craftz.remitems") && !sender.hasPermission("craftz.removeitems"))
+			return NO_PERMISSION;
+		return SUCCESS;
+	}
+	
+	
+	
+	
+	
+	@Override
+	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+		return new ArrayList<String>();
 	}
 	
 }

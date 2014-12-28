@@ -1,11 +1,24 @@
 package craftZ.cmd;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 
 import craftZ.CraftZ;
 
 
 public class CMD_Reload extends CraftZCommand {
+	
+	public CMD_Reload() {
+		super("{cmd}");
+	}
+	
+	
+	
+	
 	
 	@Override
 	public int execute() {
@@ -19,6 +32,26 @@ public class CMD_Reload extends CraftZCommand {
 		
 		return SUCCESS;
 		
+	}
+	
+	
+	
+	
+	
+	@Override
+	public int canExecute(CommandSender sender) {
+		if (!sender.hasPermission("craftz.reload"))
+			return NO_PERMISSION;
+		return SUCCESS;
+	}
+	
+	
+	
+	
+	
+	@Override
+	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+		return new ArrayList<String>();
 	}
 	
 }

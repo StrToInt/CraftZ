@@ -291,6 +291,7 @@ public class PlayerManager {
 			}
 			
 			boolean survival = p.getGameMode() != GameMode.CREATIVE && p.getGameMode() != GameMode.SPECTATOR;
+			Location ploc = p.getLocation();
 			
 			
 			
@@ -300,7 +301,7 @@ public class PlayerManager {
 			
 			if (survival && ConfigManager.getConfig("config").getBoolean("Config.players.medical.thirst.enable")) {
 				
-				Biome biome = p.getLocation().getBlock().getBiome();
+				Biome biome = ploc.getBlock().getBiome();
 				boolean desert = biome == Biome.DESERT || biome == Biome.DESERT_HILLS || biome == Biome.DESERT_MOUNTAINS;
 				int ticksNeeded = desert ? ConfigManager.getConfig("config").getInt("Config.players.medical.thirst.ticks-desert")
 						: ConfigManager.getConfig("config").getInt("Config.players.medical.thirst.ticks-normal");
@@ -347,15 +348,15 @@ public class PlayerManager {
 				
 				if (survival && ConfigManager.getConfig("config").getBoolean("Config.world.world-border.enable")) {
 					
-					double dmg = getWorldBorderDamage(p, ConfigManager.getConfig("config").getDouble("Config.world.world-border.radius"), getLobby());
+					double dmg = getWorldBorderDamage(ploc);
 					
 					if (dmg > 0) {
 						if (tickID % 200 == 0)
 							p.sendMessage(CraftZ.getPrefix() + " " + CraftZ.getMsg("Messages.out-of-world"));
 						p.damage(dmg);
 						p.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 20, 1));
-						p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20, 1));
-						p.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 50, 1));
+						p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 40, 1));
+						p.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 80, 1));
 					}
 					
 				}
@@ -394,7 +395,7 @@ public class PlayerManager {
 				for (Entity ent : entities) {
 					
 					if (ent.getType() == EntityType.ZOMBIE) {
-						Location zloc = ent.getLocation(), ploc = p.getLocation();
+						Location zloc = ent.getLocation();
 						if (zloc.getY() + 1 < ploc.getY()) {
 							p.setVelocity(zloc.toVector().subtract(ploc.toVector()).normalize().multiply(0.5 + Math.random()*0.4));
 						}
@@ -443,21 +444,38 @@ public class PlayerManager {
 	
 	
 	
-	public static double getWorldBorderDamage(Player p, double radius, Location spawn) {
+	public static double getWorldBorderDistance(Location ploc) {
 		
-		//TODO: make compatible with lobby in different world.
-		//Perhaps add configurable world center?
+		ConfigurationSection sec = ConfigManager.getConfig("config").getConfigurationSection("Config.world.world-border");
+		int r = sec.getInt("radius");
+		String shape = sec.getString("shape");
 		
-		Location ploc = p.getLocation();
-		Location loc = new Location(ploc.getWorld(), spawn.getX(), ploc.getY(), spawn.getZ());
-		
-		double dist = ploc.distance(loc) - radius;
-		if (dist <= 0) {
+		Location loc = new Location(CraftZ.world(), sec.getDouble("x"), ploc.getY(), sec.getDouble("z"));
+		if (!ploc.getWorld().getName().equals(loc.getWorld().getName()))
 			return 0;
+		
+		double dist;
+		
+		if (shape.equalsIgnoreCase("square") || shape.equalsIgnoreCase("rect")) {
+			
+			int x = loc.getBlockX(), z = loc.getBlockZ();
+			int px = ploc.getBlockX(), pz = ploc.getBlockZ();
+			
+			int dx = Math.max(Math.max((x-r) - px, 0), px - (x+r));
+			int dy = Math.max(Math.max((z-r) - pz, 0), pz - (z+r));
+			
+			dist = Math.sqrt(dx*dx + dy*dy);
+			
 		} else {
-			return dist / 60D;
+			dist = ploc.distance(loc) - r;
 		}
 		
+		return dist < 0 ? 0 : dist;
+		
+	}
+	
+	public static double getWorldBorderDamage(Location ploc) {
+		return getWorldBorderDistance(ploc) / 60.0;
 	}
 	
 	
@@ -485,12 +503,15 @@ public class PlayerManager {
 		Location lobby = cw.getSpawnLocation();
 		ConfigurationSection sec = ConfigManager.getConfig("config").getConfigurationSection("Config.world.lobby");
 		
-		String w = sec.getString("world");
+		String ws = sec.getString("world");
+		World w = ws == null ? null : Bukkit.getWorld(ws);
 		if (w != null)
-			lobby.setWorld(Bukkit.getWorld(w));
+			lobby.setWorld(w);
 		lobby.setX(sec.getDouble("x"));
 		lobby.setY(sec.getDouble("y"));
 		lobby.setZ(sec.getDouble("z"));
+		lobby.setYaw((float) sec.getDouble("yaw"));
+		lobby.setPitch((float) sec.getDouble("pitch"));
 		
 		return lobby;
 		

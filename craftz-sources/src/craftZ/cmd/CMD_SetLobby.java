@@ -1,14 +1,28 @@
 package craftZ.cmd;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 
 import craftZ.ConfigManager;
 
 
 public class CMD_SetLobby extends CraftZCommand {
 
+	public CMD_SetLobby() {
+		super("{cmd} <radius>");
+	}
+	
+	
+	
+	
+	
 	@Override
 	public int execute() {
 		
@@ -20,12 +34,26 @@ public class CMD_SetLobby extends CraftZCommand {
 		
 		if (hasPerm("craftz.setlobby")) {
 			
+			if (args.length < 1) {
+				return WRONG_USAGE;
+			}
+			
+			double radius;
+			try {
+				radius = Double.parseDouble(args[0]);
+			} catch (NumberFormatException ex) {
+				return WRONG_USAGE;
+			}
+			
 			FileConfiguration config = ConfigManager.getConfig("config");
 			
 			config.set("Config.world.lobby.world", p.getWorld().getName());
-			config.set("Config.world.lobby.x", loc.getBlockX());
-			config.set("Config.world.lobby.y", loc.getBlockY());
-			config.set("Config.world.lobby.z", loc.getBlockZ());
+			config.set("Config.world.lobby.x", Math.round(loc.getX() * 100) / 100.0);
+			config.set("Config.world.lobby.y", Math.round(loc.getY() * 100) / 100.0);
+			config.set("Config.world.lobby.z", Math.round(loc.getZ() * 100) / 100.0);
+			config.set("Config.world.lobby.yaw", Math.round(loc.getYaw() * 100) / 100f);
+			config.set("Config.world.lobby.pitch", Math.round(loc.getPitch() * 100) / 100f);
+			config.set("Config.world.lobby.radius", radius);
 			ConfigManager.saveConfig("config");
 			
 			send(ChatColor.AQUA + getMsg("Messages.cmd.setlobby"));
@@ -36,6 +64,28 @@ public class CMD_SetLobby extends CraftZCommand {
 		
 		return SUCCESS;
 		
+	}
+	
+	
+	
+	
+	
+	@Override
+	public int canExecute(CommandSender sender) {
+		if (!(sender instanceof Player))
+			return MUST_BE_PLAYER;
+		if (!sender.hasPermission("craftz.setlobby"))
+			return NO_PERMISSION;
+		return SUCCESS;
+	}
+	
+	
+	
+	
+	
+	@Override
+	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+		return new ArrayList<String>();
 	}
 	
 }

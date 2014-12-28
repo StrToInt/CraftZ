@@ -13,6 +13,7 @@ import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -86,14 +87,15 @@ public class CraftZ extends JavaPlugin {
 		getCommand("craftz").setExecutor(cmd);
 		
 		cmd.setDefault(new CMD_Help());
-		cmd.registerCommand(new CMD_Reload(), "reload");
-		cmd.registerCommand(new CMD_RemoveItems(), "removeitems", "remitems");
 		cmd.registerCommand(new CMD_Spawn(), "spawn");
-		cmd.registerCommand(new CMD_SetLobby(), "setlobby");
-		cmd.registerCommand(new CMD_Smasher(), "smasher");
-		cmd.registerCommand(new CMD_Purge(), "purge");
-		cmd.registerCommand(new CMD_Sign(), "sign");
 		cmd.registerCommand(new CMD_Top(), "top");
+		cmd.registerCommand(new CMD_Reload(), "reload");
+		cmd.registerCommand(new CMD_SetLobby(), "setlobby");
+		cmd.registerCommand(new CMD_SetBorder(), "setborder");
+		cmd.registerCommand(new CMD_Sign(), "sign");
+		cmd.registerCommand(new CMD_RemoveItems(), "remitems", "removeitems");
+		cmd.registerCommand(new CMD_Purge(), "purge");
+		cmd.registerCommand(new CMD_Smasher(), "smasher");
 		
 		
 		
@@ -332,13 +334,18 @@ public class CraftZ extends JavaPlugin {
 			
 			// WORLD
 			def_config.put("Config.world.name", "world");
-			def_config.put("Config.world.lobby.radius", 20);
 			def_config.put("Config.world.lobby.world", "world");
 			def_config.put("Config.world.lobby.x", 0);
 			def_config.put("Config.world.lobby.y", 64);
 			def_config.put("Config.world.lobby.z", 0);
+			def_config.put("Config.world.lobby.yaw", 0);
+			def_config.put("Config.world.lobby.pitch", 0);
+			def_config.put("Config.world.lobby.radius", 20);
 			def_config.put("Config.world.real-time", true);
 			def_config.put("Config.world.world-border.enable", true);
+			def_config.put("Config.world.world-border.shape", "round");
+			def_config.put("Config.world.world-border.x", 0);
+			def_config.put("Config.world.world-border.z", 0);
 			def_config.put("Config.world.world-border.radius", 400);
 				
 				// WORLDCHANGE
@@ -367,7 +374,7 @@ public class CraftZ extends JavaPlugin {
 				
 				// WOOD HARVESTING
 				def_config.put("Config.players.wood-harvesting.enable", true);
-
+				
                 // CAMPFIRES
                 def_config.put("Config.players.campfires.enable", true);
                 def_config.put("Config.players.campfires.tick-duration", 600);
@@ -543,20 +550,23 @@ public class CraftZ extends JavaPlugin {
 			
 			// HELP
 			def_messages.put("Messages.help.title", "=== CraftZ Help ===");
-			def_messages.put("Messages.help.help-command", "/craftz: Displays this help menu.");
-			def_messages.put("Messages.help.removeitems-command", "/craftz removeitems: Removes all items in the world. (Alias: /craftz remitems)");
-			def_messages.put("Messages.help.reload-command", "/craftz reload: Reload the configuration files.");
-			def_messages.put("Messages.help.spawn-command", "/craftz spawn: Spawn at a random point inside of the world.");
-			def_messages.put("Messages.help.setlobby-command", "/craftz setlobby: Set the lobby location where you're standing.");
-			def_messages.put("Messages.help.smasher-command", "/craftz smasher: Get the ultimate zombie smasher!");
-			def_messages.put("Messages.help.purge-command", "/craftz purge: Purge all zombies from the world.");
-			def_messages.put("Messages.help.sign-command", "/craftz sign <line2> <line3> <line4>: Get a pre-written sign.");
-			def_messages.put("Messages.help.top-command", "/craftz top: Take a look at the highscores.");
+			def_messages.put("Messages.help.commands.help", "Display this help menu");
+			def_messages.put("Messages.help.commands.spawn", "Spawn at a random point inside of the world");
+			def_messages.put("Messages.help.commands.top", "Take a look at the highscores");
+			def_messages.put("Messages.help.commands.reload", "Reload the configuration files");
+			def_messages.put("Messages.help.commands.setlobby", "Configure the lobby");
+			def_messages.put("Messages.help.commands.setborder", "Configure the world border.");
+			def_messages.put("Messages.help.commands.sign", "Get a pre-written sign");
+			def_messages.put("Messages.help.commands.remitems", "Remove all items in the world");
+			def_messages.put("Messages.help.commands.purge", "Purge all zombies from the world");
+			def_messages.put("Messages.help.commands.smasher", "Get the zombie smasher (admin tool)");
 			
 			// COMMAND
 			def_messages.put("Messages.cmd.removed-items", "Removed %i items.");
 			def_messages.put("Messages.cmd.reloaded", "Reloaded the config files.");
-			def_messages.put("Messages.cmd.setlobby", "The lobby center is set at your location. For lobby radius, see configuration file.");
+			def_messages.put("Messages.cmd.setlobby", "The lobby was set at your location.");
+			def_messages.put("Messages.cmd.setborder", "The world border is now configured and enabled. To disable, enter '/craftz setborder disable'.");
+			def_messages.put("Messages.cmd.setborder-disable", "The world border is now disabled.");
 			def_messages.put("Messages.cmd.purged", "All %z loaded zombies were purged from the world.");
 			def_messages.put("Messages.cmd.sign", "A pre-written sign was given to you.");
 			def_messages.put("Messages.cmd.top.minutes-survived", "LONGEST TIME SURVIVED");
@@ -565,7 +575,7 @@ public class CraftZ extends JavaPlugin {
 			
 			// ERRORS
 			def_messages.put("Messages.errors.must-be-player", "You must be a player to use this command.");
-			def_messages.put("Messages.errors.too-few-arguments", "Too few arguments given.");
+			def_messages.put("Messages.errors.wrong-usage", "Wrong command usage.");
 			def_messages.put("Messages.errors.sign-not-complete", "The sign is not complete.");
 			def_messages.put("Messages.errors.sign-facing-wrong", "The facing direction you defined is wrong. It may be n, s, e or w.");
 			def_messages.put("Messages.errors.not-enough-permissions", "You don't have the required permission to do this.");
@@ -578,6 +588,19 @@ public class CraftZ extends JavaPlugin {
 		 		+ "|| Messages for the CraftZ plugin by JangoBrick ||\n"
 		 		+ "++==============================================++"
 		);
+		
+		FileConfiguration messages = ConfigManager.getConfig("messages");
+		ConfigurationSection msgHelpSec = messages.getConfigurationSection("Messages.help");
+		boolean changed = false;
+		for (String key : msgHelpSec.getKeys(false)) {
+			if (key.endsWith("-command")) {
+				msgHelpSec.set(key, null);
+				changed = true;
+			}
+		}
+		if (changed) {
+			ConfigManager.saveConfig("messages");
+		}
 		
 		
 		
@@ -730,6 +753,14 @@ public class CraftZ extends JavaPlugin {
 			Bukkit.getPluginManager().disablePlugin(i);
 		}
 		
+	}
+	
+	
+	
+	
+	
+	public static CraftZCommandManager getCommandManager() {
+		return cmd;
 	}
 	
 	
