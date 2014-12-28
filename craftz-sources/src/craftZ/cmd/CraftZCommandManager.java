@@ -103,16 +103,17 @@ public class CraftZCommandManager implements CommandExecutor, TabCompleter {
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
 		
-		if (args.length == 0) {
-			return new ArrayList<String>(getCommands(false));
-		} else if (args.length == 1) {
+		if (args.length <= 1) {
+			
+			String arg = args.length == 0 ? "" : args[0];
 			
 			List<String> options = new ArrayList<String>();
 			
 			Set<String> cmds = getCommands(true);
-			for (String cmd : cmds) {
-				if (cmd.toLowerCase().startsWith(args[0]))
-					options.add(cmd);
+			for (String label : cmds) {
+				CraftZCommand cmd = getCommandExecutor(label);
+				if (label.toLowerCase().startsWith(arg) && cmd.canExecute(sender) == CraftZCommand.SUCCESS)
+					options.add(label);
 			}
 			
 			return options;
@@ -121,7 +122,7 @@ public class CraftZCommandManager implements CommandExecutor, TabCompleter {
 			
 			String label = args[0];
 			CraftZCommand cmd = getCommandExecutor(label);
-			if (cmd != null) {
+			if (cmd != null && cmd.canExecute(sender) == CraftZCommand.SUCCESS) {
 				return cmd.onTabComplete(sender, command, label, Arrays.copyOfRange(args, 1, args.length));
 			}
 			

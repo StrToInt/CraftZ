@@ -26,7 +26,7 @@ public class BlockIgniteListener implements Listener {
 				Player p = event.getPlayer();
 				
 				if (type != Material.OBSIDIAN) { // handled by portal listener -- obsidian cannot be ignited anyway
-					if (p != null && !p.hasPermission("craftz.interact.blockPlace"))
+					if (p != null && !p.hasPermission("craftz.build"))
 						event.setCancelled(true);
 					else
 						event.setCancelled(true);

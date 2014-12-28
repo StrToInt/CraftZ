@@ -73,8 +73,7 @@ public class PlayerDeathListener implements Listener {
 			
 			
 			
-			if (ConfigManager.getConfig("config").getBoolean("Config.players.kick-on-death")
-					&& !p.hasPermission("craftz.bypassKick")) {
+			if (ConfigManager.getConfig("config").getBoolean("Config.players.kick-on-death") && !p.hasPermission("craftz.bypassKick")) {
 				p.kickPlayer(kickMsg);
 			} else {
 				
