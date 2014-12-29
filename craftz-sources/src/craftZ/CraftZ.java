@@ -359,7 +359,7 @@ public class CraftZ extends JavaPlugin {
 				def_config.put("Config.world.weather.allow-weather-changing", true);
 				
 			// PLAYERS
-			def_config.put("Config.players.use-scoreboard-for-stats", false);
+			def_config.put("Config.players.use-scoreboard-for-stats", true);
 			def_config.put("Config.players.kick-on-death", false);
 			def_config.put("Config.players.spawn-death-zombie", true);
 			def_config.put("Config.players.send-kill-stat-messages", true);
