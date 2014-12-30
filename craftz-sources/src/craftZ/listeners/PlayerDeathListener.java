@@ -71,6 +71,8 @@ public class PlayerDeathListener implements Listener {
 			
 			PlayerManager.resetPlayer(p);
 			
+			PlayerManager.setLastDeath(p, System.currentTimeMillis());
+			
 			
 			
 			if (ConfigManager.getConfig("config").getBoolean("Config.players.kick-on-death") && !p.hasPermission("craftz.bypassKick")) {

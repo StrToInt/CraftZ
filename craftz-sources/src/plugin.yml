@@ -55,6 +55,7 @@ permissions:
       craftz.remitems: true
       craftz.purge: true
       craftz.smasher: true
+      craftz.instantRespawn: true
   
   craftz.help:
     description: Allows you to see the help
@@ -91,6 +92,9 @@ permissions:
   craftz.bypassKick:
     description: Allows you to bypass the kick-on-death setting
     default: false
+  craftz.instantRespawn:
+    description: Allows you to respawn immediately.
+    default: op
     
   craftz.build:
     description: Allows you to place and destroy blocks, item frames etc

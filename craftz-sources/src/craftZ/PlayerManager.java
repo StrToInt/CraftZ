@@ -31,6 +31,7 @@ public class PlayerManager {
 	
 	private static Map<UUID, PlayerData> players = new HashMap<UUID, PlayerData>();
 	private static Map<UUID, Integer> movingPlayers = new HashMap<UUID, Integer>();
+	private static Map<UUID, Long> lastDeaths = new HashMap<UUID, Long>();
 	
 	
 	
@@ -246,6 +247,21 @@ public class PlayerManager {
 		p.teleport(BlockChecker.getSafeSpawnLocationOver(loc));
 		p.sendMessage(ChatColor.YELLOW + CraftZ.getMsg("Messages.spawned").replaceAll("%s", ssec.getString("name")));
 		
+	}
+	
+	
+	
+	
+	
+	public static int getRespawnCountdown(Player player) {
+		if (!lastDeaths.containsKey(player.getUniqueId()) || player.hasPermission("craftz.instantRespawn"))
+			return 0;
+		int countdown = ConfigManager.getConfig("config").getInt("Config.players.respawn-countdown");
+		return (int) (countdown*1000 - (System.currentTimeMillis() - lastDeaths.get(player.getUniqueId())));
+	}
+	
+	public static void setLastDeath(Player p, long timestamp) {
+		lastDeaths.put(p.getUniqueId(), timestamp);
 	}
 	
 	
@@ -475,7 +491,7 @@ public class PlayerManager {
 	}
 	
 	public static double getWorldBorderDamage(Location ploc) {
-		return getWorldBorderDistance(ploc) / 60.0;
+		return getWorldBorderDistance(ploc) * ConfigManager.getConfig("config").getDouble("Config.world.world-border.rate");
 	}
 	
 	

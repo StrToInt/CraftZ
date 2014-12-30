@@ -334,19 +334,24 @@ public class CraftZ extends JavaPlugin {
 			
 			// WORLD
 			def_config.put("Config.world.name", "world");
-			def_config.put("Config.world.lobby.world", "world");
-			def_config.put("Config.world.lobby.x", 0);
-			def_config.put("Config.world.lobby.y", 64);
-			def_config.put("Config.world.lobby.z", 0);
-			def_config.put("Config.world.lobby.yaw", 0);
-			def_config.put("Config.world.lobby.pitch", 0);
-			def_config.put("Config.world.lobby.radius", 20);
 			def_config.put("Config.world.real-time", true);
-			def_config.put("Config.world.world-border.enable", true);
-			def_config.put("Config.world.world-border.shape", "round");
-			def_config.put("Config.world.world-border.x", 0);
-			def_config.put("Config.world.world-border.z", 0);
-			def_config.put("Config.world.world-border.radius", 400);
+			
+				// LOBBY
+				def_config.put("Config.world.lobby.world", "world");
+				def_config.put("Config.world.lobby.x", 0);
+				def_config.put("Config.world.lobby.y", 64);
+				def_config.put("Config.world.lobby.z", 0);
+				def_config.put("Config.world.lobby.yaw", 0);
+				def_config.put("Config.world.lobby.pitch", 0);
+				def_config.put("Config.world.lobby.radius", 20);
+				
+				// BORDER
+				def_config.put("Config.world.world-border.enable", true);
+				def_config.put("Config.world.world-border.shape", "round");
+				def_config.put("Config.world.world-border.x", 0);
+				def_config.put("Config.world.world-border.z", 0);
+				def_config.put("Config.world.world-border.radius", 400);
+				def_config.put("Config.world.world-border.rate", 0.018);
 				
 				// WORLDCHANGE
 				def_config.put("Config.world.world-changing.allow-burning", false);
@@ -364,6 +369,7 @@ public class CraftZ extends JavaPlugin {
 			def_config.put("Config.players.spawn-death-zombie", true);
 			def_config.put("Config.players.send-kill-stat-messages", true);
 			def_config.put("Config.players.clear-inventory-on-spawn", true);
+			def_config.put("Config.players.respawn-countdown", 0);
 			
 				// INTERACT
 				def_config.put("Config.players.interact.shearing", false);
@@ -580,6 +586,7 @@ public class CraftZ extends JavaPlugin {
 			def_messages.put("Messages.errors.sign-facing-wrong", "The facing direction you defined is wrong. It may be n, s, e or w.");
 			def_messages.put("Messages.errors.not-enough-permissions", "You don't have the required permission to do this.");
 			def_messages.put("Messages.errors.not-in-lobby", "You are too far away from the lobby.");
+			def_messages.put("Messages.errors.respawn-countdown", "Please wait another %t seconds until respawning.");
 			def_messages.put("Messages.errors.cmd-not-existing", "This command does not exist. Use '/craftz' to display the help.");
 			
 		ConfigManager.newConfig("messages", i, def_messages);

@@ -31,7 +31,14 @@ public class CMD_Spawn extends CraftZCommand {
 		if (hasPerm("craftz.spawn")) {
 			
 			if (PlayerManager.isInsideOfLobby(p)) {
-				PlayerManager.loadPlayer(p, true);
+				
+				int respawnCountdown = PlayerManager.getRespawnCountdown(p);
+				if (respawnCountdown <= 0) {
+					PlayerManager.loadPlayer(p, true);
+				} else {
+					send(ChatColor.RED + getMsg("Messages.errors.respawn-countdown").replace("%t", "" + Math.max(respawnCountdown/1000, 1)));
+				}
+				
 			} else {
 				send(ChatColor.RED + getMsg("Messages.errors.not-in-lobby"));
 			}
