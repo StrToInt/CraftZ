@@ -17,6 +17,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import craftZ.util.Dynmap;
@@ -37,16 +38,26 @@ public class ChestRefiller {
 		refillCooldowns.clear();
 		despawnCooldowns.clear();
 		
+		int num = 0;
+		
 		ConfigurationSection sec = WorldData.get().getConfigurationSection("Data.lootchests");
 		if (sec != null) {
 			
 			for (String signID : sec.getKeys(false)) {
-				startRefill(sec.getConfigurationSection(signID), false);
+				ConfigurationSection data = sec.getConfigurationSection(signID);
+				if (data == null)
+					continue;
+				num++;
+				if (getPropertyBoolean("despawn-on-startup", data.getString("list"))) {
+					startRefill(data, false);
+				} else {
+					refill(data, false);
+				}
 			}
 			
 		}
 		
-		return refillCooldowns.size();
+		return num;
 		
 	}
 	
@@ -126,30 +137,42 @@ public class ChestRefiller {
 	
 	
 	
-	public static void refill(ConfigurationSection data) {
+	public static void refill(ConfigurationSection data, boolean placeChest) {
 		
 		if (data == null)
 			return;
 		
 		String sface = data.getString("face", "n").toLowerCase();
 		Location loc = new Location(CraftZ.world(), data.getInt("coords.x"), data.getInt("coords.y"), data.getInt("coords.z"));
+		Block block = loc.getBlock();
 		String list = data.getString("list");
 		
 		double mpv = getPropertyInt("max-player-vicinity", data.getString("list"));
-		if (mpv > 0 && EntityChecker.areEntitiesNearby(loc, mpv, EntityType.PLAYER, 1)) {
+		if ((mpv > 0 && EntityChecker.areEntitiesNearby(loc, mpv, EntityType.PLAYER, 1))
+				|| (!placeChest && block.getType() != Material.CHEST)) {
 			startRefill(data, false);
 			return;
 		}
 		
 		if (list != null) {
 			
-			Block block = loc.getBlock();
 			block.setType(Material.CHEST);
 			Chest chest = (Chest) block.getState();
+			Inventory inv = chest.getInventory();
 			
 			BlockFace face = sface.equals("s") ? BlockFace.SOUTH : (sface.equals("e") ? BlockFace.EAST
 					: (sface.equals("w") ? BlockFace.WEST : BlockFace.NORTH));
 			((org.bukkit.material.Chest) chest.getData()).setFacingDirection(face);
+			
+			for (Iterator<ItemStack> it=inv.iterator(); it.hasNext(); ) { // do not refill if already full
+				ItemStack stack = it.next();
+				if (stack != null && stack.getType() != Material.AIR) {
+					if (getPropertyBoolean("despawn", list)) {
+						despawnCooldowns.put(loc, getPropertyInt("time-before-despawn", list) * 20);
+					}
+					return;
+				}
+			}
 			
 			List<String> bItems = ConfigManager.getConfig("loot").getStringList("Loot.lists." + list);
 			if (bItems == null || bItems.isEmpty())
@@ -275,7 +298,7 @@ public class ChestRefiller {
 		}
 		
 		for (ConfigurationSection data : refill) {
-			refill(data);
+			refill(data, true);
 		}
 		
 		
