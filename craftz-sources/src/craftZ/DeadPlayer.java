@@ -36,8 +36,10 @@ public class DeadPlayer {
 		this.p = p.getName();
 		
 		ItemStack[] contents = p.getInventory().getContents();
-		for (ItemStack st : contents)
-			if (st != null) inventory.add(st);
+		for (ItemStack stack : contents) {
+			if (stack != null && stack.getType() != Material.AIR && !Kit.isSoulbound(stack))
+				inventory.add(stack);
+		}
 		armor = p.getInventory().getArmorContents();
 		
 		Zombie zombie = (Zombie) p.getLocation().getWorld().spawnEntity(p.getLocation(), EntityType.ZOMBIE);

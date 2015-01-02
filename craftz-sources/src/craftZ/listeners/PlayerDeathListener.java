@@ -12,6 +12,7 @@ import org.bukkit.util.Vector;
 import craftZ.ConfigManager;
 import craftZ.CraftZ;
 import craftZ.DeadPlayer;
+import craftZ.Kit;
 import craftZ.PlayerManager;
 import craftZ.util.Rewarder.RewardType;
 
@@ -87,8 +88,15 @@ public class PlayerDeathListener implements Listener {
 				Bukkit.getScheduler().runTask(CraftZ.i, new Runnable() {
 					@Override
 					public void run() {
+						
 						p.setVelocity(new Vector());
 						p.teleport(PlayerManager.getLobby());
+						
+						Kit kit = Kit.getDefaultKit();
+						if (kit != null) {
+							kit.select(p);
+						}
+						
 					}
 				});
 				

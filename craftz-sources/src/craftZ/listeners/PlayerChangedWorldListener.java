@@ -35,7 +35,8 @@ public class PlayerChangedWorldListener implements Listener {
 			if (modify) {
 				CraftZ.broadcastToWorld((ChatColor.RED + "Player " + p.getDisplayName() + " connected."), w);
 			}
-			PlayerManager.loadPlayer(p, false);
+			
+			PlayerJoinListener.joinPlayer(p);
 			
 		}
 		

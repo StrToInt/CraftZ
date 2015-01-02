@@ -12,6 +12,7 @@ import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -20,6 +21,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -89,6 +91,7 @@ public class CraftZ extends JavaPlugin {
 		cmd.setDefault(new CMD_Help());
 		cmd.registerCommand(new CMD_Spawn(), "spawn");
 		cmd.registerCommand(new CMD_Top(), "top");
+		cmd.registerCommand(new CMD_Kit(), "kit");
 		cmd.registerCommand(new CMD_Reload(), "reload");
 		cmd.registerCommand(new CMD_SetLobby(), "setlobby");
 		cmd.registerCommand(new CMD_SetBorder(), "setborder");
@@ -161,6 +164,7 @@ public class CraftZ extends JavaPlugin {
 					int ps = PlayerManager.loadSpawns();
 					int zs = ZombieSpawner.loadSpawns();
 					int dp = DeadPlayer.loadDeadPlayers();
+					Kit.loadKits();
 					
 					info("Loaded " + lc + " chests, " + ps + " player spawns, " + zs + " zombie spawns, " + dp + " dead players");
 					
@@ -559,6 +563,7 @@ public class CraftZ extends JavaPlugin {
 			def_messages.put("Messages.help.commands.help", "Display this help menu");
 			def_messages.put("Messages.help.commands.spawn", "Spawn at a random point inside of the world");
 			def_messages.put("Messages.help.commands.top", "Take a look at the highscores");
+			def_messages.put("Messages.help.commands.kit", "Select the kit you want to spawn with");
 			def_messages.put("Messages.help.commands.reload", "Reload the configuration files");
 			def_messages.put("Messages.help.commands.setlobby", "Configure the lobby");
 			def_messages.put("Messages.help.commands.setborder", "Configure the world border.");
@@ -735,6 +740,44 @@ public class CraftZ extends JavaPlugin {
 		 		+ "++========================================================++"
 		);
 		
+		
+		
+		
+		
+		// KITS
+		Map<String, Object> def_kits = new LinkedHashMap<String, Object>();
+		
+		ConfigManager.newConfig("kits", i, def_kits);
+		ConfigManager.getConfig("kits").options().header(
+				  "++================================================++\n"
+		 		+ "|| Kits setup for the CraftZ plugin by JangoBrick ||\n"
+		 		+ "++================================================++"
+		);
+		
+		
+		
+		FileConfiguration kits = ConfigManager.getConfig("kits");
+		if (!kits.contains("Kits.kits")) {
+			
+			kits.addDefault("Kits.kits.nothing.default", true);
+			kits.addDefault("Kits.kits.nothing.items", new LinkedHashMap<Integer, ItemStack>());
+			
+			kits.addDefault("Kits.kits.basic.permission", "craftz.kits.basic");
+			Map<String, ItemStack> kits_basic_items = new LinkedHashMap<String, ItemStack>();
+			{
+				kits_basic_items.put("0", new ItemStack(Material.WOOD_SWORD, 1, (short) 40));
+				kits_basic_items.put("1", new ItemStack(Material.GLASS_BOTTLE, 1));
+				kits_basic_items.put("2", new ItemStack(Material.COOKIE, 3));
+				kits_basic_items.put("chestplate", new ItemStack(Material.LEATHER_CHESTPLATE, 1, (short) 60));
+				kits_basic_items.put("leggings", new ItemStack(Material.LEATHER_LEGGINGS, 1, (short) 60));
+				kits_basic_items.put("boots", new ItemStack(Material.LEATHER_BOOTS, 1, (short) 50));
+			}
+			kits.addDefault("Kits.kits.basic.items", kits_basic_items);
+			
+			ConfigManager.saveConfig("kits");
+			
+		}
+		
 	}
 	
 	
@@ -750,6 +793,8 @@ public class CraftZ extends JavaPlugin {
 		ZombieSpawner.loadSpawns();
 		
 		DeadPlayer.loadDeadPlayers();
+		
+		Kit.loadKits();
 		
 		onDynmapEnabled();
 		

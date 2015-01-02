@@ -16,6 +16,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -110,8 +111,24 @@ public class PlayerManager {
 		} else {
 			
 			if (ConfigManager.getConfig("config").getBoolean("Config.players.clear-inventory-on-spawn")) {
-				p.getInventory().clear();
-				p.getInventory().setArmorContents(new ItemStack[4]);
+				
+				PlayerInventory inv = p.getInventory();
+				
+				for (int i=0; i<inv.getSize(); i++) {
+					ItemStack stack = inv.getItem(i);
+					if (!Kit.isSoulbound(stack))
+						inv.setItem(i, null);
+				}
+				
+				if (!Kit.isSoulbound(inv.getHelmet()))
+					inv.setHelmet(null);
+				if (!Kit.isSoulbound(inv.getChestplate()))
+					inv.setChestplate(null);
+				if (!Kit.isSoulbound(inv.getLeggings()))
+					inv.setLeggings(null);
+				if (!Kit.isSoulbound(inv.getBoots()))
+					inv.setBoots(null);
+				
 			}
 			
 			p.setHealth(p.getMaxHealth());

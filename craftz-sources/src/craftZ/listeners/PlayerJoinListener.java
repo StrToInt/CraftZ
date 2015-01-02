@@ -11,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 
 import craftZ.ConfigManager;
 import craftZ.CraftZ;
+import craftZ.Kit;
 import craftZ.PlayerManager;
 
 public class PlayerJoinListener implements Listener {
@@ -47,6 +48,11 @@ public class PlayerJoinListener implements Listener {
 			p.getInventory().setArmorContents(new ItemStack[] { null, null, null, null });
 			
 			p.teleport(PlayerManager.getLobby());
+			
+			Kit kit = Kit.getDefaultKit();
+			if (kit != null) {
+				kit.select(p);
+			}
 			
 		}
 		
