@@ -6,7 +6,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerDropItemEvent;
 
 import craftZ.CraftZ;
-import craftZ.Kit;
+import craftZ.Kits;
 
 
 public class PlayerDropItemListener implements Listener {
@@ -16,7 +16,7 @@ public class PlayerDropItemListener implements Listener {
 		
 		if (CraftZ.isWorld(event.getPlayer().getWorld())) {
 			
-			if (Kit.isSoulbound(event.getItemDrop().getItemStack())) {
+			if (Kits.isSoulbound(event.getItemDrop().getItemStack())) {
 				event.getItemDrop().remove();
 			}
 			

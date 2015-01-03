@@ -1,9 +1,7 @@
 package craftZ;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
@@ -15,31 +13,38 @@ import org.bukkit.event.Listener;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import craftZ.util.BlockChecker;
 import craftZ.util.EntityChecker;
+import craftZ.worldData.Spawnpoint;
+import craftZ.worldData.WorldData;
+import craftZ.worldData.ZombieSpawnpoint;
 
 
 public class ZombieSpawner implements Listener {
 	
 	private static double autoSpawnTicks = 0;
-	private static Map<String, Integer> cooldowns = new HashMap<String, Integer>();
+	private static List<ZombieSpawnpoint> spawns = new ArrayList<ZombieSpawnpoint>();
 	
 	
 	
 	public static int loadSpawns() {
 		
-		cooldowns.clear();
+		spawns.clear();
 		
 		ConfigurationSection sec = WorldData.get().getConfigurationSection("Data.zombiespawns");
 		if (sec != null) {
 			
 			for (String entry : sec.getKeys(false)) {
-				startSpawning(entry);
+				
+				ConfigurationSection data = sec.getConfigurationSection(entry);
+				
+				ZombieSpawnpoint spawn = new ZombieSpawnpoint(data);
+				spawns.add(spawn);
+				
 			}
 			
 		}
 		
-		return cooldowns.size();
+		return spawns.size();
 		
 	}
 	
@@ -51,31 +56,32 @@ public class ZombieSpawner implements Listener {
 		return "x" + signLoc.getBlockX() + "y" + signLoc.getBlockY() + "z" + signLoc.getBlockZ();
 	}
 	
-	public static ConfigurationSection getData(String signID) {
-		return WorldData.get().getConfigurationSection("Data.zombiespawns." + signID);
+	public static ZombieSpawnpoint getSpawnpoint(String signID) {
+		
+		for (ZombieSpawnpoint spawn : spawns) {
+			if (spawn.getID().equals(signID))
+				return spawn;
+		}
+		
+		return null;
 	}
 	
-	public static ConfigurationSection getData(Location signLoc) {
-		return WorldData.get().getConfigurationSection("Data.zombiespawns." + makeID(signLoc));
+	public static ZombieSpawnpoint getSpawnpoint(Location signLoc) {
+		return getSpawnpoint(makeID(signLoc));
 	}
 	
 	
 	
 	
 	
-	public static void addSpawn(Location signLoc, int maxZombiesIn, int maxZombiesRadius) {
+	public static void addSpawn(Location signLoc, int maxInRadius, int maxRadius) {
 		
 		String id = makeID(signLoc);
-		String path = "Data.zombiespawns." + id;
 		
-		WorldData.get().set(path + ".coords.x", signLoc.getBlockX());
-		WorldData.get().set(path + ".coords.y", signLoc.getBlockY());
-		WorldData.get().set(path + ".coords.z", signLoc.getBlockZ());
-		WorldData.get().set(path + ".max-zombies-in-radius", maxZombiesIn);
-		WorldData.get().set(path + ".max-zombies-radius", maxZombiesRadius);
-		WorldData.save();
+		ZombieSpawnpoint spawn = new ZombieSpawnpoint(id, signLoc, maxRadius, maxInRadius);
+		spawns.add(spawn);
 		
-		startSpawning(id);
+		spawn.save();
 		
 	}
 	
@@ -84,49 +90,10 @@ public class ZombieSpawner implements Listener {
 		WorldData.get().set("Data.zombiespawns." + signID, null);
 		WorldData.save();
 		
-		cooldowns.remove(signID);
+		ZombieSpawnpoint spawn = getSpawnpoint(signID);
+		if (spawn != null)
+			spawns.remove(spawn);
 		
-	}
-	
-	
-	
-	
-	
-	public static void startSpawning(String signID) {
-		cooldowns.put(signID, 0);
-	}
-	
-	
-	
-	
-	
-	public static Zombie spawn(ConfigurationSection data) {
-		
-		if (data == null)
-			return null;
-		
-		Location loc = findSpawn(new Location(CraftZ.world(), data.getInt("coords.x"), data.getInt("coords.y"), data.getInt("coords.z")));
-		
-		int maxZombiesInRadius = data.getInt("max-zombies-in-radius");
-		int maxZombiesRadius = data.getInt("max-zombies-radius");
-		
-		if (loc != null && !EntityChecker.areEntitiesNearby(loc, maxZombiesRadius, EntityType.ZOMBIE, maxZombiesInRadius)) {
-			return spawnAt(loc);
-		} else {
-			return null;
-		}
-		
-	}
-	
-	
-	
-	
-	
-	public static Location findSpawn(Location base) {
-		Location loc = BlockChecker.getSafeSpawnLocationOver(base);
-		if (loc == null)
-			loc = BlockChecker.getSafeSpawnLocationUnder(base);
-		return CraftZ.centerOfBlock(loc);
 	}
 	
 	
@@ -199,30 +166,13 @@ public class ZombieSpawner implements Listener {
 	
 	public static void onServerTick() {
 		
-		FileConfiguration config = ConfigManager.getConfig("config");
-		
-		
-		
-		int interval = config.getInt("Config.mobs.zombies.spawning.interval") * 20;
-		
-		for (Iterator<Entry<String, Integer>> it=cooldowns.entrySet().iterator(); it.hasNext(); ) {
-			
-			Entry<String, Integer> entry = it.next();
-			int v = entry.getValue() + 1;
-			entry.setValue(v);
-			
-			ConfigurationSection data = getData(entry.getKey());
-			
-			if (data == null) {
-				it.remove();
-			} else if (v >= interval) {
-				entry.setValue(0);
-				spawn(data);
-			}
-			
+		for (ZombieSpawnpoint spawn : spawns) {
+			spawn.onServerTick();
 		}
 		
 		
+		
+		FileConfiguration config = ConfigManager.getConfig("config");
 		
 		if (config.getBoolean("Config.mobs.zombies.spawning.enable-auto-spawn")) {
 			
@@ -242,8 +192,8 @@ public class ZombieSpawner implements Listener {
 					if (p == null)
 						break;
 					
-					Location loc = findSpawn(p.getLocation().add(CraftZ.RANDOM.nextInt(128) - 64, 0, CraftZ.RANDOM.nextInt(128) - 64));
-					spawnAt(loc);
+					Location loc = p.getLocation().add(CraftZ.RANDOM.nextInt(128) - 64, 0, CraftZ.RANDOM.nextInt(128) - 64);
+					spawnAt(Spawnpoint.findSafeLocation(loc));
 					
 				}
 				

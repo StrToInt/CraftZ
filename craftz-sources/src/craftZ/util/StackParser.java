@@ -1,5 +1,8 @@
 package craftZ.util;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -14,20 +17,13 @@ public class StackParser {
 		short data = 0;
 		int amount = 1;
 		
-		String[] split = string.split("x", 2);
-		String itemName;
-		if (split.length > 1) {
-			
-			itemName = split[1];
-			
-			try {
-				amount = withAmount ? Integer.parseInt(split[0]) : 1;
-			} catch(NumberFormatException ex) {
-				itemName = split[0] + "x" + split[1];
-			}
-			
-		} else {
-			itemName = split[0];
+		String itemName = string;
+		
+		Pattern pattern = Pattern.compile("^([0-9])x");
+		Matcher matcher = pattern.matcher(string);
+		if (matcher.find()) {
+			amount = Integer.parseInt(matcher.group(1));
+			itemName = string.substring(matcher.end());
 		}
 		
 		if (itemName.startsWith("'"))

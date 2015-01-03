@@ -32,6 +32,8 @@ import craftZ.util.EntityChecker;
 import craftZ.util.ItemRenamer;
 import craftZ.util.Rewarder;
 import craftZ.util.ScoreboardHelper;
+import craftZ.worldData.DeadPlayer;
+import craftZ.worldData.WorldData;
 
 
 public class CraftZ extends JavaPlugin {
@@ -164,7 +166,7 @@ public class CraftZ extends JavaPlugin {
 					int ps = PlayerManager.loadSpawns();
 					int zs = ZombieSpawner.loadSpawns();
 					int dp = DeadPlayer.loadDeadPlayers();
-					Kit.loadKits();
+					Kits.loadKits();
 					
 					info("Loaded " + lc + " chests, " + ps + " player spawns, " + zs + " zombie spawns, " + dp + " dead players");
 					
@@ -794,7 +796,7 @@ public class CraftZ extends JavaPlugin {
 		
 		DeadPlayer.loadDeadPlayers();
 		
-		Kit.loadKits();
+		Kits.loadKits();
 		
 		onDynmapEnabled();
 		

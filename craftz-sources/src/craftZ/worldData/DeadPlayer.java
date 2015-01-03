@@ -1,4 +1,4 @@
-package craftZ;
+package craftZ.worldData;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,6 +11,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.ItemStack;
 
+import craftZ.Kits;
+import craftZ.ZombieSpawner;
 import craftZ.util.StackParser;
 
 
@@ -37,7 +39,7 @@ public class DeadPlayer {
 		
 		ItemStack[] contents = p.getInventory().getContents();
 		for (ItemStack stack : contents) {
-			if (stack != null && stack.getType() != Material.AIR && !Kit.isSoulbound(stack))
+			if (stack != null && stack.getType() != Material.AIR && !Kits.isSoulbound(stack))
 				inventory.add(stack);
 		}
 		armor = p.getInventory().getArmorContents();

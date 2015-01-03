@@ -11,6 +11,7 @@ import org.bukkit.inventory.InventoryHolder;
 
 import craftZ.ChestRefiller;
 import craftZ.CraftZ;
+import craftZ.worldData.LootChest;
 
 
 public class InventoryCloseListener implements Listener {
@@ -29,7 +30,9 @@ public class InventoryCloseListener implements Listener {
 				
 				Location signLoc = ChestRefiller.findSign(chest.getLocation());
 				if (signLoc != null) {
-					ChestRefiller.startRefill(ChestRefiller.getData(signLoc), true);
+					LootChest lootChest = ChestRefiller.getLootChest(signLoc);
+					if (lootChest != null)
+						lootChest.startRefill(true);
 				}
 				
 			}

@@ -9,6 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import craftZ.Kit;
+import craftZ.Kits;
 import craftZ.PlayerManager;
 
 public class CMD_Kit extends CraftZCommand {
@@ -37,8 +38,8 @@ public class CMD_Kit extends CraftZCommand {
 		} else {
 			
 			String kitname = args[0];
-			if (Kit.isAvailable(kitname, p)) {
-				Kit kit = Kit.get(kitname);
+			if (Kits.isAvailable(kitname, p)) {
+				Kit kit = Kits.get(kitname);
 				kit.select(p);
 			}
 			
@@ -71,7 +72,7 @@ public class CMD_Kit extends CraftZCommand {
 		if (!(sender instanceof Player))
 			return options;
 		
-		List<Kit> kits = Kit.getAvailableKits((Player) sender);
+		List<Kit> kits = Kits.getAvailableKits((Player) sender);
 		for (Kit kit : kits) {
 			if (args.length < 1 || kit.getName().startsWith(args[0]))
 				options.add(kit.getName());

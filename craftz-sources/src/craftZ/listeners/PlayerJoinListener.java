@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import craftZ.ConfigManager;
 import craftZ.CraftZ;
 import craftZ.Kit;
+import craftZ.Kits;
 import craftZ.PlayerManager;
 
 public class PlayerJoinListener implements Listener {
@@ -49,7 +50,7 @@ public class PlayerJoinListener implements Listener {
 			
 			p.teleport(PlayerManager.getLobby());
 			
-			Kit kit = Kit.getDefaultKit();
+			Kit kit = Kits.getDefaultKit();
 			if (kit != null) {
 				kit.select(p);
 			}

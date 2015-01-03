@@ -16,6 +16,7 @@ import craftZ.ConfigManager;
 import craftZ.CraftZ;
 import craftZ.PlayerManager;
 import craftZ.ZombieSpawner;
+import craftZ.worldData.LootChest;
 
 public class BlockBreakListener implements Listener {
 	
@@ -108,7 +109,9 @@ public class BlockBreakListener implements Listener {
 					
 					Location signLoc = ChestRefiller.findSign(chest.getLocation());
 					if (signLoc != null) {
-						ChestRefiller.startRefill(ChestRefiller.getData(signLoc), true);
+						LootChest lootChest = ChestRefiller.getLootChest(signLoc);
+						if (lootChest != null)
+							lootChest.startRefill(true);
 					}
 					
 				}

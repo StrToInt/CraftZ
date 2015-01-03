@@ -14,10 +14,10 @@ import org.bukkit.inventory.ItemStack;
 
 import craftZ.ConfigManager;
 import craftZ.CraftZ;
-import craftZ.DeadPlayer;
 import craftZ.PlayerManager;
 import craftZ.util.Rewarder.RewardType;
 import craftZ.util.StackParser;
+import craftZ.worldData.DeadPlayer;
 
 
 public class EntityDeathListener implements Listener {

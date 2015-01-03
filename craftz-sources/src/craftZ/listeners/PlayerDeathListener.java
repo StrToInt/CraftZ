@@ -11,10 +11,11 @@ import org.bukkit.util.Vector;
 
 import craftZ.ConfigManager;
 import craftZ.CraftZ;
-import craftZ.DeadPlayer;
 import craftZ.Kit;
+import craftZ.Kits;
 import craftZ.PlayerManager;
 import craftZ.util.Rewarder.RewardType;
+import craftZ.worldData.DeadPlayer;
 
 
 public class PlayerDeathListener implements Listener {
@@ -92,7 +93,7 @@ public class PlayerDeathListener implements Listener {
 						p.setVelocity(new Vector());
 						p.teleport(PlayerManager.getLobby());
 						
-						Kit kit = Kit.getDefaultKit();
+						Kit kit = Kits.getDefaultKit();
 						if (kit != null) {
 							kit.select(p);
 						}

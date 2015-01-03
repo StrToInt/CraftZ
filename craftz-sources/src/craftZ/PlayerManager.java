@@ -20,16 +20,18 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import craftZ.util.BlockChecker;
 import craftZ.util.Dynmap;
 import craftZ.util.EntityChecker;
 import craftZ.util.ItemRenamer;
 import craftZ.util.PlayerData;
 import craftZ.util.ScoreboardHelper;
+import craftZ.worldData.PlayerSpawnpoint;
+import craftZ.worldData.WorldData;
 
 
 public class PlayerManager {
 	
+	private static List<PlayerSpawnpoint> spawns = new ArrayList<PlayerSpawnpoint>();
 	private static Map<UUID, PlayerData> players = new HashMap<UUID, PlayerData>();
 	private static Map<UUID, Integer> movingPlayers = new HashMap<UUID, Integer>();
 	private static Map<UUID, Long> lastDeaths = new HashMap<UUID, Long>();
@@ -110,34 +112,34 @@ public class PlayerManager {
 			
 		} else {
 			
+			putPlayer(p, true);
+			savePlayer(p);
+			
 			if (ConfigManager.getConfig("config").getBoolean("Config.players.clear-inventory-on-spawn")) {
 				
 				PlayerInventory inv = p.getInventory();
 				
 				for (int i=0; i<inv.getSize(); i++) {
 					ItemStack stack = inv.getItem(i);
-					if (!Kit.isSoulbound(stack))
+					if (!Kits.isSoulbound(stack))
 						inv.setItem(i, null);
 				}
 				
-				if (!Kit.isSoulbound(inv.getHelmet()))
+				if (!Kits.isSoulbound(inv.getHelmet()))
 					inv.setHelmet(null);
-				if (!Kit.isSoulbound(inv.getChestplate()))
+				if (!Kits.isSoulbound(inv.getChestplate()))
 					inv.setChestplate(null);
-				if (!Kit.isSoulbound(inv.getLeggings()))
+				if (!Kits.isSoulbound(inv.getLeggings()))
 					inv.setLeggings(null);
-				if (!Kit.isSoulbound(inv.getBoots()))
+				if (!Kits.isSoulbound(inv.getBoots()))
 					inv.setBoots(null);
 				
 			}
 			
 			p.setHealth(p.getMaxHealth());
 			p.setFoodLevel(20);
+			
 			spawnPlayerAtRandomSpawn(p);
-			
-			putPlayer(p, true);
-			
-			savePlayer(p);
 			
 			p.setLevel(players.get(p.getUniqueId()).thirst);
 			
@@ -183,12 +185,23 @@ public class PlayerManager {
 	
 	public static int loadSpawns() {
 		
-		ConfigurationSection sec = getConfig().getConfigurationSection("Data.playerspawns");
-		if (sec == null)
-			return 0;
-		Set<String> spawnsset = sec.getKeys(false);
+		spawns.clear();
 		
-		return spawnsset.size();
+		ConfigurationSection sec = WorldData.get().getConfigurationSection("Data.playerspawns");
+		if (sec != null) {
+			
+			for (String entry : sec.getKeys(false)) {
+				
+				ConfigurationSection data = sec.getConfigurationSection(entry);
+				
+				PlayerSpawnpoint spawn = new PlayerSpawnpoint(data);
+				spawns.add(spawn);
+				
+			}
+			
+		}
+		
+		return spawns.size();
 		
 	}
 	
@@ -200,12 +213,18 @@ public class PlayerManager {
 		return "x" + signLoc.getBlockX() + "y" + signLoc.getBlockY() + "z" + signLoc.getBlockZ();
 	}
 	
-	public static ConfigurationSection getSpawnData(String signID) {
-		return WorldData.get().getConfigurationSection("Data.playerspawns." + signID);
+	public static PlayerSpawnpoint getSpawnpoint(String signID) {
+		
+		for (PlayerSpawnpoint spawn : spawns) {
+			if (spawn.getID().equals(signID))
+				return spawn;
+		}
+		
+		return null;
 	}
 	
-	public static ConfigurationSection getSpawnData(Location signLoc) {
-		return WorldData.get().getConfigurationSection("Data.playerspawns." + makeSpawnID(signLoc));
+	public static PlayerSpawnpoint getSpawnpoint(Location signLoc) {
+		return getSpawnpoint(makeSpawnID(signLoc));
 	}
 	
 	
@@ -215,13 +234,11 @@ public class PlayerManager {
 	public static void addSpawn(Location signLoc, String name) {
 		
 		String id = makeSpawnID(signLoc);
-		String path = "Data.playerspawns." + id;
 		
-		WorldData.get().set(path + ".coords.x", signLoc.getBlockX());
-		WorldData.get().set(path + ".coords.y", signLoc.getBlockY());
-		WorldData.get().set(path + ".coords.z", signLoc.getBlockZ());
-		WorldData.get().set(path + ".name", name);
-		WorldData.save();
+		PlayerSpawnpoint spawn = new PlayerSpawnpoint(id, signLoc, name);
+		spawns.add(spawn);
+		
+		spawn.save();
 		
 		Dynmap.createMarker(Dynmap.SET_PLAYERSPAWNS, "playerspawn_" + id, "Spawn: " + name, signLoc, Dynmap.ICON_PLAYERSPAWN);
 		
@@ -231,6 +248,10 @@ public class PlayerManager {
 		
 		WorldData.get().set("Data.playerspawns." + signID, null);
 		WorldData.save();
+		
+		PlayerSpawnpoint spawn = getSpawnpoint(signID);
+		if (spawn != null)
+			spawns.remove(spawn);
 		
 		Dynmap.removeMarker(Dynmap.getMarker(Dynmap.SET_PLAYERSPAWNS, "playerspawn_" + signID));
 		
@@ -245,24 +266,13 @@ public class PlayerManager {
 		if (!getConfig().contains("Data.playerspawns"))
 			return;
 		
-		ConfigurationSection sec = getConfig().getConfigurationSection("Data.playerspawns");
-		if (sec == null)
-			return;
-		Set<String> spawnsset = sec.getKeys(false);
-		String[] spawns = spawnsset.toArray(new String[spawnsset.size()]);
-		
-		if (spawns.length < 1)
+		if (spawns.isEmpty())
 			return;
 		
-		int spawn = CraftZ.RANDOM.nextInt(spawns.length);
+		PlayerSpawnpoint spawn = spawns.get(CraftZ.RANDOM.nextInt(spawns.size()));
 		
-		ConfigurationSection ssec = getConfig().getConfigurationSection("Data.playerspawns." + spawns[spawn]);
-		if (ssec == null)
-			return;
-		
-		Location loc = CraftZ.centerOfBlock(CraftZ.world(), ssec.getInt("coords.x"), ssec.getInt("coords.y"), ssec.getInt("coords.z"));
-		p.teleport(BlockChecker.getSafeSpawnLocationOver(loc));
-		p.sendMessage(ChatColor.YELLOW + CraftZ.getMsg("Messages.spawned").replaceAll("%s", ssec.getString("name")));
+		p.teleport(spawn.getSafeLocation());
+		p.sendMessage(ChatColor.YELLOW + CraftZ.getMsg("Messages.spawned").replaceAll("%s", spawn.getName()));
 		
 	}
 	
@@ -741,20 +751,10 @@ public class PlayerManager {
 		
 		if (config.getBoolean("Config.dynmap.show-playerspawns")) {
 			
-			ConfigurationSection sec = getConfig().getConfigurationSection("Data.playerspawns");
-			if (sec != null) {
-				
-				for (String signID : sec.getKeys(false)) {
-					
-					ConfigurationSection data = sec.getConfigurationSection(signID);
-					
-					Location loc = CraftZ.centerOfBlock(CraftZ.world(), data.getInt("coords.x"), data.getInt("coords.y"), data.getInt("coords.z"));
-					String id = "playerspawn_" + signID;
-					String label = "Spawn: " + data.getString("name");
-					Dynmap.createMarker(Dynmap.SET_PLAYERSPAWNS, id, label, loc, Dynmap.ICON_PLAYERSPAWN);
-					
-				}
-				
+			for (PlayerSpawnpoint spawn : spawns) {
+				String id = "playerspawn_" + spawn.getID();
+				String label = "Spawn: " + spawn.getName();
+				Dynmap.createMarker(Dynmap.SET_PLAYERSPAWNS, id, label, spawn.getLocation(), Dynmap.ICON_PLAYERSPAWN);
 			}
 			
 		}
