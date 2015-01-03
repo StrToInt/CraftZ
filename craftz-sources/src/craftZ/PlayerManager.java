@@ -101,21 +101,25 @@ public class PlayerManager {
 			return;
 		}
 		
+		FileConfiguration config = ConfigManager.getConfig("config");
 		
 		
-		p.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 30, 1000));
+		
+		int invulnTime = 0;
 		
 		if (existsInConfig(p) && !forceRespawn) {
 			
 			putPlayer(p, false);
 			p.setLevel(players.get(p.getUniqueId()).thirst);
 			
+			invulnTime = (int) (config.getDouble("Config.players.invulnerability.on-return") * 20);
+			
 		} else {
 			
 			putPlayer(p, true);
 			savePlayer(p);
 			
-			if (ConfigManager.getConfig("config").getBoolean("Config.players.clear-inventory-on-spawn")) {
+			if (config.getBoolean("Config.players.clear-inventory-on-spawn")) {
 				
 				PlayerInventory inv = p.getInventory();
 				
@@ -143,7 +147,11 @@ public class PlayerManager {
 			
 			p.setLevel(players.get(p.getUniqueId()).thirst);
 			
+			invulnTime = (int) (config.getDouble("Config.players.invulnerability.on-spawn") * 20);
+			
 		}
+		
+		p.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, invulnTime, 1000));
 		
 		ScoreboardHelper.addPlayer(p);
 		

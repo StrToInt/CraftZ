@@ -377,6 +377,10 @@ public class CraftZ extends JavaPlugin {
 			def_config.put("Config.players.clear-inventory-on-spawn", true);
 			def_config.put("Config.players.respawn-countdown", 0);
 			
+				// INVULNERABILITY
+				def_config.put("Config.players.invulnerability.on-spawn", 30);
+				def_config.put("Config.players.invulnerability.on-return", 3);
+			
 				// INTERACT
 				def_config.put("Config.players.interact.shearing", false);
 				def_config.put("Config.players.interact.sleeping", false);
