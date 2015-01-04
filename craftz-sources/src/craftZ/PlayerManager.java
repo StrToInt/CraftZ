@@ -533,13 +533,17 @@ public class PlayerManager {
 	
 	
 	
-	public static boolean isInsideOfLobby(Player p) {
+	public static boolean isLobby(Location loc) {
 		
 		Location lobby = getLobby();
 		int radius = ConfigManager.getConfig("config").getInt("Config.world.lobby.radius");
 		
-		return p.getWorld().getName().equals(lobby.getWorld().getName()) && lobby.distance(p.getLocation()) <= radius;
+		return loc.getWorld().getName().equals(lobby.getWorld().getName()) && lobby.distance(loc) <= radius;
 		
+	}
+	
+	public static boolean isInsideOfLobby(Player p) {
+		return isLobby(p.getLocation());
 	}
 	
 	

@@ -93,6 +93,7 @@ public class CraftZ extends JavaPlugin {
 		cmd.registerCommand(new CMD_Spawn(), "spawn");
 		cmd.registerCommand(new CMD_Top(), "top");
 		cmd.registerCommand(new CMD_Kit(), "kit");
+		cmd.registerCommand(new CMD_Kitsadmin(), "kitsadmin");
 		cmd.registerCommand(new CMD_Reload(), "reload");
 		cmd.registerCommand(new CMD_SetLobby(), "setlobby");
 		cmd.registerCommand(new CMD_SetBorder(), "setborder");
@@ -246,6 +247,11 @@ public class CraftZ extends JavaPlugin {
 	public void onDisable() {
 		
 		PlayerManager.saveAllPlayers();
+		
+		for (Player p : Bukkit.getOnlinePlayers()) {
+			if (Kits.isEditing(p))
+				Kits.stopEditing(p, false, false);
+		}
 		
 		info("++=================================++");
 		info("||  Plugin successfully disabled.  ||");
@@ -568,6 +574,7 @@ public class CraftZ extends JavaPlugin {
 			def_messages.put("Messages.help.commands.spawn", "Spawn at a random point inside of the world");
 			def_messages.put("Messages.help.commands.top", "Take a look at the highscores");
 			def_messages.put("Messages.help.commands.kit", "Select the kit you want to spawn with");
+			def_messages.put("Messages.help.commands.kitsadmin", "Create, edit, or delete kits");
 			def_messages.put("Messages.help.commands.reload", "Reload the configuration files");
 			def_messages.put("Messages.help.commands.setlobby", "Configure the lobby");
 			def_messages.put("Messages.help.commands.setborder", "Configure the world border.");
@@ -584,9 +591,19 @@ public class CraftZ extends JavaPlugin {
 			def_messages.put("Messages.cmd.setborder-disable", "The world border is now disabled.");
 			def_messages.put("Messages.cmd.purged", "All %z loaded zombies were purged from the world.");
 			def_messages.put("Messages.cmd.sign", "A pre-written sign was given to you.");
-			def_messages.put("Messages.cmd.top.minutes-survived", "LONGEST TIME SURVIVED");
-			def_messages.put("Messages.cmd.top.zombies-killed", "MOST ZOMBIE KILLS IN 1 LIFE");
-			def_messages.put("Messages.cmd.top.players-killed", "MOST PLAYER KILLS IN 1 LIFE");
+				// TOP
+				def_messages.put("Messages.cmd.top.minutes-survived", "LONGEST TIME SURVIVED");
+				def_messages.put("Messages.cmd.top.zombies-killed", "MOST ZOMBIE KILLS IN 1 LIFE");
+				def_messages.put("Messages.cmd.top.players-killed", "MOST PLAYER KILLS IN 1 LIFE");
+				// KITSADMIN
+				def_messages.put("Messages.cmd.kitsadmin.kit-not-found", "The kit %k could not be found.");
+				def_messages.put("Messages.cmd.kitsadmin.kit-already-exists", "The kit %k already exists.");
+				def_messages.put("Messages.cmd.kitsadmin.kit-created", "The kit %k was successfully created. You can configure it with '/craftz kitsadmin %k edit'.");
+				def_messages.put("Messages.cmd.kitsadmin.kit-editing", "You are now editing the kit %k. When done, enter 'done' in the chat, or 'cancel' to abort.");
+				def_messages.put("Messages.cmd.kitsadmin.kit-already-editing", "You are already editing the kit %k. When done, enter 'done' in the chat, or 'cancel' to abort.");
+				def_messages.put("Messages.cmd.kitsadmin.kit-edited", "Your changes to the kit %k were saved.");
+				def_messages.put("Messages.cmd.kitsadmin.kit-editing-cancelled", "No changes to the kit %k were made.");
+				def_messages.put("Messages.cmd.kitsadmin.kit-deleted", "The kit %k was deleted.");
 			
 			// ERRORS
 			def_messages.put("Messages.errors.must-be-player", "You must be a player to use this command.");
@@ -751,6 +768,8 @@ public class CraftZ extends JavaPlugin {
 		// KITS
 		Map<String, Object> def_kits = new LinkedHashMap<String, Object>();
 		
+		def_kits.put("Kits.settings.soulbound-label", "Soulbound");
+		
 		ConfigManager.newConfig("kits", i, def_kits);
 		ConfigManager.getConfig("kits").options().header(
 				  "++================================================++\n"
@@ -766,7 +785,7 @@ public class CraftZ extends JavaPlugin {
 			kits.addDefault("Kits.kits.nothing.default", true);
 			kits.addDefault("Kits.kits.nothing.items", new LinkedHashMap<Integer, ItemStack>());
 			
-			kits.addDefault("Kits.kits.basic.permission", "craftz.kits.basic");
+			kits.addDefault("Kits.kits.basic.permission", "craftz.kit.basic");
 			Map<String, ItemStack> kits_basic_items = new LinkedHashMap<String, ItemStack>();
 			{
 				kits_basic_items.put("0", new ItemStack(Material.WOOD_SWORD, 1, (short) 40));

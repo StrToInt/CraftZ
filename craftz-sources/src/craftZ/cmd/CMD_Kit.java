@@ -38,8 +38,8 @@ public class CMD_Kit extends CraftZCommand {
 		} else {
 			
 			String kitname = args[0];
-			if (Kits.isAvailable(kitname, p)) {
-				Kit kit = Kits.get(kitname);
+			Kit kit = Kits.match(kitname);
+			if (kit != null && kit.canUse(p)) {
 				kit.select(p);
 			}
 			
@@ -72,9 +72,11 @@ public class CMD_Kit extends CraftZCommand {
 		if (!(sender instanceof Player))
 			return options;
 		
+		String arg = args.length < 1 ? "" : args[0].toLowerCase();
+		
 		List<Kit> kits = Kits.getAvailableKits((Player) sender);
 		for (Kit kit : kits) {
-			if (args.length < 1 || kit.getName().startsWith(args[0]))
+			if (kit.getName().toLowerCase().startsWith(arg))
 				options.add(kit.getName());
 		}
 		

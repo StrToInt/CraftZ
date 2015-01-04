@@ -16,6 +16,7 @@ import org.bukkit.inventory.ItemStack;
 
 import craftZ.ConfigManager;
 import craftZ.CraftZ;
+import craftZ.Kits;
 
 
 public class AsyncPlayerChatListener implements Listener {
@@ -26,8 +27,36 @@ public class AsyncPlayerChatListener implements Listener {
 		if (event.isCancelled() || ConfigManager.getConfig("config").getBoolean("Config.chat.completely-disable-modifications"))
 			return;
 		
-		World world = event.getPlayer().getWorld();
+		Player p = event.getPlayer();
+		
+		World world = p.getWorld();
 		boolean separate = ConfigManager.getConfig("config").getBoolean("Config.chat.separate-craftz-chat");
+		
+		
+		
+		if (Kits.isEditing(p)) {
+			
+			String msg = event.getMessage();
+			
+			if (msg.equalsIgnoreCase("done")) {
+				
+				Kits.stopEditing(p, true, true);
+				event.setCancelled(true);
+				
+				return;
+				
+			} else if (msg.equalsIgnoreCase("cancel")) {
+				
+				Kits.stopEditing(p, true, false);
+				event.setCancelled(true);
+				
+				return;
+				
+			}
+			
+		}
+		
+		
 		
 		if (CraftZ.isWorld(world)) {
 			
@@ -55,13 +84,13 @@ public class AsyncPlayerChatListener implements Listener {
 			
 			
 			
-			for (Player p : event.getRecipients()) {
+			for (Player rp : event.getRecipients()) {
 				
-				boolean send_separate = !separate || ploc.getWorld().equals(p.getWorld());
-				boolean send_range = ploc.getWorld().equals(p.getWorld()) && ploc.distance(p.getLocation()) <= range;
+				boolean send_separate = !separate || ploc.getWorld().equals(rp.getWorld());
+				boolean send_range = ploc.getWorld().equals(rp.getWorld()) && ploc.distance(rp.getLocation()) <= range;
 				
 				boolean send_radio = false;
-				for (Entry<Integer, ? extends ItemStack> entry : p.getInventory().all(Material.WATCH).entrySet()) {
+				for (Entry<Integer, ? extends ItemStack> entry : rp.getInventory().all(Material.WATCH).entrySet()) {
 					ItemStack stack = entry.getValue();
 					if (stack != null && stack.hasItemMeta()) {
 						int ochannel = 0;
@@ -73,7 +102,7 @@ public class AsyncPlayerChatListener implements Listener {
 				}
 				
 				if ((!ranged && send_separate) || (ranged && send_range) || (radio && send_radio))
-					p.sendMessage(s);
+					rp.sendMessage(s);
 			}
 			
 			
@@ -85,9 +114,9 @@ public class AsyncPlayerChatListener implements Listener {
 			event.setCancelled(true);
 			
 			String s = String.format(event.getFormat(), event.getPlayer().getDisplayName(), event.getMessage());
-			for (Player p : event.getRecipients()) {
-				if (!separate || !CraftZ.isWorld(p.getWorld()))
-					p.sendMessage(s);
+			for (Player rp : event.getRecipients()) {
+				if (!separate || !CraftZ.isWorld(rp.getWorld()))
+					rp.sendMessage(s);
 			}
 			
 			CraftZ.info(s);

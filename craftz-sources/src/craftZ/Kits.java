@@ -1,11 +1,6 @@
 package craftZ;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 import org.bukkit.ChatColor;
@@ -15,10 +10,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import craftZ.util.ItemRenamer;
+import craftZ.util.KitEditingSession;
 
 public class Kits {
 	
 	private static Map<String, Kit> kits = new HashMap<String, Kit>();
+	private static Map<UUID, KitEditingSession> editingSessions = new HashMap<UUID, KitEditingSession>();
 	
 	
 	
@@ -34,7 +31,7 @@ public class Kits {
 				ConfigurationSection sec = kits.getConfigurationSection(name);
 				
 				ConfigurationSection itemsSec = sec.getConfigurationSection("items");
-				Map<String, ItemStack> items = new LinkedHashMap<String, ItemStack>();
+				LinkedHashMap<String, ItemStack> items = new LinkedHashMap<String, ItemStack>();
 				
 				if (itemsSec != null) {
 					for (String slot : itemsSec.getKeys(false)) {
@@ -49,6 +46,48 @@ public class Kits {
 		}
 		
 		return Kits.kits.size();
+		
+	}
+	
+	
+	
+	
+	
+	public static void addKit(Kit kit) {
+		kits.put(kit.getName(), kit);
+		kit.save();
+	}
+	
+	public static void removeKit(Kit kit) {
+		
+		for (Iterator<KitEditingSession> it=editingSessions.values().iterator(); it.hasNext(); ) {
+			KitEditingSession session = it.next();
+			if (session.kit == kit) {
+				session.stop(false);
+				it.remove();
+			}
+		}
+		
+		kits.remove(kit.getName());
+		kit.delete();
+		
+	}
+	
+	
+	
+	
+	
+	public static void setDefault(Kit defaultKit) {
+		
+		for (Kit kit : kits.values()) {
+			kit.setDefault(false);
+			kit.save();
+		}
+		
+		if (defaultKit != null) {
+			defaultKit.setDefault(true);
+			defaultKit.save();
+		}
 		
 	}
 	
@@ -75,6 +114,10 @@ public class Kits {
 	
 	
 	
+	public static Collection<Kit> getKits() {
+		return kits.values();
+	}
+	
 	public static List<Kit> getAvailableKits(Player p) {
 		
 		List<Kit> available = new ArrayList<Kit>();
@@ -89,10 +132,6 @@ public class Kits {
 		
 	}
 	
-	public static boolean isAvailable(String kit, Player p) {
-		return kits.containsKey(kit) && kits.get(kit).canUse(p);
-	}
-	
 	
 	
 	
@@ -101,9 +140,18 @@ public class Kits {
 		return kits.get(name);
 	}
 	
+	public static Kit match(String name) {
+		return kits.get(name.toLowerCase());
+	}
 	
 	
 	
+	
+	
+	public static String getSoulboundLabel() {
+		return ChatColor.DARK_PURPLE + CraftZ.getPrefix() + " " + ChatColor.LIGHT_PURPLE
+				+ ConfigManager.getConfig("kits").getString("Kits.settings.soulbound-label");
+	}
 	
 	public static boolean isSoulbound(ItemStack stack) {
 		
@@ -116,12 +164,53 @@ public class Kits {
 		
 		List<String> lore = meta.getLore();
 		
-		return !lore.isEmpty() && lore.get(0).equals(ChatColor.LIGHT_PURPLE + "Soulbound");
+		return !lore.isEmpty() && lore.get(0).equals(getSoulboundLabel());
 		
 	}
 	
 	public static ItemStack setSoulbound(ItemStack stack) {
-		return ItemRenamer.setLore(stack, Arrays.asList(ChatColor.LIGHT_PURPLE + "Soulbound"));
+		return ItemRenamer.setLore(stack, Arrays.asList(getSoulboundLabel()));
+	}
+	
+	
+	
+	
+	
+	public static KitEditingSession startEditing(Player p, Kit kit) {
+		
+		if (isEditing(p))
+			return null;
+		
+		KitEditingSession session = KitEditingSession.start(p, kit);
+		editingSessions.put(p.getUniqueId(), session);
+		
+		return session;
+		
+	}
+	
+	public static void stopEditing(Player p, boolean message, boolean save) {
+		
+		if (!isEditing(p))
+			return;
+		
+		KitEditingSession session = getEditingSession(p);
+		session.stop(save);
+		
+		editingSessions.remove(p.getUniqueId());
+		
+		if (message) {
+			p.sendMessage(ChatColor.AQUA + CraftZ.getMsg("Messages.cmd.kitsadmin." + (save ? "kit-edited" : "kit-editing-cancelled"))
+					.replace("%k", session.kit.getName()));
+		}
+		
+	}
+	
+	public static boolean isEditing(Player p) {
+		return editingSessions.containsKey(p.getUniqueId());
+	}
+	
+	public static KitEditingSession getEditingSession(Player p) {
+		return editingSessions.get(p.getUniqueId());
 	}
 	
 }

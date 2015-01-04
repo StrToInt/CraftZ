@@ -1,5 +1,7 @@
 package craftZ.listeners;
 
+import java.util.Iterator;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -7,6 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import craftZ.ConfigManager;
@@ -59,10 +62,18 @@ public class PlayerDeathListener implements Listener {
 				DeadPlayers.create(p);
 				event.getDrops().clear();
 				
-				p.getInventory().clear();
-				p.getInventory().setArmorContents(null);
+			} else {
+				
+				for (Iterator<ItemStack> it=event.getDrops().iterator(); it.hasNext(); ) {
+					ItemStack stack = it.next();
+					if (stack != null && Kits.isSoulbound(stack))
+						it.remove();
+				}
 				
 			}
+			
+			p.getInventory().clear();
+			p.getInventory().setArmorContents(null);
 			
 			
 			

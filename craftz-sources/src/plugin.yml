@@ -51,6 +51,7 @@ permissions:
       craftz.reload: true
       craftz.setlobby: true
       craftz.setborder: true
+      craftz.kitsadmin: true
       craftz.sign: true
       craftz.remitems: true
       craftz.purge: true
@@ -75,6 +76,9 @@ permissions:
     default: op
   craftz.setborder:
     description: Allows configuring the world border
+    default: op
+  craftz.kitsadmin:
+    description: Allows configuring the available kits
     default: op
   craftz.sign:
     description: Allows you to obtain a pre-written sign
