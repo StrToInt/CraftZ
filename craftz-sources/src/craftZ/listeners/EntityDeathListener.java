@@ -6,6 +6,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -16,8 +17,8 @@ import craftZ.ConfigManager;
 import craftZ.CraftZ;
 import craftZ.PlayerManager;
 import craftZ.util.Rewarder.RewardType;
+import craftZ.util.DeadPlayers;
 import craftZ.util.StackParser;
-import craftZ.worldData.DeadPlayer;
 
 
 public class EntityDeathListener implements Listener {
@@ -41,13 +42,12 @@ public class EntityDeathListener implements Listener {
 				
 				
 				
-				if (DeadPlayer.get(entity.getUniqueId()) != null) {
+				Zombie zombie = (Zombie) entity;
+				List<ItemStack> inventory = DeadPlayers.getInventory(zombie);
+				
+				if (!inventory.isEmpty()) {
 					
-					DeadPlayer dp = DeadPlayer.get(entity.getUniqueId());
-					drops.clear();
-					drops.addAll(dp.getDrops());
-					dp.remove();
-					DeadPlayer.saveDeadPlayers();
+					drops.addAll(inventory);
 					
 				} else if (ConfigManager.getConfig("config").getBoolean("Config.mobs.zombies.enable-drops")) {
 					
@@ -77,24 +77,6 @@ public class EntityDeathListener implements Listener {
 					RewardType.KILL_ZOMBIE.reward(killer);
 					
 				}
-				
-			}
-			
-			
-			
-			if (event.getEntityType() == EntityType.COW) {
-				
-			}
-			
-			if (event.getEntityType() == EntityType.CHICKEN) {
-				
-			}
-			
-			if (event.getEntityType() == EntityType.PIG) {
-				
-			}
-			
-			if (event.getEntityType() == EntityType.SHEEP) {
 				
 			}
 		

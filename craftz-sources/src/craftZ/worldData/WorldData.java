@@ -1,6 +1,6 @@
 package craftZ.worldData;
 
-import static craftZ.CraftZ.info;
+import static craftZ.CraftZ.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,11 +29,11 @@ public class WorldData {
 	
 	public static void setup() {
 		
-		tryUpdate();
-		
 		dir = new File(CraftZ.i.getDataFolder(), "worlds");
 		if (!dir.exists())
 			dir.mkdirs();
+		
+		tryUpdate();
 		
 		for (File file : dir.listFiles()) {
 			if (file.getName().toLowerCase().endsWith(".yml"))
@@ -84,6 +84,12 @@ public class WorldData {
 			save(world);
 		}
 		
+		if (version < 2) {
+			uc_2(world);
+			get(world).set("Data.never-ever-modify.configversion", 2);
+			save(world);
+		}
+		
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -93,7 +99,7 @@ public class WorldData {
 		
 		ConfigurationSection plSec = get(world).getConfigurationSection("Data.players");
 		if (plSec == null) {
-			info(" -  World data for '" + world + "' seems to be empty, no conversion needed");
+			info(" -  No player data exists, no conversion needed");
 			return;
 		}
 		
@@ -101,7 +107,7 @@ public class WorldData {
 			
 			UUID id = Bukkit.getOfflinePlayer(key).getUniqueId();
 			if (id == null) {
-				info(" -  Not able to convert player '" + key + "', he will be deleted");
+				warn(" -  Not able to convert player '" + key + "', he will be deleted");
 				plSec.set(key, null);
 				continue;
 			}
@@ -119,6 +125,18 @@ public class WorldData {
 			plSec.set(key, null);
 			
 		}
+		
+		info(" -  Done");
+		
+	}
+	
+	private static void uc_2(String world) {
+		
+		info("Converting world data for '" + world + "' to version 2");
+		
+		get(world).set("Data.dead", null);
+		
+		info(" -  Done");
 		
 	}
 	

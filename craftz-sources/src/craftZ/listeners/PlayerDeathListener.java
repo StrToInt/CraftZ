@@ -14,8 +14,8 @@ import craftZ.CraftZ;
 import craftZ.Kit;
 import craftZ.Kits;
 import craftZ.PlayerManager;
+import craftZ.util.DeadPlayers;
 import craftZ.util.Rewarder.RewardType;
-import craftZ.worldData.DeadPlayer;
 
 
 public class PlayerDeathListener implements Listener {
@@ -56,7 +56,7 @@ public class PlayerDeathListener implements Listener {
 			
 			if (ConfigManager.getConfig("config").getBoolean("Config.players.spawn-death-zombie")) {
 				
-				DeadPlayer.create(p);
+				DeadPlayers.create(p);
 				event.getDrops().clear();
 				
 				p.getInventory().clear();

@@ -32,7 +32,6 @@ import craftZ.util.EntityChecker;
 import craftZ.util.ItemRenamer;
 import craftZ.util.Rewarder;
 import craftZ.util.ScoreboardHelper;
-import craftZ.worldData.DeadPlayer;
 import craftZ.worldData.WorldData;
 
 
@@ -165,10 +164,9 @@ public class CraftZ extends JavaPlugin {
 					int lc = ChestRefiller.loadChests();
 					int ps = PlayerManager.loadSpawns();
 					int zs = ZombieSpawner.loadSpawns();
-					int dp = DeadPlayer.loadDeadPlayers();
 					Kits.loadKits();
 					
-					info("Loaded " + lc + " chests, " + ps + " player spawns, " + zs + " zombie spawns, " + dp + " dead players");
+					info("Loaded " + lc + " chests, " + ps + " player spawns, " + zs + " zombie spawns");
 					
 					for (Player p : world().getPlayers()) {
 						PlayerJoinListener.joinPlayer(p);
@@ -797,8 +795,6 @@ public class CraftZ extends JavaPlugin {
 		
 		ChestRefiller.loadChests();
 		ZombieSpawner.loadSpawns();
-		
-		DeadPlayer.loadDeadPlayers();
 		
 		Kits.loadKits();
 		
