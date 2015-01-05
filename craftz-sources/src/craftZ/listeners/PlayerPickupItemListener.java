@@ -9,6 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 
+import craftZ.ConfigManager;
 import craftZ.CraftZ;
 import craftZ.util.ItemRenamer;
 
@@ -24,7 +25,8 @@ public class PlayerPickupItemListener implements Listener {
 		
 		if (CraftZ.isWorld(p.getWorld())) {
 			
-			if (stack.getType() == Material.LOG || stack.getType() == Material.LOG_2) {
+			if (ConfigManager.getConfig("config").getBoolean("Config.players.wood-harvesting.enable")
+					&& (stack.getType() == Material.LOG || stack.getType() == Material.LOG_2)) {
 				
 				event.setCancelled(true);
 				
