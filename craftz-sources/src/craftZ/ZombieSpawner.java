@@ -109,9 +109,15 @@ public class ZombieSpawner implements Listener {
 		int maxZombies = ConfigManager.getConfig("config").getInt("Config.mobs.zombies.spawning.maxzombies");
 		
 		if (zombies < maxZombies || maxZombies < 0) {
+			
 			Zombie z = (Zombie) CraftZ.world().spawnEntity(loc, EntityType.ZOMBIE);
+			
+			z.setVillager(false);
+			z.setBaby(false);
 			equipZombie(z);
+			
 			return z;
+			
 		} else {
 			return null;
 		}
@@ -129,34 +135,44 @@ public class ZombieSpawner implements Listener {
 			return;
 		}
 		
-		
-		
 		FileConfiguration config = ConfigManager.getConfig("config");
-		
-		
 		
 		int speed = config.getInt("Config.mobs.zombies.properties.speed-boost");
 		int damage = config.getInt("Config.mobs.zombies.properties.damage-boost");
+		double health = config.getDouble("Config.mobs.zombies.properties.health");
+		
+		if (config.getBoolean("Config.mobs.zombies.spawning.enable-mini-zombies") && CraftZ.RANDOM.nextInt(7) < 1) {
+			
+			zombie.setBaby(true);
+			
+			if (!config.getString("Config.mobs.zombies.baby-properties.speed-boost").equalsIgnoreCase("same"))
+				speed = config.getInt("Config.mobs.zombies.baby-properties.speed-boost");
+			
+			if (!config.getString("Config.mobs.zombies.baby-properties.damage-boost").equalsIgnoreCase("same"))
+				damage = config.getInt("Config.mobs.zombies.baby-properties.damage-boost");
+			
+			if (!config.getString("Config.mobs.zombies.baby-properties.health").equalsIgnoreCase("same"))
+				health = config.getDouble("Config.mobs.zombies.baby-properties.health");
+			
+		}
+		
+		equipZombie(zombie, speed, damage, health);
+		
+	}
+	
+	private static void equipZombie(Zombie zombie, int speed, int damage, double health) {
 		
 		if (speed > 0)
 			zombie.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, speed - 1));
+		else if (speed < 0)
+			zombie.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, Integer.MAX_VALUE, -speed - 1));
+		
 		if (damage > 0)
 			zombie.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, damage - 1));
+		else if (damage < 0)
+			zombie.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, Integer.MAX_VALUE, -damage - 1));
 		
-		
-		
-		if (config.getBoolean("Config.mobs.zombies.spawning.enable-mini-zombies") && CraftZ.RANDOM.nextInt(7) < 1) {
-			zombie.setBaby(true);
-			zombie.removePotionEffect(PotionEffectType.SPEED);
-			zombie.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, Integer.MAX_VALUE, 0));
-		}
-		
-		
-		
-		int health = config.getInt("Config.mobs.zombies.properties.health");
-		if (health > 0) {
-			zombie.setHealth(health);
-		}
+		zombie.setHealth(Math.max(health, 1));
 		
 	}
 	

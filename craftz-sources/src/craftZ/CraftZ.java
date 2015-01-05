@@ -451,10 +451,15 @@ public class CraftZ extends JavaPlugin {
 					def_config.put("Config.mobs.zombies.spawning.enable-mini-zombies", true);
 					def_config.put("Config.mobs.zombies.spawning.auto-spawning-interval", 40);
 					
-					// EFFECTS
+					// PROPERTIES
 					def_config.put("Config.mobs.zombies.properties.speed-boost", 1);
 					def_config.put("Config.mobs.zombies.properties.damage-boost", 0);
 					def_config.put("Config.mobs.zombies.properties.health", 16);
+					
+					// BABY PROPERTIES
+					def_config.put("Config.mobs.zombies.baby-properties.speed-boost", -1);
+					def_config.put("Config.mobs.zombies.baby-properties.damage-boost", "same");
+					def_config.put("Config.mobs.zombies.baby-properties.health", "same");
 					
 //						// ANIMALS
 //						
