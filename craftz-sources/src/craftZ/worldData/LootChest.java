@@ -45,7 +45,7 @@ public class LootChest extends WorldDataObject {
 		
 		this.list = list;
 		this.loc = loc;
-		this.face = face.toLowerCase();
+		this.face = face == null ? "n" : face.toLowerCase();
 		
 	}
 	
