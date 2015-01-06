@@ -23,8 +23,8 @@ import org.bukkit.potion.PotionEffectType;
 import craftZ.util.Dynmap;
 import craftZ.util.EntityChecker;
 import craftZ.util.ItemRenamer;
-import craftZ.util.PlayerData;
 import craftZ.util.ScoreboardHelper;
+import craftZ.worldData.PlayerData;
 import craftZ.worldData.PlayerSpawnpoint;
 import craftZ.worldData.WorldData;
 
@@ -110,8 +110,6 @@ public class PlayerManager {
 		if (existsInConfig(p) && !forceRespawn) {
 			
 			putPlayer(p, false);
-			p.setLevel(players.get(p.getUniqueId()).thirst);
-			
 			invulnTime = (int) (config.getDouble("Config.players.invulnerability.on-return") * 20);
 			
 		} else {
@@ -150,10 +148,12 @@ public class PlayerManager {
 			
 			spawnpoint.spawn(p);
 			
-			p.setLevel(players.get(p.getUniqueId()).thirst);
-			
 			invulnTime = (int) (config.getDouble("Config.players.invulnerability.on-spawn") * 20);
 			
+		}
+		
+		if (config.getBoolean("Config.players.medical.thirst.enable")) {
+			p.setLevel(players.get(p.getUniqueId()).thirst);
 		}
 		
 		p.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, invulnTime, 1000));
@@ -335,6 +335,10 @@ public class PlayerManager {
 	
 	public static void onServerTick(long tickID) {
 		
+		FileConfiguration config = ConfigManager.getConfig("config");
+		
+		
+		
 		for (Iterator<Entry<UUID, PlayerData>> it=players.entrySet().iterator(); it.hasNext(); ) {
 			
 			Entry<UUID, PlayerData> entry = it.next();
@@ -364,12 +368,12 @@ public class PlayerManager {
 			
 			
 			
-			if (survival && ConfigManager.getConfig("config").getBoolean("Config.players.medical.thirst.enable")) {
+			if (survival && config.getBoolean("Config.players.medical.thirst.enable")) {
 				
 				Biome biome = ploc.getBlock().getBiome();
 				boolean desert = biome == Biome.DESERT || biome == Biome.DESERT_HILLS || biome == Biome.DESERT_MOUNTAINS;
-				int ticksNeeded = desert ? ConfigManager.getConfig("config").getInt("Config.players.medical.thirst.ticks-desert")
-						: ConfigManager.getConfig("config").getInt("Config.players.medical.thirst.ticks-normal");
+				int ticksNeeded = desert ? config.getInt("Config.players.medical.thirst.ticks-desert")
+						: config.getInt("Config.players.medical.thirst.ticks-normal");
 				
 				if (tickID % ticksNeeded == 0) {
 					
@@ -380,7 +384,7 @@ public class PlayerManager {
 						p.damage(2);
 					}
 					
-					if (ConfigManager.getConfig("config").getBoolean("Config.players.medical.thirst.show-messages")) {
+					if (config.getBoolean("Config.players.medical.thirst.show-messages")) {
 						
 						if (data.thirst <= 8 && data.thirst > 1 && data.thirst % 2 == 0) {
 							p.sendMessage(ChatColor.RED + CraftZ.getMsg("Messages.thirsty"));
@@ -411,7 +415,7 @@ public class PlayerManager {
 			
 			if (tickID % 30 == 0) {
 				
-				if (survival && ConfigManager.getConfig("config").getBoolean("Config.world.world-border.enable")) {
+				if (survival && config.getBoolean("Config.world.world-border.enable")) {
 					
 					double dmg = getWorldBorderDamage(ploc);
 					
@@ -453,8 +457,7 @@ public class PlayerManager {
 			
 			
 			
-			if (survival && ConfigManager.getConfig("config").getBoolean("Config.mobs.zombies.pull-players-down")
-					&& tickID % 20 == 0 && Math.random() < 0.15) {
+			if (survival && tickID % 20 == 0 && config.getBoolean("Config.mobs.zombies.pull-players-down") && Math.random() < 0.15) {
 				
 				List<Entity> entities = EntityChecker.getNearbyEntities(p, 2.5);
 				for (Entity ent : entities) {

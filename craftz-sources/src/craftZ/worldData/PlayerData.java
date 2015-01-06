@@ -1,4 +1,4 @@
-package craftZ.util;
+package craftZ.worldData;
 
 public class PlayerData {
 	

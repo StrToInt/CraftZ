@@ -15,6 +15,7 @@ import org.bukkit.scoreboard.ScoreboardManager;
 
 import craftZ.ConfigManager;
 import craftZ.PlayerManager;
+import craftZ.worldData.PlayerData;
 
 public class ScoreboardHelper {
 	

@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 
+import craftZ.ConfigManager;
 import craftZ.CraftZ;
 import craftZ.PlayerManager;
 
@@ -23,7 +24,9 @@ public class PlayerItemConsumeListener implements Listener {
 			ItemStack item = event.getItem();
 			Material type = item != null ? item.getType() : Material.AIR;
 			
-			if (type == Material.POTION && item.getDurability() == 0 && PlayerManager.existsInWorld(p)) {
+			if (type == Material.POTION && item.getDurability() == 0
+					&& ConfigManager.getConfig("config").getBoolean("Config.players.medical.thirst.enable")
+					&& PlayerManager.existsInWorld(p)) {
 					
 				if (p.getItemInHand().getAmount() < 2)
 					p.setItemInHand(new ItemStack(Material.AIR, 0));
