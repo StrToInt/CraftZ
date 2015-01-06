@@ -8,7 +8,6 @@ import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
 
 import craftZ.ConfigManager;
 
@@ -86,12 +85,8 @@ public class CMD_SetBorder extends CraftZCommand {
 	
 	
 	@Override
-	public int canExecute(CommandSender sender) {
-		if (!(sender instanceof Player))
-			return MUST_BE_PLAYER;
-		if (!sender.hasPermission("craftz.setborder"))
-			return NO_PERMISSION;
-		return SUCCESS;
+	public CanExecute canExecute(CommandSender sender) {
+		return CanExecute.on(sender).player().permission("craftz.setborder");
 	}
 	
 	
@@ -104,13 +99,7 @@ public class CMD_SetBorder extends CraftZCommand {
 		List<String> options = new ArrayList<String>();
 		
 		if (args.length <= 1) {
-			String arg = args.length == 0 ? "" : args[0].toLowerCase();
-			if ("disable".startsWith(arg))
-				options.add("disable");
-			if ("round".startsWith(arg))
-				options.add("round");
-			if ("square".startsWith(arg))
-				options.add("square");
+			addCompletions(options, args.length == 0 ? "" : args[0], true, "disable", "round", "square");
 		}
 		
 		return options;

@@ -9,7 +9,6 @@ import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 
 import craftZ.CraftZ;
@@ -27,10 +26,6 @@ public class CMD_Purge extends CraftZCommand {
 	
 	@Override
 	public int execute() {
-		
-		if (!isPlayer) {
-			return MUST_BE_PLAYER;
-		}
 		
 		if (hasPerm("craftz.purge")) {
 			
@@ -67,12 +62,8 @@ public class CMD_Purge extends CraftZCommand {
 	
 	
 	@Override
-	public int canExecute(CommandSender sender) {
-		if (!(sender instanceof Player))
-			return MUST_BE_PLAYER;
-		if (!sender.hasPermission("craftz.purge"))
-			return NO_PERMISSION;
-		return SUCCESS;
+	public CanExecute canExecute(CommandSender sender) {
+		return CanExecute.on(sender).permission("craftz.purge");
 	}
 	
 	

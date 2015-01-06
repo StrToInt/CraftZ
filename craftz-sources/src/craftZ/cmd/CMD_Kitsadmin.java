@@ -7,7 +7,6 @@ import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import craftZ.Kit;
@@ -107,12 +106,8 @@ public class CMD_Kitsadmin extends CraftZCommand {
 	
 	
 	@Override
-	public int canExecute(CommandSender sender) {
-		if (!(sender instanceof Player))
-			return MUST_BE_PLAYER;
-		if (!sender.hasPermission("craftz.kitsadmin"))
-			return NO_PERMISSION;
-		return SUCCESS;
+	public CanExecute canExecute(CommandSender sender) {
+		return CanExecute.on(sender).player().permission("craftz.kitsadmin");
 	}
 	
 	
@@ -125,26 +120,9 @@ public class CMD_Kitsadmin extends CraftZCommand {
 		List<String> options = new ArrayList<String>();
 		
 		if (args.length <= 1) {
-			
-			String arg = args.length < 1 ? "" : args[0];
-			for (Kit kit : Kits.getKits()) {
-				if (kit.getName().startsWith(arg))
-					options.add(kit.getName());
-			}
-			
+			addCompletions(options, args.length < 1 ? "" : args[0], true, Stringifier.KIT, Kits.getKits());
 		} else if (args.length == 2) {
-			
-			if ("create".startsWith(args[1]))
-				options.add("create");
-			if ("edit".startsWith(args[1]))
-				options.add("edit");
-			if ("permission".startsWith(args[1]))
-				options.add("permission");
-			if ("setdefault".startsWith(args[1]))
-				options.add("setdefault");
-			if ("delete".startsWith(args[1]))
-				options.add("delete");
-			
+			addCompletions(options, args[1], true, "create", "edit", "permission", "setdefault", "delete");
 		}
 		
 		return options;

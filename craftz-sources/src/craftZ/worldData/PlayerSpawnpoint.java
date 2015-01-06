@@ -1,7 +1,11 @@
 package craftZ.worldData;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
+
+import craftZ.CraftZ;
 
 public class PlayerSpawnpoint extends Spawnpoint {
 	
@@ -42,6 +46,15 @@ public class PlayerSpawnpoint extends Spawnpoint {
 		
 		section.set("name", name);
 		
+	}
+	
+	
+	
+	
+	
+	public void spawn(Player p) {
+		p.teleport(getSafeLocation());
+		p.sendMessage(ChatColor.YELLOW + CraftZ.getMsg("Messages.spawned").replaceAll("%s", name));
 	}
 	
 }

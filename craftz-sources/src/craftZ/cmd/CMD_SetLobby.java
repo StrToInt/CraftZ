@@ -8,7 +8,6 @@ import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
 
 import craftZ.ConfigManager;
 
@@ -71,12 +70,8 @@ public class CMD_SetLobby extends CraftZCommand {
 	
 	
 	@Override
-	public int canExecute(CommandSender sender) {
-		if (!(sender instanceof Player))
-			return MUST_BE_PLAYER;
-		if (!sender.hasPermission("craftz.setlobby"))
-			return NO_PERMISSION;
-		return SUCCESS;
+	public CanExecute canExecute(CommandSender sender) {
+		return CanExecute.on(sender).player().permission("craftz.setlobby");
 	}
 	
 	

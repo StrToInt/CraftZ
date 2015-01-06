@@ -54,7 +54,7 @@ public class CMD_Help extends CraftZCommand {
 	
 	private void printCommand(String label, CraftZCommand cmd) {
 		
-		int exec = cmd.canExecute(sender);
+		int exec = cmd.canExecute(sender).result();
 		
 		if (exec == MUST_BE_PLAYER) {
 			send(ChatColor.GRAY + cmd.getUsage(label));
@@ -71,10 +71,8 @@ public class CMD_Help extends CraftZCommand {
 	
 	
 	@Override
-	public int canExecute(CommandSender sender) {
-		if (!sender.hasPermission("craftz.help"))
-			return NO_PERMISSION;
-		return SUCCESS;
+	public CanExecute canExecute(CommandSender sender) {
+		return CanExecute.on(sender).permission("craftz.help");
 	}
 	
 	

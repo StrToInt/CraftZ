@@ -7,7 +7,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import craftZ.util.ItemRenamer;
@@ -45,12 +44,8 @@ public class CMD_Smasher extends CraftZCommand {
 	
 	
 	@Override
-	public int canExecute(CommandSender sender) {
-		if (!(sender instanceof Player))
-			return MUST_BE_PLAYER;
-		if (!sender.hasPermission("craftz.smasher"))
-			return NO_PERMISSION;
-		return SUCCESS;
+	public CanExecute canExecute(CommandSender sender) {
+		return CanExecute.on(sender).player().permission("craftz.smasher");
 	}
 	
 	

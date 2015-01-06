@@ -53,10 +53,8 @@ public class CMD_RemoveItems extends CraftZCommand {
 	
 	
 	@Override
-	public int canExecute(CommandSender sender) {
-		if (!sender.hasPermission("craftz.remitems") && !sender.hasPermission("craftz.removeitems"))
-			return NO_PERMISSION;
-		return SUCCESS;
+	public CanExecute canExecute(CommandSender sender) {
+		return CanExecute.on(sender).permission("craftz.remitems", "craftz.removeitems");
 	}
 	
 	

@@ -40,7 +40,7 @@ public class PlayerJoinListener implements Listener {
 	public static void joinPlayer(Player p) {
 		
 		if (PlayerManager.existsInConfig(p)) {
-			PlayerManager.loadPlayer(p, false);
+			PlayerManager.loadPlayer(p, false, null);
 		} else {
 			
 			p.setHealth(20);

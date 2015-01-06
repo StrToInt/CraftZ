@@ -54,10 +54,8 @@ public class CMD_Kit extends CraftZCommand {
 	
 	
 	@Override
-	public int canExecute(CommandSender sender) {
-		if (!(sender instanceof Player))
-			return MUST_BE_PLAYER;
-		return SUCCESS;
+	public CanExecute canExecute(CommandSender sender) {
+		return CanExecute.on(sender).player();
 	}
 	
 	
@@ -72,13 +70,7 @@ public class CMD_Kit extends CraftZCommand {
 		if (!(sender instanceof Player))
 			return options;
 		
-		String arg = args.length < 1 ? "" : args[0].toLowerCase();
-		
-		List<Kit> kits = Kits.getAvailableKits((Player) sender);
-		for (Kit kit : kits) {
-			if (kit.getName().toLowerCase().startsWith(arg))
-				options.add(kit.getName());
-		}
+		addCompletions(options, args.length < 1 ? "" : args[0], true, Stringifier.KIT, Kits.getAvailableKits((Player) sender));
 		
 		return options;
 		

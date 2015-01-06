@@ -95,7 +95,7 @@ public class PlayerManager {
 	
 	
 	
-	public static void loadPlayer(Player p, boolean forceRespawn) {
+	public static void loadPlayer(Player p, boolean forceRespawn, PlayerSpawnpoint spawnpoint) {
 		
 		if (hasPlayer(p) && !forceRespawn) {
 			return;
@@ -115,6 +115,11 @@ public class PlayerManager {
 			invulnTime = (int) (config.getDouble("Config.players.invulnerability.on-return") * 20);
 			
 		} else {
+			
+			if (spawnpoint == null && (spawnpoint = randomSpawn()) == null) {
+				p.sendMessage(ChatColor.RED + CraftZ.getMsg("Messages.errors.no-player-spawns"));
+				return;
+			}
 			
 			putPlayer(p, true);
 			savePlayer(p);
@@ -143,7 +148,7 @@ public class PlayerManager {
 			p.setHealth(p.getMaxHealth());
 			p.setFoodLevel(20);
 			
-			spawnPlayerAtRandomSpawn(p);
+			spawnpoint.spawn(p);
 			
 			p.setLevel(players.get(p.getUniqueId()).thirst);
 			
@@ -269,18 +274,27 @@ public class PlayerManager {
 	
 	
 	
-	public static void spawnPlayerAtRandomSpawn(Player p) {
+	public static List<PlayerSpawnpoint> getSpawns() {
+		return Collections.unmodifiableList(spawns);
+	}
+	
+	public static PlayerSpawnpoint matchSpawn(String name) {
 		
-		if (!getConfig().contains("Data.playerspawns"))
-			return;
+		for (PlayerSpawnpoint spawn : spawns) {
+			if (spawn.getName().equalsIgnoreCase(name.trim()))
+				return spawn;
+		}
+		
+		return null;
+		
+	}
+	
+	public static PlayerSpawnpoint randomSpawn() {
 		
 		if (spawns.isEmpty())
-			return;
+			return null;
 		
-		PlayerSpawnpoint spawn = spawns.get(CraftZ.RANDOM.nextInt(spawns.size()));
-		
-		p.teleport(spawn.getSafeLocation());
-		p.sendMessage(ChatColor.YELLOW + CraftZ.getMsg("Messages.spawned").replaceAll("%s", spawn.getName()));
+		return spawns.get(CraftZ.RANDOM.nextInt(spawns.size()));
 		
 	}
 	
@@ -305,13 +319,13 @@ public class PlayerManager {
 	
 	public static PlayerData getData(UUID p) {
 		if (!players.containsKey(p))
-			loadPlayer(p(p), false);
+			loadPlayer(p(p), false, null);
 		return players.get(p);
 	}
 	
 	public static PlayerData getData(Player p) {
 		if (!players.containsKey(p.getUniqueId()))
-			loadPlayer(p, false);
+			loadPlayer(p, false, null);
 		return players.get(p.getUniqueId());
 	}
 	

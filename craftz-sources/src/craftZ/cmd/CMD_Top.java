@@ -78,10 +78,8 @@ public class CMD_Top extends CraftZCommand {
 	
 	
 	@Override
-	public int canExecute(CommandSender sender) {
-		if (!sender.hasPermission("craftz.top"))
-			return NO_PERMISSION;
-		return SUCCESS;
+	public CanExecute canExecute(CommandSender sender) {
+		return CanExecute.on(sender).permission("craftz.top");
 	}
 	
 	

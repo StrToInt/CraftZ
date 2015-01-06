@@ -619,6 +619,8 @@ public class CraftZ extends JavaPlugin {
 			def_messages.put("Messages.errors.not-in-lobby", "You are too far away from the lobby.");
 			def_messages.put("Messages.errors.respawn-countdown", "Please wait another %t seconds until respawning.");
 			def_messages.put("Messages.errors.cmd-not-existing", "This command does not exist. Use '/craftz' to display the help.");
+			def_messages.put("Messages.errors.no-player-spawns", "No player spawnpoints are defined!");
+			def_messages.put("Messages.errors.player-spawn-not-found", "The spawnpoint you tried spawning at does not exist.");
 			
 		ConfigManager.newConfig("messages", i, def_messages);
 		ConfigManager.getConfig("messages").options().header(

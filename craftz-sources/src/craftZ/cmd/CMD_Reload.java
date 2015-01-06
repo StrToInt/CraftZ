@@ -39,10 +39,8 @@ public class CMD_Reload extends CraftZCommand {
 	
 	
 	@Override
-	public int canExecute(CommandSender sender) {
-		if (!sender.hasPermission("craftz.reload"))
-			return NO_PERMISSION;
-		return SUCCESS;
+	public CanExecute canExecute(CommandSender sender) {
+		return CanExecute.on(sender).permission("craftz.reload");
 	}
 	
 	
