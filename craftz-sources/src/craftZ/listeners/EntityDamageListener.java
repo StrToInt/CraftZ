@@ -17,10 +17,12 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.metadata.MetadataValue;
 
 import craftZ.ConfigManager;
 import craftZ.CraftZ;
 import craftZ.PlayerManager;
+import craftZ.util.EntityChecker;
 import craftZ.util.ItemRenamer;
 
 
@@ -76,7 +78,8 @@ public class EntityDamageListener implements Listener {
 				
 				
 				
-                if (event.getEntityType() == EntityType.ARMOR_STAND && event.getCause() == DamageCause.FIRE_TICK) {
+				MetadataValue isFireplace;
+                if (type == EntityType.ARMOR_STAND && (isFireplace = EntityChecker.getMeta(entity, "isFireplace")) != null && isFireplace.asBoolean()) {
                     event.setCancelled(true); // prevent armor stand from burning away before it's "done"
                 }
                 

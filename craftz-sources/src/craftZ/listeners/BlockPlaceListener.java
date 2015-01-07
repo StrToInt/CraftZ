@@ -30,6 +30,8 @@ public class BlockPlaceListener implements Listener {
 			
 			if (!allow) {
 				event.setCancelled(true);
+			} else if ((type == Material.LOG || type == Material.LOG_2) && ConfigManager.getConfig("config").getBoolean("Config.players.campfires.enable")) {
+				event.setCancelled(true);
 			}
 			
 		}
