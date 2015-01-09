@@ -4,6 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 
 import craftZ.CraftZ;
@@ -77,6 +78,34 @@ public class StackParser {
 		return (a ? stack.getAmount() + "x" : "") + (a ? "'" : "") + stack.getType().name().toLowerCase() + (a ? "'" : "")
 				+ (stack.getDurability() != 0 ? ":" + stack.getDurability() : "");
 		
+	}
+	
+	
+	
+	
+	
+	public static boolean compare(ItemStack stack, String string, boolean withAmount) {
+		
+		ItemStack other = fromString(string, withAmount);
+		if (other == null)
+			return stack == null;
+		
+		boolean a = stack.getType() == other.getType() && stack.getData().equals(other.getData());
+		if (withAmount)
+			return a && stack.getAmount() == other.getAmount();
+		else
+			return a;
+		
+	}
+	
+	public static boolean compare(Material type, short durability, String string) {
+		ItemStack other = fromString(string, false);
+		return other != null && other.getType() == type && other.getDurability() == durability;
+	}
+	
+	@SuppressWarnings("deprecation")
+	public static boolean compare(Block block, String string) {
+		return compare(block.getType(), block.getData(), string);
 	}
 	
 }

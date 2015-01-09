@@ -390,14 +390,19 @@ public class CraftZ extends JavaPlugin {
 				def_config.put("Config.players.interact.sleeping", false);
 				def_config.put("Config.players.interact.block-breaking", false);
 				def_config.put("Config.players.interact.block-placing", false);
-				def_config.put("Config.players.interact.allow-spiderweb-placing", true);
+				def_config.put("Config.players.interact.placeable-blocks", new String[] { "web" });
+				def_config.put("Config.players.interact.breakable-blocks", makeConfigMap(new String[] {
+						"web", "brown_mushroom", "red_mushroom"
+				}, new String[] {
+						"shears", "all", "all"
+				}));
 				
 				// WOOD HARVESTING
 				def_config.put("Config.players.wood-harvesting.enable", true);
 				
-                // CAMPFIRES
-                def_config.put("Config.players.campfires.enable", true);
-                def_config.put("Config.players.campfires.tick-duration", 600);
+				// CAMPFIRES
+				def_config.put("Config.players.campfires.enable", true);
+				def_config.put("Config.players.campfires.tick-duration", 600);
 				
 				// WEAPONS
 				def_config.put("Config.players.weapons.grenade-enable", true);
@@ -535,6 +540,9 @@ public class CraftZ extends JavaPlugin {
 				config.set("Config.change-item-names.names." + spl[0], spl[1]);
 			}
 		}
+		
+		if (config.contains("Config.players.interact.allow-spiderweb-placing"))
+			config.set("Config.players.interact.allow-spiderweb-placing", null);
 		
 		ConfigManager.saveConfig("config");
 		
@@ -924,6 +932,21 @@ public class CraftZ extends JavaPlugin {
 	
 	private static double centerOf(int coord) {
 		return coord < 0 ? coord - 0.5 : coord + 0.5;
+	}
+	
+	
+	
+	
+	
+	public static <K, V> LinkedHashMap<K, V> makeConfigMap(K[] keys, V[] values) {
+		
+		LinkedHashMap<K, V> map = new LinkedHashMap<K, V>();
+		
+		for (int i=0; i<keys.length; i++)
+			map.put(keys[i], values[i]);
+		
+		return map;
+		
 	}
 	
 	
