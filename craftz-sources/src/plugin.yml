@@ -57,6 +57,7 @@ permissions:
       craftz.purge: true
       craftz.smasher: true
       craftz.instantRespawn: true
+      craftz.spawn.choose: true
   
   craftz.help:
     description: Allows you to see the help
@@ -99,6 +100,11 @@ permissions:
   craftz.instantRespawn:
     description: Allows you to respawn immediately.
     default: op
+  craftz.spawn.choose:
+    description: Allows you to select the spawnpoint where you want to apppear.
+    default: op
+    children:
+      craftz.spawn: true
     
   craftz.build:
     description: Allows you to place and destroy blocks, item frames etc

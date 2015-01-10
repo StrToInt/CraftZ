@@ -167,17 +167,21 @@ public class LootChest extends WorldDataObject {
 		
 		List<String> defs = getLootDefinitions(true);
 		
-		int min = ChestRefiller.getPropertyInt("min-stacks-filled", list);
-		int max = ChestRefiller.getPropertyInt("max-stacks-filled", list);
-		
-		for (int i = 0, n = (1 + min + CraftZ.RANDOM.nextInt(max - min)); i < n; i++) {
-			ItemStack stack = StackParser.fromString(defs.get(CraftZ.RANDOM.nextInt(defs.size())), false);
-			if (stack != null) {
-				chest.getInventory().addItem(stack);
+		if (!defs.isEmpty()) {
+			
+			int min = ChestRefiller.getPropertyInt("min-stacks-filled", list);
+			int max = ChestRefiller.getPropertyInt("max-stacks-filled", list);
+			
+			for (int i = 0, n = (1 + min + (max > min ? CraftZ.RANDOM.nextInt(max - min) : 0)); i < n; i++) {
+				ItemStack stack = StackParser.fromString(defs.get(CraftZ.RANDOM.nextInt(defs.size())), false);
+				if (stack != null) {
+					chest.getInventory().addItem(stack);
+				}
 			}
+			
+			ItemRenamer.convertInventory(chest, ItemRenamer.DEFAULT_MAP);
+			
 		}
-		
-		ItemRenamer.convertInventory(chest, ItemRenamer.DEFAULT_MAP);
 		
 		if (ChestRefiller.getPropertyBoolean("despawn", list)) {
 			despawnCountdown = ChestRefiller.getPropertyInt("time-before-despawn", list) * 20;
