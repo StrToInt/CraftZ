@@ -1,13 +1,21 @@
 package craftZ.listeners;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.*;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.Minecart;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -27,6 +35,15 @@ import craftZ.util.BlockChecker;
 
 public class PlayerInteractListener implements Listener {
 	
+	private static Vector[] fireplaceRotations = {
+			new Vector(0, 0, 1),
+			new Vector(1, 0, 1),
+			new Vector(1, 0, 0),
+			new Vector(1, 0, -1)
+	};
+	
+	
+	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		
@@ -44,10 +61,7 @@ public class PlayerInteractListener implements Listener {
 					
 					if (ConfigManager.getConfig("config").getBoolean("Config.players.medical.enable-sugar-speed-effect") == true) {
 						
-						if (p.getItemInHand().getAmount() < 2)
-							p.setItemInHand(new ItemStack(Material.AIR, 0));
-						else
-							p.getItemInHand().setAmount(p.getItemInHand().getAmount() - 1);
+						reduceInHand(p);
 						
 						p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 3600, 2));
 						p.playSound(p.getLocation(), Sound.BURP, 1, 1);
@@ -62,10 +76,7 @@ public class PlayerInteractListener implements Listener {
 					
 					if (ConfigManager.getConfig("config").getBoolean("Config.players.medical.bleeding.heal-with-paper")) {
 						
-						if (p.getItemInHand().getAmount() < 2)
-							p.setItemInHand(new ItemStack(Material.AIR, 0));
-						else
-							p.getItemInHand().setAmount(p.getItemInHand().getAmount() - 1);
+						reduceInHand(p);
 						
 						PlayerManager.getData(p).bleeding = false;
 						p.playSound(p.getLocation(), Sound.ENDERDRAGON_WINGS, 1, 1);
@@ -82,10 +93,7 @@ public class PlayerInteractListener implements Listener {
 					if (ConfigManager.getConfig("config").getBoolean("Config.players.medical.healing.heal-with-rosered")
 							&& !ConfigManager.getConfig("config").getBoolean("Config.players.medical.healing.only-healing-others")) {
 						
-						if (p.getItemInHand().getAmount() < 2)
-							p.setItemInHand(new ItemStack(Material.AIR, 0));
-						else
-							p.getItemInHand().setAmount(p.getItemInHand().getAmount() - 1);
+						reduceInHand(p);
 						
 						p.setHealth(20);
 						//p.playSound(p.getLocation(), Sound.BREATH, 1, 1);
@@ -101,10 +109,7 @@ public class PlayerInteractListener implements Listener {
 					
 					if (ConfigManager.getConfig("config").getBoolean("Config.players.medical.poisoning.cure-with-limegreen")) {
 						
-						if (p.getItemInHand().getAmount() < 2)
-							p.setItemInHand(new ItemStack(Material.AIR, 0));
-						else
-							p.getItemInHand().setAmount(p.getItemInHand().getAmount() - 1);
+						reduceInHand(p);
 						
 						PlayerManager.getData(p).poisoned = false;
 						p.playSound(p.getLocation(), Sound.ZOMBIE_UNFECT, 1, 1);
@@ -120,10 +125,7 @@ public class PlayerInteractListener implements Listener {
 					
 					if (ConfigManager.getConfig("config").getBoolean("Config.players.medical.bonebreak.heal-with-blazerod")) {
 						
-						if (p.getItemInHand().getAmount() < 2)
-							p.setItemInHand(new ItemStack(Material.AIR, 0));
-						else
-							p.getItemInHand().setAmount(p.getItemInHand().getAmount() - 1);
+						reduceInHand(p);
 						
 						PlayerManager.getData(p).bonesBroken = false;
 						p.removePotionEffect(PotionEffectType.SLOW);
@@ -147,34 +149,17 @@ public class PlayerInteractListener implements Listener {
 							&& block.getRelative(BlockFace.UP).getType() == Material.AIR
 							&& event.getBlockFace() == BlockFace.UP) {
                         
-						if (p.getItemInHand().getAmount() < 2)
-							p.setItemInHand(new ItemStack(Material.AIR, 0));
-						else
-							p.getItemInHand().setAmount(p.getItemInHand().getAmount() - 1);
+						reduceInHand(p);
 						
-						Long campfireTicks = ConfigManager.getConfig("config").getLong("Config.players.campfires.tick-duration");
-						Vector[] fireplaceRotations = { new Vector(0, 0, 1), new Vector(1, 0, 1), new Vector(1, 0, 0), new Vector(1, 0, -1) };
-						final List<ArmorStand> fireplace = new ArrayList<ArmorStand>();
-						for (Vector rot : fireplaceRotations) {
-							ArmorStand as = (ArmorStand) block.getWorld().spawnEntity(block.getLocation().add(.5, -0.3, .5).setDirection(rot), EntityType.ARMOR_STAND);
-							as.setGravity(false);
-							as.setFireTicks(campfireTicks.intValue());
-							as.setMetadata("isFireplace", new FixedMetadataValue(CraftZ.i, true));
-							fireplace.add(as);
+						Location loc = block.getLocation(), standLoc = loc.clone().add(.5, -0.3, .5);
+						int campfireTicks = ConfigManager.getConfig("config").getInt("Config.players.campfires.tick-duration"),
+								lightAfter = fireplaceRotations.length * 4;
+						
+						for (int i=0; i<fireplaceRotations.length; i++) {
+							int delay = i * 4;
+							constructFireplaceStand(standLoc, fireplaceRotations[i], delay, lightAfter - delay, campfireTicks);
 						}
-						
-						final Block torch = block.getLocation().add(0, 1, 0).getBlock();
-						torch.setType(Material.TORCH);
-						torch.setMetadata("isFireplace", new FixedMetadataValue(CraftZ.i, true));
-						Bukkit.getScheduler().scheduleSyncDelayedTask(CraftZ.i, new Runnable() {
-							@Override
-							public void run() {
-								torch.setType(Material.AIR);
-								for (ArmorStand as : fireplace) {
-									as.remove();
-								}
-							}
-						}, campfireTicks);
+						constructFireplaceTorch(loc.add(0, 1, 0), lightAfter, campfireTicks);
 						
 						p.sendMessage(CraftZ.getMsg("Messages.placed-fireplace"));
 						
@@ -275,6 +260,83 @@ public class PlayerInteractListener implements Listener {
 			}
 		
 		}
+		
+	}
+	
+	
+	
+	
+	
+	private void reduceInHand(Player p) {
+		
+		if (p.getGameMode() == GameMode.CREATIVE)
+			return;
+		
+		ItemStack hand = p.getItemInHand();
+		if (hand == null)
+			return;
+		
+		if (hand.getAmount() == 1)
+			p.setItemInHand(null);
+		else
+			hand.setAmount(hand.getAmount()-1);
+		
+	}
+	
+	
+	
+	
+	
+	private void constructFireplaceStand(final Location loc, final Vector rotation, int delay, final int lightAfter, final int fireTicks) {
+		
+		Bukkit.getScheduler().runTaskLater(CraftZ.i, new Runnable() {
+			@Override
+			public void run() {
+				
+				final ArmorStand stand = (ArmorStand) loc.getWorld().spawnEntity(loc.setDirection(rotation), EntityType.ARMOR_STAND);
+				stand.setGravity(false);
+				stand.setBasePlate(false);
+				stand.setMetadata("isFireplace", new FixedMetadataValue(CraftZ.i, true));
+				
+				Bukkit.getScheduler().runTaskLater(CraftZ.i, new Runnable() {
+					@Override
+					public void run() {
+						
+						stand.setFireTicks(fireTicks);
+						
+						Bukkit.getScheduler().runTaskLater(CraftZ.i, new Runnable() {
+							@Override
+							public void run() {
+								stand.remove();
+							}
+						}, fireTicks);
+						
+					}
+				}, lightAfter);
+				
+			}
+		}, delay);
+		
+	}
+	
+	private void constructFireplaceTorch(final Location loc, int delay, final int fireTicks) {
+		
+		Bukkit.getScheduler().runTaskLater(CraftZ.i, new Runnable() {
+			@Override
+			public void run() {
+				
+				final Block torch = loc.getBlock();
+				torch.setType(Material.TORCH);
+				torch.setMetadata("isFireplace", new FixedMetadataValue(CraftZ.i, true));
+				Bukkit.getScheduler().scheduleSyncDelayedTask(CraftZ.i, new Runnable() {
+					@Override
+					public void run() {
+						torch.setType(Material.AIR);
+					}
+				}, fireTicks);
+				
+			}
+		}, delay);
 		
 	}
 	
