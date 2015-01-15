@@ -172,7 +172,9 @@ public class ZombieSpawner implements Listener {
 		else if (damage < 0)
 			zombie.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, Integer.MAX_VALUE, -damage - 1));
 		
-		zombie.setHealth(Math.max(health, 1));
+		health = Math.max(health, 1);
+		zombie.setMaxHealth(health);
+		zombie.setHealth(health);
 		
 	}
 	
