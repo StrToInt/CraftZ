@@ -73,7 +73,7 @@ public class PlayerDeathListener implements Listener {
 			}
 			
 			p.getInventory().clear();
-			p.getInventory().setArmorContents(null);
+			p.getInventory().setArmorContents(new ItemStack[4]);
 			
 			
 			
@@ -94,7 +94,7 @@ public class PlayerDeathListener implements Listener {
 				
 				p.sendMessage(ChatColor.GREEN + kickMsg);
 				
-				p.setHealth(20);
+				p.setHealth(p.getMaxHealth());
 				p.setFoodLevel(20);
 				
 				Bukkit.getScheduler().runTask(CraftZ.i, new Runnable() {

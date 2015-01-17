@@ -43,10 +43,16 @@ public class PlayerJoinListener implements Listener {
 			PlayerManager.loadPlayer(p, false, null);
 		} else {
 			
-			p.setHealth(20);
-			p.setFoodLevel(20);
-			p.getInventory().clear();
-			p.getInventory().setArmorContents(new ItemStack[] { null, null, null, null });
+			boolean reset = ConfigManager.getConfig("config").getBoolean("Config.players.reset-in-lobby");
+			
+			if (reset || p.getHealth() == 0)
+				p.setHealth(p.getMaxHealth());
+			
+			if (reset) {
+				p.setFoodLevel(20);
+				p.getInventory().clear();
+				p.getInventory().setArmorContents(new ItemStack[4]);
+			}
 			
 			p.teleport(PlayerManager.getLobby());
 			

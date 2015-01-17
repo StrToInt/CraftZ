@@ -378,6 +378,7 @@ public class CraftZ extends JavaPlugin {
 			def_config.put("Config.players.kick-on-death", false);
 			def_config.put("Config.players.spawn-death-zombie", true);
 			def_config.put("Config.players.send-kill-stat-messages", true);
+			def_config.put("Config.players.reset-in-lobby", true);
 			def_config.put("Config.players.clear-inventory-on-spawn", true);
 			def_config.put("Config.players.respawn-countdown", 0);
 			
