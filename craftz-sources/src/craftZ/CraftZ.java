@@ -399,6 +399,7 @@ public class CraftZ extends JavaPlugin {
 				
 				// WOOD HARVESTING
 				def_config.put("Config.players.wood-harvesting.enable", true);
+				def_config.put("Config.players.wood-harvesting.log-limit", 1);
 				
 				// CAMPFIRES
 				def_config.put("Config.players.campfires.enable", true);

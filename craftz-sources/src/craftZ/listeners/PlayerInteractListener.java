@@ -11,6 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
@@ -22,6 +23,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
@@ -49,17 +51,21 @@ public class PlayerInteractListener implements Listener {
 		
 		if (CraftZ.isWorld(event.getPlayer().getWorld())) {
 			
+			FileConfiguration config = ConfigManager.getConfig("config");
+			
 			Player p = event.getPlayer();
 			ItemStack item = event.getItem();
 			Material type = event.getMaterial();
 			Action action = event.getAction();
 			Block block = event.getClickedBlock();
 			
+			
+			
 			if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
 				
 				if (type == Material.SUGAR) {
 					
-					if (ConfigManager.getConfig("config").getBoolean("Config.players.medical.enable-sugar-speed-effect") == true) {
+					if (config.getBoolean("Config.players.medical.enable-sugar-speed-effect") == true) {
 						
 						reduceInHand(p);
 						
@@ -74,7 +80,7 @@ public class PlayerInteractListener implements Listener {
 				
 				if (type == Material.PAPER) {
 					
-					if (ConfigManager.getConfig("config").getBoolean("Config.players.medical.bleeding.heal-with-paper")) {
+					if (config.getBoolean("Config.players.medical.bleeding.heal-with-paper")) {
 						
 						reduceInHand(p);
 						
@@ -90,8 +96,8 @@ public class PlayerInteractListener implements Listener {
 				
 				if (type == Material.INK_SACK && item.getDurability() == 1) {
 					
-					if (ConfigManager.getConfig("config").getBoolean("Config.players.medical.healing.heal-with-rosered")
-							&& !ConfigManager.getConfig("config").getBoolean("Config.players.medical.healing.only-healing-others")) {
+					if (config.getBoolean("Config.players.medical.healing.heal-with-rosered")
+							&& !config.getBoolean("Config.players.medical.healing.only-healing-others")) {
 						
 						reduceInHand(p);
 						
@@ -107,7 +113,7 @@ public class PlayerInteractListener implements Listener {
 				
 				if (type == Material.INK_SACK && item.getDurability() == 10) {
 					
-					if (ConfigManager.getConfig("config").getBoolean("Config.players.medical.poisoning.cure-with-limegreen")) {
+					if (config.getBoolean("Config.players.medical.poisoning.cure-with-limegreen")) {
 						
 						reduceInHand(p);
 						
@@ -123,7 +129,7 @@ public class PlayerInteractListener implements Listener {
 				
 				if (type == Material.BLAZE_ROD) {
 					
-					if (ConfigManager.getConfig("config").getBoolean("Config.players.medical.bonebreak.heal-with-blazerod")) {
+					if (config.getBoolean("Config.players.medical.bonebreak.heal-with-blazerod")) {
 						
 						reduceInHand(p);
 						
@@ -142,8 +148,7 @@ public class PlayerInteractListener implements Listener {
 			
             if (action == Action.RIGHT_CLICK_BLOCK) {
             	
-				if ((type == Material.LOG || type == Material.LOG_2)
-						&& ConfigManager.getConfig("config").getBoolean("Config.players.campfires.enable")) {
+				if ((type == Material.LOG || type == Material.LOG_2) && config.getBoolean("Config.players.campfires.enable")) {
                 	
 					if (!block.getType().isTransparent() && block.getType().isSolid() && block.getType() != Material.CHEST
 							&& block.getRelative(BlockFace.UP).getType() == Material.AIR
@@ -152,7 +157,7 @@ public class PlayerInteractListener implements Listener {
 						reduceInHand(p);
 						
 						Location loc = block.getLocation(), standLoc = loc.clone().add(.5, -0.3, .5);
-						int campfireTicks = ConfigManager.getConfig("config").getInt("Config.players.campfires.tick-duration"),
+						int campfireTicks = config.getInt("Config.players.campfires.tick-duration"),
 								lightAfter = fireplaceRotations.length * 4;
 						
 						for (int i=0; i<fireplaceRotations.length; i++) {
@@ -175,11 +180,13 @@ public class PlayerInteractListener implements Listener {
                 
 				if (type == Material.IRON_AXE) {
 					
-					if (ConfigManager.getConfig("config").getBoolean("Config.players.wood-harvesting.enable")) {
+					if (config.getBoolean("Config.players.wood-harvesting.enable")) {
 						
 						if (BlockChecker.isTree(block)) {
 							
-							if (!p.getInventory().contains(Material.LOG) && !p.getInventory().contains(Material.LOG_2)) {
+							int limit = config.getInt("Config.players.wood-harvesting.log-limit");
+							PlayerInventory inv = p.getInventory();
+							if (limit < 1 || (!inv.contains(Material.LOG, limit) && !inv.contains(Material.LOG_2, limit))) {
 								
 								Item itm = p.getWorld().dropItem(p.getLocation(), new ItemStack(Material.LOG, 1));
 								itm.setPickupDelay(0);
@@ -201,7 +208,7 @@ public class PlayerInteractListener implements Listener {
 				
 				if (type == Material.MINECART) {
 					
-					if (ConfigManager.getConfig("config").getBoolean("Config.vehicles.enable")) {
+					if (config.getBoolean("Config.vehicles.enable")) {
 						
 						Location locForMinecart = block.getLocation();
 						locForMinecart.add(new Vector(0, 1, 0));
@@ -230,7 +237,7 @@ public class PlayerInteractListener implements Listener {
 			
 			
 			
-			if (type == Material.WATCH && ConfigManager.getConfig("config").getBoolean("Config.chat.ranged.enable-radio")) {
+			if (type == Material.WATCH && config.getBoolean("Config.chat.ranged.enable-radio")) {
 				
 				ItemMeta meta = item.getItemMeta();
 				
@@ -250,7 +257,7 @@ public class PlayerInteractListener implements Listener {
 					channel--;
 				}
 				
-				channel = Math.max(Math.min(channel, ConfigManager.getConfig("config").getInt("Config.chat.ranged.radio-channels")), 1);
+				channel = Math.max(Math.min(channel, config.getInt("Config.chat.ranged.radio-channels")), 1);
 				
 				meta.setLore(Arrays.asList("" + ChatColor.RESET + ChatColor.GRAY + "Channel " + channel));
 				item.setItemMeta(meta);

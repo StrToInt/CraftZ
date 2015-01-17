@@ -7,6 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 
 
 public class BlockChecker {
@@ -66,9 +67,16 @@ public class BlockChecker {
 			above = countBlocksAbove(loc, Material.LOG, Material.LOG_2);
 		int logs = below + above;
 		
-		Material leaves = loc.clone().add(0, above + 1, 0).getBlock().getType();
-		return logs > 2 && (leaves == Material.LEAVES || leaves == Material.LEAVES_2);
+		Location top = loc.clone().add(0, above, 0);
+		return logs > 2 && (isLeaves(top, BlockFace.UP)
+				|| (isLeaves(top, BlockFace.NORTH) && isLeaves(top, BlockFace.SOUTH)
+						&& isLeaves(top, BlockFace.EAST) && isLeaves(top, BlockFace.WEST)));
 		
+	}
+	
+	private static boolean isLeaves(Location loc, BlockFace face) {
+		Material t = loc.getBlock().getRelative(face).getType();
+		return t == Material.LEAVES || t == Material.LEAVES_2;
 	}
 	
 	
@@ -97,7 +105,7 @@ public class BlockChecker {
 		loc = loc.clone();
 		List<Material> tlist = Arrays.asList(types);
 		
-		for (int i=loc.getBlockY(); i>=0; i--) {
+		for (int i=loc.getBlockY()-1; i>=0; i--) {
 			loc.setY(i);
 			if (tlist.contains(loc.getBlock().getType()))
 				amount++;
@@ -115,7 +123,7 @@ public class BlockChecker {
 		loc = loc.clone();
 		List<Material> tlist = Arrays.asList(types);
 		
-		for (int i=loc.getBlockY(); i<256; i++) {
+		for (int i=loc.getBlockY()+1; i<256; i++) {
 			loc.setY(i);
 			if (tlist.contains(loc.getBlock().getType()))
 				amount++;
