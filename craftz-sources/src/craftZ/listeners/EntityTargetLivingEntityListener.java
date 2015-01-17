@@ -23,6 +23,9 @@ public class EntityTargetLivingEntityListener implements Listener {
 			
 			Zombie z = (Zombie) event.getEntity();
 			Player p = (Player) event.getTarget();
+			if (!PlayerManager.isPlaying(p) || !z.getWorld().getName().equals(p.getWorld().getName()))
+				return;
+			
 			float vis = PlayerManager.getVisibility(p);
 			
 			double blocks = 50 * vis;
