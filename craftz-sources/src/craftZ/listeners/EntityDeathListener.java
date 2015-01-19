@@ -3,6 +3,7 @@ package craftZ.listeners;
 import java.util.List;
 
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -32,7 +33,13 @@ public class EntityDeathListener implements Listener {
 			EntityType type = event.getEntityType();
 			List<ItemStack> drops = event.getDrops();
 			
-			event.setDroppedExp(0);
+			FileConfiguration config = ConfigManager.getConfig("config");
+			
+			
+			
+			if (config.getBoolean("Config.mobs.no-exp-drops")) {
+				event.setDroppedExp(0);
+			}
 			
 			
 			
@@ -49,13 +56,13 @@ public class EntityDeathListener implements Listener {
 					
 					drops.addAll(inventory);
 					
-				} else if (ConfigManager.getConfig("config").getBoolean("Config.mobs.zombies.enable-drops")) {
+				} else if (config.getBoolean("Config.mobs.zombies.enable-drops")) {
 					
-					List<String> items = ConfigManager.getConfig("config").getStringList("Config.mobs.zombies.drops.items");
+					List<String> items = config.getStringList("Config.mobs.zombies.drops.items");
 					
 					for (String itemString : items) {
 						ItemStack item = StackParser.fromString(itemString, true);
-						if (item != null && CraftZ.RANDOM.nextDouble() < ConfigManager.getConfig("config").getDouble("Config.mobs.zombies.drops.chance"))
+						if (item != null && CraftZ.RANDOM.nextDouble() < config.getDouble("Config.mobs.zombies.drops.chance"))
 							drops.add(item);
 					}
 					
@@ -69,7 +76,7 @@ public class EntityDeathListener implements Listener {
 					
 					PlayerManager.getData(killer).zombiesKilled++;
 					
-					if (ConfigManager.getConfig("config").getBoolean("Config.players.send-kill-stat-messages")) {
+					if (config.getBoolean("Config.players.send-kill-stat-messages")) {
 						killer.sendMessage(ChatColor.GOLD + CraftZ.getMsg("Messages.killed.zombie")
 								.replaceAll("%k", "" + PlayerManager.getData(killer).zombiesKilled));
 					}

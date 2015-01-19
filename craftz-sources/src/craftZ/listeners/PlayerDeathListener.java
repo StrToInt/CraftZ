@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -30,7 +31,9 @@ public class PlayerDeathListener implements Listener {
 		
 		if (CraftZ.isWorld(p.getWorld())) {
 			
-			if (ConfigManager.getConfig("config").getBoolean("Config.chat.modify-death-messages"))
+			FileConfiguration config = ConfigManager.getConfig("config");
+			
+			if (config.getBoolean("Config.chat.modify-death-messages"))
 				event.setDeathMessage(p.getDisplayName() + " was killed.");
 			
 			
@@ -41,7 +44,7 @@ public class PlayerDeathListener implements Listener {
 				
 				PlayerManager.getData(killer).playersKilled++;
 				
-				if (ConfigManager.getConfig("config").getBoolean("Config.players.send-kill-stat-messages")) {
+				if (config.getBoolean("Config.players.send-kill-stat-messages")) {
 					killer.sendMessage(ChatColor.GOLD + CraftZ.getMsg("Messages.killed.player").replaceAll("%p", p.getDisplayName())
 							.replaceAll("%k", "" + PlayerManager.getData(killer).playersKilled));
 				}
@@ -52,12 +55,14 @@ public class PlayerDeathListener implements Listener {
 			
 			
 			
-			event.setDroppedExp(0);
-			event.setKeepLevel(false);
+			if (config.getBoolean("Config.players.medical.thirst.enable") || config.getBoolean("Config.mobs.no-exp-drops")) {
+				event.setDroppedExp(0);
+				event.setKeepLevel(false);
+			}
 			
 			
 			
-			if (ConfigManager.getConfig("config").getBoolean("Config.players.spawn-death-zombie")) {
+			if (config.getBoolean("Config.players.spawn-death-zombie")) {
 				
 				DeadPlayers.create(p);
 				event.getDrops().clear();
@@ -88,7 +93,7 @@ public class PlayerDeathListener implements Listener {
 			
 			
 			
-			if (ConfigManager.getConfig("config").getBoolean("Config.players.kick-on-death") && !p.hasPermission("craftz.bypassKick")) {
+			if (config.getBoolean("Config.players.kick-on-death") && !p.hasPermission("craftz.bypassKick")) {
 				p.kickPlayer(kickMsg);
 			} else {
 				

@@ -381,6 +381,7 @@ public class CraftZ extends JavaPlugin {
 			def_config.put("Config.players.reset-in-lobby", true);
 			def_config.put("Config.players.clear-inventory-on-spawn", true);
 			def_config.put("Config.players.respawn-countdown", 0);
+			def_config.put("Config.players.enable-visibility-bar", true);
 			
 				// INVULNERABILITY
 				def_config.put("Config.players.invulnerability.on-spawn", 30);
@@ -415,21 +416,26 @@ public class CraftZ extends JavaPlugin {
 				
 				// MEDICAL
 				def_config.put("Config.players.medical.enable-sugar-speed-effect", true);
-				def_config.put("Config.players.medical.bleeding.enable", true);
-				def_config.put("Config.players.medical.bleeding.chance", 0.04);
-				def_config.put("Config.players.medical.bleeding.heal-with-paper", true);
-				def_config.put("Config.players.medical.healing.heal-with-rosered", true);
-				def_config.put("Config.players.medical.healing.only-healing-others", true);
-				def_config.put("Config.players.medical.poisoning.enable", true);
-				def_config.put("Config.players.medical.poisoning.chance", 0.04);
-				def_config.put("Config.players.medical.poisoning.cure-with-limegreen", true);
-				def_config.put("Config.players.medical.bonebreak.enable", true);
-				def_config.put("Config.players.medical.bonebreak.height", 6);
-				def_config.put("Config.players.medical.bonebreak.heal-with-blazerod", true);
-				def_config.put("Config.players.medical.thirst.enable", true);
-				def_config.put("Config.players.medical.thirst.ticks-normal", 1200);
-				def_config.put("Config.players.medical.thirst.ticks-desert", 800);
-				def_config.put("Config.players.medical.thirst.show-messages", true);
+					// BLEEDING
+					def_config.put("Config.players.medical.bleeding.enable", true);
+					def_config.put("Config.players.medical.bleeding.chance", 0.04);
+					def_config.put("Config.players.medical.bleeding.heal-with-paper", true);
+					// HEALING
+					def_config.put("Config.players.medical.healing.heal-with-rosered", true);
+					def_config.put("Config.players.medical.healing.only-healing-others", true);
+					// POISONING
+					def_config.put("Config.players.medical.poisoning.enable", true);
+					def_config.put("Config.players.medical.poisoning.chance", 0.04);
+					def_config.put("Config.players.medical.poisoning.cure-with-limegreen", true);
+					// BONEBREAK
+					def_config.put("Config.players.medical.bonebreak.enable", true);
+					def_config.put("Config.players.medical.bonebreak.height", 6);
+					def_config.put("Config.players.medical.bonebreak.heal-with-blazerod", true);
+					// THIRST
+					def_config.put("Config.players.medical.thirst.enable", true);
+					def_config.put("Config.players.medical.thirst.ticks-normal", 1200);
+					def_config.put("Config.players.medical.thirst.ticks-desert", 800);
+					def_config.put("Config.players.medical.thirst.show-messages", true);
 				
 				// REWARDS
 				def_config.put("Config.players.rewards.enable", false);
@@ -440,6 +446,7 @@ public class CraftZ extends JavaPlugin {
 			
 			// MOBS
 			def_config.put("Config.mobs.blood-particles-when-damaged", true);
+			def_config.put("Config.mobs.no-exp-drops", true);
 			def_config.put("Config.mobs.allow-all-plugin-spawning", true);
 			def_config.put("Config.mobs.completely-disable-spawn-control", false);
 			

@@ -595,6 +595,9 @@ public class PlayerManager {
 	
 	public static void updateVisibility(Player p) {
 		
+		if (!ConfigManager.getConfig("config").getBoolean("Config.players.enable-visibility-bar"))
+			return;
+		
 		float visibility = 0.32F;
 		
 		boolean mov = isMoving(p);
@@ -620,7 +623,7 @@ public class PlayerManager {
 	}
 	
 	public static float getVisibility(Player p) {
-		return p.getExp();
+		return ConfigManager.getConfig("config").getBoolean("Config.players.enable-visibility-bar") ? p.getExp() : 0.6f;
 	}
 	
 	
