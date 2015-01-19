@@ -192,28 +192,23 @@ public class ZombieSpawner implements Listener {
 		
 		FileConfiguration config = ConfigManager.getConfig("config");
 		
-		if (config.getBoolean("Config.mobs.zombies.spawning.enable-auto-spawn")) {
+		if (config.getBoolean("Config.mobs.zombies.spawning.enable-auto-spawn") && PlayerManager.getPlayerCount() > 0) {
 			
 			autoSpawnTicks++;
 			
-			if (PlayerManager.getPlayerCount() > 0) {
+			double perPlayer = config.getDouble("Config.mobs.zombies.spawning.auto-spawning-interval") * 20 / PlayerManager.getPlayerCount();
+			while (autoSpawnTicks >= perPlayer) {
 				
-				double perPlayer = config.getDouble("Config.mobs.zombies.spawning.auto-spawning-interval") * 20 / PlayerManager.getPlayerCount();
+				autoSpawnTicks -= perPlayer;
+				if (autoSpawnTicks < 0)
+					autoSpawnTicks = 0;
 				
-				while (autoSpawnTicks >= perPlayer) {
-					
-					autoSpawnTicks -= perPlayer;
-					if (autoSpawnTicks < 0)
-						autoSpawnTicks = 0;
-					
-					Player p = PlayerManager.randomPlayer();
-					if (p == null)
-						break;
-					
-					Location loc = p.getLocation().add(CraftZ.RANDOM.nextInt(128) - 64, 0, CraftZ.RANDOM.nextInt(128) - 64);
-					spawnAt(Spawnpoint.findSafeLocation(loc));
-					
-				}
+				Player p = PlayerManager.randomPlayer();
+				if (p == null)
+					break;
+				
+				Location loc = p.getLocation().add(CraftZ.RANDOM.nextInt(128) - 64, 0, CraftZ.RANDOM.nextInt(128) - 64);
+				spawnAt(Spawnpoint.findSafeLocation(loc));
 				
 			}
 			
