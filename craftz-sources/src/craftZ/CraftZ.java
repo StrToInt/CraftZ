@@ -88,10 +88,10 @@ public class CraftZ extends JavaPlugin {
 		addModule(dynmap = new Dynmap(this));
 		dynmap.unpackIcons("loot_military", "loot_military-epic", "loot_civilian", "loot_farms", "loot_industrial", "loot_barracks", "loot_medical");
 		
+		addModule(scoreboardHelper = new ScoreboardHelper(this));
 		addModule(chestRefiller = new ChestRefiller(this));
 		addModule(zombieSpawner = new ZombieSpawner(this));
 		addModule(playerManager = new PlayerManager(this));
-		addModule(scoreboardHelper = new ScoreboardHelper(this));
 		addModule(kits = new Kits(this));
 		addModule(deadPlayers = new DeadPlayers(this));
 		

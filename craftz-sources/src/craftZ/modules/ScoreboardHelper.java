@@ -28,7 +28,20 @@ public class ScoreboardHelper extends Module {
 	
 	public ScoreboardHelper(CraftZ craftZ) {
 		super(craftZ);
-		manager = craftZ.getServer().getScoreboardManager();
+	}
+	
+	
+	
+	
+	
+	@Override
+	public void onLoad(boolean configReload) {
+		
+		if (configReload)
+			return;
+		
+		manager = getCraftZ().getServer().getScoreboardManager();
+		
 	}
 	
 	

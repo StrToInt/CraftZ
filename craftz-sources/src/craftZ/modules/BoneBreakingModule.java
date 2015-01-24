@@ -111,7 +111,7 @@ public class BoneBreakingModule extends Module {
 		
 		PlayerData data = getData(p);
 		
-		if (isSurvival(p) && tick % 200 == 0 && data.bonesBroken) {
+		if (isSurvival(p) && tick % 10 == 0 && data.bonesBroken) {
 			p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 40, 2));
 		}
 		

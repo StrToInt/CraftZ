@@ -125,6 +125,7 @@ public class SignModule extends Module {
 								
 								if (b == null) {
 									signNotComplete(p, block, "No chest was found.");
+									return;
 								} else {
 									chestY = b.getY();
 									lines[2] = lines[2].replace("%c%", "" + chestY);
@@ -151,7 +152,9 @@ public class SignModule extends Module {
 								if (!getCraftZ().getChestRefiller().getLists().contains(lootList)) {
 									signNotComplete(p, block, "The loot list '" + lootList + "' is not defined.");
 								} else {
-									getCraftZ().getChestRefiller().addChest(ChestRefiller.makeID(loc), lootList, loc.clone(), l3f);
+									Location cloc = loc.clone();
+									cloc.setY(chestY);
+									getCraftZ().getChestRefiller().addChest(ChestRefiller.makeID(loc), lootList, cloc, l3f);
 									p.sendMessage(success);
 								}
 								
