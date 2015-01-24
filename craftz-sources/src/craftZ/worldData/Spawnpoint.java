@@ -1,10 +1,12 @@
 package craftZ.worldData;
 
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 
 import craftZ.CraftZ;
 import craftZ.util.BlockChecker;
+
 
 public class Spawnpoint extends WorldDataObject {
 	
@@ -12,8 +14,8 @@ public class Spawnpoint extends WorldDataObject {
 	
 	
 	
-	public Spawnpoint(ConfigurationSection data) {
-		this(data.getName(), new Location(CraftZ.world(), data.getInt("coords.x"), data.getInt("coords.y"), data.getInt("coords.z")));
+	public Spawnpoint(World world, ConfigurationSection data) {
+		this(data.getName(), new Location(world, data.getInt("coords.x"), data.getInt("coords.y"), data.getInt("coords.z")));
 	}
 	
 	public Spawnpoint(String id, Location loc) {

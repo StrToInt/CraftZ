@@ -9,13 +9,14 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
 
+import craftZ.CraftZ;
 import craftZ.util.ItemRenamer;
 
 
 public class CMD_Smasher extends CraftZCommand {
 	
-	public CMD_Smasher() {
-		super("{cmd}");
+	public CMD_Smasher(CraftZ craftZ) {
+		super(craftZ, "{cmd}");
 	}
 	
 	

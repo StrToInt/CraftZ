@@ -9,13 +9,14 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
 
-import craftZ.Kit;
-import craftZ.Kits;
+import craftZ.CraftZ;
+import craftZ.modules.Kit;
+import craftZ.modules.Kits;
 
 public class CMD_Kitsadmin extends CraftZCommand {
 	
-	public CMD_Kitsadmin() {
-		super("{cmd} <kit> create | edit | permission <perm>/- | setdefault | delete");
+	public CMD_Kitsadmin(CraftZ craftZ) {
+		super(craftZ, "{cmd} <kit> create | edit | permission <perm>/- | setdefault | delete");
 	}
 	
 	
@@ -37,8 +38,10 @@ public class CMD_Kitsadmin extends CraftZCommand {
 			return NO_PERMISSION;
 		}
 		
+		Kits kits = getCraftZ().getKits();
+		
 		String kitname = args[0];
-		Kit kit = Kits.match(kitname);
+		Kit kit = kits.match(kitname);
 		String action = args[1];
 		
 		if (action.equalsIgnoreCase("create")) { // ======== create
@@ -46,8 +49,8 @@ public class CMD_Kitsadmin extends CraftZCommand {
 			if (kit != null) {
 				send(ChatColor.RED + getMsg("Messages.cmd.kitsadmin.kit-already-exists").replace("%k", kitname));
 			} else {
-				kit = new Kit(kitname, false, null, new LinkedHashMap<String, ItemStack>());
-				Kits.addKit(kit);
+				kit = new Kit(kits, kitname, false, null, new LinkedHashMap<String, ItemStack>());
+				kits.addKit(kit);
 				send(ChatColor.AQUA + getMsg("Messages.cmd.kitsadmin.kit-created").replace("%k", kitname));
 			}
 			
@@ -55,11 +58,11 @@ public class CMD_Kitsadmin extends CraftZCommand {
 			
 			if (kit == null) {
 				send(ChatColor.RED + getMsg("Messages.cmd.kitsadmin.kit-not-found").replace("%k", kitname));
-			} else if (Kits.isEditing(p)) {
+			} else if (kits.isEditing(p)) {
 				send(ChatColor.RED + getMsg("Messages.cmd.kitsadmin.kit-already-editing")
-						.replace("%k", Kits.getEditingSession(p).kit.getName()));
+						.replace("%k", kits.getEditingSession(p).kit.getName()));
 			} else {
-				Kits.startEditing(p, kit);
+				kits.startEditing(p, kit);
 				send(ChatColor.AQUA + getMsg("Messages.cmd.kitsadmin.kit-editing").replace("%k", kitname));
 			}
 			
@@ -82,7 +85,7 @@ public class CMD_Kitsadmin extends CraftZCommand {
 			if (kit == null) {
 				send(ChatColor.RED + getMsg("Messages.cmd.kitsadmin.kit-not-found").replace("%k", kitname));
 			} else {
-				Kits.setDefault(kit);
+				kits.setDefault(kit);
 				send(ChatColor.AQUA + getMsg("Messages.cmd.kitsadmin.kit-edited").replace("%k", kitname));
 			}
 			
@@ -91,7 +94,7 @@ public class CMD_Kitsadmin extends CraftZCommand {
 			if (kit == null) {
 				send(ChatColor.RED + getMsg("Messages.cmd.kitsadmin.kit-not-found").replace("%k", kitname));
 			} else {
-				Kits.removeKit(kit);
+				kits.removeKit(kit);
 				send(ChatColor.AQUA + getMsg("Messages.cmd.kitsadmin.kit-deleted").replace("%k", kitname));
 			}
 			
@@ -120,7 +123,7 @@ public class CMD_Kitsadmin extends CraftZCommand {
 		List<String> options = new ArrayList<String>();
 		
 		if (args.length <= 1) {
-			addCompletions(options, args.length < 1 ? "" : args[0], true, Stringifier.KIT, Kits.getKits());
+			addCompletions(options, args.length < 1 ? "" : args[0], true, Stringifier.KIT, getCraftZ().getKits().getKits());
 		} else if (args.length == 2) {
 			addCompletions(options, args[1], true, "create", "edit", "permission", "setdefault", "delete");
 		}

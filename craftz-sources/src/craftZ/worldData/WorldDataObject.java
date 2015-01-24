@@ -3,6 +3,7 @@ package craftZ.worldData;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
+
 public abstract class WorldDataObject {
 	
 	private final String id;

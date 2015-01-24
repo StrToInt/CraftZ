@@ -12,8 +12,8 @@ import craftZ.CraftZ;
 
 public class CMD_Reload extends CraftZCommand {
 	
-	public CMD_Reload() {
-		super("{cmd}");
+	public CMD_Reload(CraftZ craftZ) {
+		super(craftZ, "{cmd}");
 	}
 	
 	
@@ -24,7 +24,7 @@ public class CMD_Reload extends CraftZCommand {
 	public int execute() {
 		
 		if (hasPerm("craftz.reload")) {
-			CraftZ.reloadConfigs();
+			getCraftZ().reloadConfigs();
 			send(ChatColor.GREEN + getMsg("Messages.cmd.reloaded"));
 		} else {
 			return NO_PERMISSION;

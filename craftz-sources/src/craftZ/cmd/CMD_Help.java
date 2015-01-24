@@ -13,8 +13,8 @@ import craftZ.CraftZ;
 
 public class CMD_Help extends CraftZCommand {
 
-	public CMD_Help() {
-		super("");
+	public CMD_Help(CraftZ craftZ) {
+		super(craftZ, "");
 	}
 	
 	
@@ -30,7 +30,7 @@ public class CMD_Help extends CraftZCommand {
 			
 			send("" + ChatColor.GOLD + ChatColor.BOLD + getMsg("Messages.help.title"));
 			
-			CraftZCommandManager cmdm = CraftZ.getCommandManager();
+			CraftZCommandManager cmdm = getCraftZ().getCommandManager();
 			Set<String> cmds = cmdm.getCommands(false);
 			
 			printCommand("help", this);

@@ -17,15 +17,16 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import craftZ.ChestRefiller;
-import craftZ.ConfigManager;
 import craftZ.CraftZ;
+import craftZ.modules.ChestRefiller;
 import craftZ.util.EntityChecker;
 import craftZ.util.ItemRenamer;
 import craftZ.util.StackParser;
 
+
 public class LootChest extends WorldDataObject {
 	
+	private final ChestRefiller refiller;
 	private final String list;
 	private final Location loc;
 	private final String face;
@@ -33,15 +34,17 @@ public class LootChest extends WorldDataObject {
 	
 	
 	
-	public LootChest(ConfigurationSection data) {
-		this(data.getName(), data.getString("list"),
-				new Location(CraftZ.world(), data.getInt("coords.x"), data.getInt("coords.y"), data.getInt("coords.z")),
+	public LootChest(ChestRefiller refiller, ConfigurationSection data) {
+		this(refiller, data.getName(), data.getString("list"),
+				new Location(refiller.world(), data.getInt("coords.x"), data.getInt("coords.y"), data.getInt("coords.z")),
 				data.getString("face"));
 	}
 	
-	public LootChest(String id, String list, Location loc, String face) {
+	public LootChest(ChestRefiller refiller, String id, String list, Location loc, String face) {
 		
 		super(id);
+		
+		this.refiller = refiller;
 		
 		this.list = list;
 		this.loc = loc;
@@ -105,7 +108,7 @@ public class LootChest extends WorldDataObject {
 	
 	public List<String> getLootDefinitions(boolean multiplied) {
 		
-		List<String> defs = ConfigManager.getConfig("loot").getStringList("Loot.lists." + list);
+		List<String> defs = refiller.getConfig("loot").getStringList("Loot.lists." + list);
 		List<String> ndefs = new ArrayList<String>();
 		if (!multiplied || defs == null)
 			return ndefs;
@@ -141,7 +144,7 @@ public class LootChest extends WorldDataObject {
 		
 		Block block = loc.getBlock();
 		
-		double mpv = ChestRefiller.getPropertyInt("max-player-vicinity", list);
+		double mpv = refiller.getPropertyInt("max-player-vicinity", list);
 		if ((mpv > 0 && EntityChecker.areEntitiesNearby(loc, mpv, EntityType.PLAYER, 1))
 				|| (!placeChest && block.getType() != Material.CHEST)) {
 			startRefill(false);
@@ -158,8 +161,8 @@ public class LootChest extends WorldDataObject {
 		for (Iterator<ItemStack> it=inv.iterator(); it.hasNext(); ) { // do not refill if already full
 			ItemStack stack = it.next();
 			if (stack != null && stack.getType() != Material.AIR) {
-				if (ChestRefiller.getPropertyBoolean("despawn", list)) {
-					despawnCountdown = ChestRefiller.getPropertyInt("time-before-despawn", list) * 20;
+				if (refiller.getPropertyBoolean("despawn", list)) {
+					despawnCountdown = refiller.getPropertyInt("time-before-despawn", list) * 20;
 				}
 				return;
 			}
@@ -169,8 +172,8 @@ public class LootChest extends WorldDataObject {
 		
 		if (!defs.isEmpty()) {
 			
-			int min = ChestRefiller.getPropertyInt("min-stacks-filled", list);
-			int max = ChestRefiller.getPropertyInt("max-stacks-filled", list);
+			int min = refiller.getPropertyInt("min-stacks-filled", list);
+			int max = refiller.getPropertyInt("max-stacks-filled", list);
 			
 			for (int i = 0, n = (1 + min + (max > min ? CraftZ.RANDOM.nextInt(max - min) : 0)); i < n; i++) {
 				ItemStack stack = StackParser.fromString(defs.get(CraftZ.RANDOM.nextInt(defs.size())), false);
@@ -183,8 +186,8 @@ public class LootChest extends WorldDataObject {
 			
 		}
 		
-		if (ChestRefiller.getPropertyBoolean("despawn", list)) {
-			despawnCountdown = ChestRefiller.getPropertyInt("time-before-despawn", list) * 20;
+		if (refiller.getPropertyBoolean("despawn", list)) {
+			despawnCountdown = refiller.getPropertyInt("time-before-despawn", list) * 20;
 		}
 		
 	}
@@ -195,7 +198,7 @@ public class LootChest extends WorldDataObject {
 	
 	public void startRefill(boolean drop) {
 		
-		refillCountdown = ChestRefiller.getPropertyInt("time-before-refill", list) * 20;
+		refillCountdown = refiller.getPropertyInt("time-before-refill", list) * 20;
 		
 		Block block = loc.getBlock();
 		
@@ -218,7 +221,7 @@ public class LootChest extends WorldDataObject {
 		if (despawnCountdown > 0) {
 			
 			if (--despawnCountdown <= 0)
-				startRefill(ChestRefiller.getPropertyBoolean("drop-on-despawn", list));
+				startRefill(refiller.getPropertyBoolean("drop-on-despawn", list));
 			
 		} else if (refillCountdown > 0) {
 			

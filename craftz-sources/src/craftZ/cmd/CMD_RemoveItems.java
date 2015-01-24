@@ -14,8 +14,8 @@ import craftZ.CraftZ;
 
 public class CMD_RemoveItems extends CraftZCommand {
 	
-	public CMD_RemoveItems() {
-		super("{cmd}");
+	public CMD_RemoveItems(CraftZ craftZ) {
+		super(craftZ, "{cmd}");
 	}
 	
 	
@@ -28,7 +28,7 @@ public class CMD_RemoveItems extends CraftZCommand {
 		if (hasPerm("craftz.remitems") || hasPerm("craftz.removeitems")) {
 			
 			int ri = 0;
-			List<Entity> entities = CraftZ.world().getEntities();
+			List<Entity> entities = world().getEntities();
 			for (int i=0; i<entities.size(); i++) {
 				Entity entity = entities.get(i);
 				if (entity.getType() == EntityType.DROPPED_ITEM) {
@@ -37,7 +37,7 @@ public class CMD_RemoveItems extends CraftZCommand {
 				}
 			}
 			
-			send(CraftZ.getPrefix() + " " + ChatColor.GREEN + getMsg("Messages.cmd.removed-items")
+			send(getCraftZ().getPrefix() + " " + ChatColor.GREEN + getMsg("Messages.cmd.removed-items")
 					.replace("%i", "" + ChatColor.AQUA + ri + ChatColor.GREEN));
 			
 		} else {

@@ -28,7 +28,7 @@ public class WorldData {
 	
 	public static void setup() {
 		
-		dir = new File(CraftZ.i.getDataFolder(), "worlds");
+		dir = new File(CraftZ.getInstance().getDataFolder(), "worlds");
 		if (!dir.exists())
 			dir.mkdirs();
 		
@@ -47,12 +47,12 @@ public class WorldData {
 	
 	private static void tryUpdate() {
 		
-		File old = new File(CraftZ.i.getDataFolder(), "data.yml");
+		File old = new File(CraftZ.getInstance().getDataFolder(), "data.yml");
 		if (old.exists()) {
 			
 			try {
 				
-				File newFile = new File(dir, CraftZ.worldName() + ".yml");
+				File newFile = new File(dir, CraftZ.getInstance().worldName() + ".yml");
 				if (newFile.exists())
 					return;
 				
@@ -173,7 +173,7 @@ public class WorldData {
 	}
 	
 	public static void reload() {
-		reload(CraftZ.worldName());
+		reload(CraftZ.getInstance().worldName());
 	}
 	
 	
@@ -191,7 +191,7 @@ public class WorldData {
 	}
 	
 	public static FileConfiguration get() {
-		return get(CraftZ.worldName());
+		return get(CraftZ.getInstance().worldName());
 	}
 	
 	
@@ -216,7 +216,7 @@ public class WorldData {
 	}
 	
 	public static void save() {
-		save(CraftZ.worldName());
+		save(CraftZ.getInstance().worldName());
 	}
 	
 }

@@ -13,11 +13,22 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 
+import craftZ.CraftZ;
+import craftZ.Module;
 
-public class CraftZCommandManager implements CommandExecutor, TabCompleter {
+
+public class CraftZCommandManager extends Module implements CommandExecutor, TabCompleter {
 	
 	private Map<String, CraftZCommand> commands = new LinkedHashMap<String, CraftZCommand>();
 	private CraftZCommand def;
+	
+	
+	
+	public CraftZCommandManager(CraftZ craftZ) {
+		super(craftZ);
+	}
+	
+	
 	
 	
 	
@@ -37,9 +48,16 @@ public class CraftZCommandManager implements CommandExecutor, TabCompleter {
 	
 	
 	public void registerCommand(CraftZCommand commandExecutor, String cmd, String... aliases) {
+		
+		boolean cv = commands.containsValue(commandExecutor) || def == commandExecutor;
+		
 		commands.put(cmd.toLowerCase(), commandExecutor);
 		for (String alias : aliases)
 			commands.put(alias.toLowerCase(), commandExecutor);
+		
+		if (!cv)
+			getCraftZ().addModule(commandExecutor);
+		
 	}
 	
 	
@@ -52,6 +70,8 @@ public class CraftZCommandManager implements CommandExecutor, TabCompleter {
 	
 	public void setDefault(CraftZCommand def) {
 		this.def = def;
+		if (!commands.containsValue(def))
+			getCraftZ().addModule(def);
 	}
 	
 	

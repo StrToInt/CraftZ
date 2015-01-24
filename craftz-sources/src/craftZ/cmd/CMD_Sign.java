@@ -10,14 +10,14 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
 
-import craftZ.ChestRefiller;
+import craftZ.CraftZ;
 import craftZ.util.ItemRenamer;
 
 
 public class CMD_Sign extends CraftZCommand {
 	
-	public CMD_Sign() {
-		super("{cmd} <line2> <line3> <line4>");
+	public CMD_Sign(CraftZ craftZ) {
+		super(craftZ, "{cmd} <line2> <line3> <line4>");
 	}
 	
 	
@@ -85,7 +85,7 @@ public class CMD_Sign extends CraftZCommand {
 		if (args.length <= 1) {
 			addCompletions(options, args.length == 0 ? "" : args[0], true, "lootchest", "playerspawn", "zombiespawn");
 		} else if (args.length == 3 && args[0].equalsIgnoreCase("lootchest")) {
-			addCompletions(options, args[2], true, ChestRefiller.getLists());
+			addCompletions(options, args[2], true, getCraftZ().getChestRefiller().getLists());
 		}
 		
 		return options;

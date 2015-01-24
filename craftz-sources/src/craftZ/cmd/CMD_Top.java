@@ -9,14 +9,15 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-import craftZ.PlayerManager;
+import craftZ.CraftZ;
+import craftZ.modules.PlayerManager;
 
 
 
 public class CMD_Top extends CraftZCommand {
 	
-	public CMD_Top() {
-		super("{cmd}");
+	public CMD_Top(CraftZ craftZ) {
+		super(craftZ, "{cmd}");
 	}
 	
 	
@@ -32,7 +33,7 @@ public class CMD_Top extends CraftZCommand {
 			
 			{
 				send(ChatColor.GOLD + "==== " + getMsg("Messages.cmd.top.minutes-survived") + " ====");
-				SortedSet<Entry<String, Integer>> scores = PlayerManager.sortHighscores(PlayerManager.getHighscores("minutes-survived"));
+				SortedSet<Entry<String, Integer>> scores = PlayerManager.sortHighscores(getCraftZ().getPlayerManager().getHighscores("minutes-survived"));
 				int i = 0;
 				for (Entry<String, Integer> entry : scores) {
 					send(ChatColor.RED + "" + entry.getValue() + ChatColor.WHITE + " - " + ChatColor.YELLOW + entry.getKey());
@@ -43,7 +44,7 @@ public class CMD_Top extends CraftZCommand {
 			
 			{
 				send(ChatColor.GOLD + "==== " + getMsg("Messages.cmd.top.zombies-killed") + " ====");
-				SortedSet<Entry<String, Integer>> scores = PlayerManager.sortHighscores(PlayerManager.getHighscores("zombies-killed"));
+				SortedSet<Entry<String, Integer>> scores = PlayerManager.sortHighscores(getCraftZ().getPlayerManager().getHighscores("zombies-killed"));
 				int i = 0;
 				for (Entry<String, Integer> entry : scores) {
 					send(ChatColor.RED + "" + entry.getValue() + ChatColor.WHITE + " - " + ChatColor.YELLOW + entry.getKey());
@@ -54,7 +55,7 @@ public class CMD_Top extends CraftZCommand {
 			
 			{
 				send(ChatColor.GOLD + "==== " + getMsg("Messages.cmd.top.players-killed") + " ====");
-				SortedSet<Entry<String, Integer>> scores = PlayerManager.sortHighscores(PlayerManager.getHighscores("players-killed"));
+				SortedSet<Entry<String, Integer>> scores = PlayerManager.sortHighscores(getCraftZ().getPlayerManager().getHighscores("players-killed"));
 				int i = 0;
 				for (Entry<String, Integer> entry : scores) {
 					send(ChatColor.RED + "" + entry.getValue() + ChatColor.WHITE + " - " + ChatColor.YELLOW + entry.getKey());

@@ -8,14 +8,13 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import craftZ.Kit;
-import craftZ.Kits;
-import craftZ.PlayerManager;
+import craftZ.CraftZ;
+import craftZ.modules.Kit;
 
 public class CMD_Kit extends CraftZCommand {
 	
-	public CMD_Kit() {
-		super("{cmd} <kit>");
+	public CMD_Kit(CraftZ craftZ) {
+		super(craftZ, "{cmd} <kit>");
 	}
 	
 	
@@ -33,12 +32,12 @@ public class CMD_Kit extends CraftZCommand {
 			return WRONG_USAGE;
 		}
 		
-		if (!PlayerManager.isInsideOfLobby(p)) {
+		if (!getCraftZ().getPlayerManager().isInsideOfLobby(p)) {
 			send(ChatColor.RED + getMsg("Messages.errors.not-in-lobby"));
 		} else {
 			
 			String kitname = args[0];
-			Kit kit = Kits.match(kitname);
+			Kit kit = getCraftZ().getKits().match(kitname);
 			if (kit != null && kit.canUse(p)) {
 				kit.select(p);
 			}
@@ -70,7 +69,7 @@ public class CMD_Kit extends CraftZCommand {
 		if (!(sender instanceof Player))
 			return options;
 		
-		addCompletions(options, args.length < 1 ? "" : args[0], true, Stringifier.KIT, Kits.getAvailableKits((Player) sender));
+		addCompletions(options, args.length < 1 ? "" : args[0], true, Stringifier.KIT, getCraftZ().getKits().getAvailableKits((Player) sender));
 		
 		return options;
 		

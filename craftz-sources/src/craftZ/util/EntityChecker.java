@@ -82,7 +82,7 @@ public class EntityChecker {
 		
 		List<MetadataValue> values = ent.getMetadata(key);
 		for (MetadataValue value : values) {
-			if (value.getOwningPlugin().getName().equals(CraftZ.i.getName()))
+			if (value.getOwningPlugin().getName().equals(CraftZ.getInstance().getName()))
 				return value;
 		}
 		

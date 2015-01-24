@@ -5,21 +5,25 @@ import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
-import craftZ.CraftZ;
+import craftZ.modules.PlayerManager;
+
 
 public class PlayerSpawnpoint extends Spawnpoint {
 	
+	private final PlayerManager manager;
 	private final String name;
 	
 	
 	
-	public PlayerSpawnpoint(ConfigurationSection data) {
-		super(data);
+	public PlayerSpawnpoint(PlayerManager manager, ConfigurationSection data) {
+		super(manager.world(), data);
+		this.manager = manager;
 		this.name = data.getString("name");
 	}
 	
-	public PlayerSpawnpoint(String id, Location loc, String name) {
+	public PlayerSpawnpoint(PlayerManager manager, String id, Location loc, String name) {
 		super(id, loc);
+		this.manager = manager;
 		this.name = name;
 	}
 	
@@ -54,7 +58,7 @@ public class PlayerSpawnpoint extends Spawnpoint {
 	
 	public void spawn(Player p) {
 		p.teleport(getSafeLocation());
-		p.sendMessage(ChatColor.YELLOW + CraftZ.getMsg("Messages.spawned").replaceAll("%s", name));
+		p.sendMessage(ChatColor.YELLOW + manager.getMsg("Messages.spawned").replaceAll("%s", name));
 	}
 	
 }

@@ -9,12 +9,12 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import craftZ.ConfigManager;
+import craftZ.CraftZ;
 
 public class CMD_SetBorder extends CraftZCommand {
 	
-	public CMD_SetBorder() {
-		super("{cmd} disable | round|square <radius>");
+	public CMD_SetBorder(CraftZ craftZ) {
+		super(craftZ, "{cmd} disable | round|square <radius>");
 	}
 	
 	
@@ -32,12 +32,12 @@ public class CMD_SetBorder extends CraftZCommand {
 		
 		if (hasPerm("craftz.setborder")) {
 			
-			FileConfiguration config = ConfigManager.getConfig("config");
+			FileConfiguration config = getConfig("config");
 			
 			if (args.length > 0 && args[0].equalsIgnoreCase("disable")) {
 				
 				config.set("Config.world.world-border.enable", false);
-				ConfigManager.saveConfig("config");
+				saveConfig("config");
 				
 				send(ChatColor.AQUA + getMsg("Messages.cmd.setborder-disable"));
 				
@@ -68,7 +68,7 @@ public class CMD_SetBorder extends CraftZCommand {
 			config.set("Config.world.world-border.radius", radius);
 			config.set("Config.world.world-border.x", Math.round(loc.getX() * 100) / 100.0);
 			config.set("Config.world.world-border.z", Math.round(loc.getZ() * 100) / 100.0);
-			ConfigManager.saveConfig("config");
+			saveConfig("config");
 			
 			send(ChatColor.AQUA + getMsg("Messages.cmd.setborder"));
 			

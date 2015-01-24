@@ -12,11 +12,12 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
 import craftZ.CraftZ;
-import craftZ.Kit;
+import craftZ.Module;
+import craftZ.modules.Kit;
 import craftZ.worldData.PlayerSpawnpoint;
 
 
-public abstract class CraftZCommand implements CommandExecutor, TabCompleter {
+public abstract class CraftZCommand extends Module implements CommandExecutor, TabCompleter {
 	
 	public static final int SUCCESS = 0, NO_PERMISSION = 1, MUST_BE_PLAYER = 2, WRONG_USAGE = 3;
 	
@@ -29,7 +30,8 @@ public abstract class CraftZCommand implements CommandExecutor, TabCompleter {
 	
 	
 	
-	public CraftZCommand(String usage) {
+	public CraftZCommand(CraftZ craftZ, String usage) {
+		super(craftZ);
 		this.usage = usage;
 	}
 	
@@ -99,14 +101,6 @@ public abstract class CraftZCommand implements CommandExecutor, TabCompleter {
 	
 	public CanExecute canExecute(CommandSender sender) {
 		return CanExecute.on(sender);
-	}
-	
-	
-	
-	
-	
-	protected static String getMsg(String path) {
-		return CraftZ.getMsg(path);
 	}
 	
 	

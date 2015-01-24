@@ -5,29 +5,34 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Zombie;
 
-import craftZ.ConfigManager;
-import craftZ.ZombieSpawner;
+import craftZ.modules.ZombieSpawner;
 import craftZ.util.EntityChecker;
+
 
 public class ZombieSpawnpoint extends Spawnpoint {
 	
+	private final ZombieSpawner spawner;
 	private final int maxInRadius, maxRadius;
 	private int countdown;
 	
 	
 	
-	public ZombieSpawnpoint(ConfigurationSection data) {
+	public ZombieSpawnpoint(ZombieSpawner spawner, ConfigurationSection data) {
 		
-		super(data);
+		super(spawner.world(), data);
+		
+		this.spawner = spawner;
 		
 		this.maxInRadius = data.getInt("max-zombies-in-radius");
 		this.maxRadius = data.getInt("max-zombies-radius");
 		
 	}
 	
-	public ZombieSpawnpoint(String id, Location loc, int maxInRadius, int maxRadius) {
+	public ZombieSpawnpoint(ZombieSpawner spawner, String id, Location loc, int maxInRadius, int maxRadius) {
 		
 		super(id, loc);
+		
+		this.spawner = spawner;
 		
 		this.maxInRadius = maxInRadius;
 		this.maxRadius = maxRadius;
@@ -73,7 +78,7 @@ public class ZombieSpawnpoint extends Spawnpoint {
 		Location loc = getSafeLocation();
 		
 		if (loc != null && !EntityChecker.areEntitiesNearby(loc, maxRadius, EntityType.ZOMBIE, maxInRadius)) {
-			return ZombieSpawner.spawnAt(loc);
+			return spawner.spawnAt(loc);
 		} else {
 			return null;
 		}
@@ -88,11 +93,8 @@ public class ZombieSpawnpoint extends Spawnpoint {
 		
 		countdown--;
 		if (countdown <= 0) {
-			
-			countdown = ConfigManager.getConfig("config").getInt("Config.mobs.zombies.spawning.interval") * 20;
-			
 			spawn();
-			
+			countdown = spawner.getConfig("config").getInt("Config.mobs.zombies.spawning.interval") * 20;
 		}
 		
 	}

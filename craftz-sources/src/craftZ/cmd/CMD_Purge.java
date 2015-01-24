@@ -16,8 +16,8 @@ import craftZ.CraftZ;
 
 public class CMD_Purge extends CraftZCommand {
 	
-	public CMD_Purge() {
-		super("{cmd}");
+	public CMD_Purge(CraftZ craftZ) {
+		super(craftZ, "{cmd}");
 	}
 	
 	
@@ -29,7 +29,7 @@ public class CMD_Purge extends CraftZCommand {
 		
 		if (hasPerm("craftz.purge")) {
 			
-			World w = CraftZ.world();
+			World w = world();
 			List<Entity> ents = w.getEntities();
 			int n = 0;						
 			for (Entity ent : ents) {
@@ -46,7 +46,7 @@ public class CMD_Purge extends CraftZCommand {
 				
 			}
 			
-			send(CraftZ.getPrefix() + " " + ChatColor.GREEN + getMsg("Messages.cmd.purged")
+			send(getCraftZ().getPrefix() + " " + ChatColor.GREEN + getMsg("Messages.cmd.purged")
 					.replace("%z", "" + ChatColor.AQUA + n + ChatColor.GREEN));
 			
 		} else {

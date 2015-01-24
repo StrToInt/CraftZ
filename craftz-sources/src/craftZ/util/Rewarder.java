@@ -1,5 +1,9 @@
 package craftZ.util;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
+
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
@@ -14,6 +18,7 @@ import craftZ.CraftZ;
 
 public class Rewarder {
 	
+	public static final DecimalFormat DEFAULT_FORMAT = new DecimalFormat("0.##", new DecimalFormatSymbols(Locale.ENGLISH));
 	public static Economy economy = null;
 	
 	
@@ -57,7 +62,7 @@ public class Rewarder {
 	public static String formatMoney(double money) {
 		
 		if (economy == null)
-			return "" + money;
+			return DEFAULT_FORMAT.format(money);
 		
 		return economy.format(money);
 		
@@ -106,7 +111,7 @@ public class Rewarder {
 		}
 		
 		public String getNotification() {
-			return CraftZ.getMsg(messageEntry);
+			return CraftZ.getInstance().getMsg(messageEntry);
 		}
 		
 		public String formatNotification() {

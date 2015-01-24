@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import craftZ.Kit;
+import craftZ.modules.Kit;
 
 public class KitEditingSession {
 	

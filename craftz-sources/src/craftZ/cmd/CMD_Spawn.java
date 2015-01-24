@@ -7,14 +7,14 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-import craftZ.PlayerManager;
+import craftZ.CraftZ;
 import craftZ.worldData.PlayerSpawnpoint;
 
 
 public class CMD_Spawn extends CraftZCommand {
 	
-	public CMD_Spawn() {
-		super("{cmd} [spawnpoint]");
+	public CMD_Spawn(CraftZ craftZ) {
+		super(craftZ, "{cmd} [spawnpoint]");
 	}
 	
 	
@@ -30,13 +30,13 @@ public class CMD_Spawn extends CraftZCommand {
 		
 		if (hasPerm("craftz.spawn")) {
 			
-			if (PlayerManager.isInsideOfLobby(p)) {
+			if (getCraftZ().getPlayerManager().isInsideOfLobby(p)) {
 				
 				PlayerSpawnpoint spawn = null;
 				
 				if (args.length > 0) {
 					if (p.hasPermission("craftz.spawn.choose")) {
-						spawn = PlayerManager.matchSpawn(args[0]);
+						spawn = getCraftZ().getPlayerManager().matchSpawn(args[0]);
 						if (spawn == null) {
 							send(ChatColor.RED + getMsg("Messages.errors.player-spawn-not-found"));
 							return SUCCESS;
@@ -46,9 +46,9 @@ public class CMD_Spawn extends CraftZCommand {
 					}
 				}
 				
-				int respawnCountdown = PlayerManager.getRespawnCountdown(p);
+				int respawnCountdown = getCraftZ().getPlayerManager().getRespawnCountdown(p);
 				if (respawnCountdown <= 0) {
-					PlayerManager.loadPlayer(p, true, spawn);
+					getCraftZ().getPlayerManager().loadPlayer(p, true, spawn);
 				} else {
 					send(ChatColor.RED + getMsg("Messages.errors.respawn-countdown").replace("%t", "" + Math.max(respawnCountdown/1000, 1)));
 				}
@@ -84,7 +84,7 @@ public class CMD_Spawn extends CraftZCommand {
 		List<String> options = new ArrayList<String>();
 		
 		if (sender.hasPermission("craftz.spawn.choose")) {
-			addCompletions(options, args.length == 0 ? "" : args[0], true, Stringifier.PLAYERSPAWN, PlayerManager.getSpawns());
+			addCompletions(options, args.length == 0 ? "" : args[0], true, Stringifier.PLAYERSPAWN, getCraftZ().getPlayerManager().getSpawns());
 		}
 		
 		return options;
