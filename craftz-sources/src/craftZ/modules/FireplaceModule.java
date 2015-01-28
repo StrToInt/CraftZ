@@ -140,7 +140,7 @@ public class FireplaceModule extends Module {
 		final Player p = event.getPlayer();
 		final Item item = event.getItemDrop();
 		
-		if (item.isValid() && isWorld(item.getWorld())) {
+		if (isWorld(item.getWorld())) {
 			
 			new BukkitRunnable() {
 				@Override
