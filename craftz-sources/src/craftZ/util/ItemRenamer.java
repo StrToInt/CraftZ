@@ -57,6 +57,20 @@ public class ItemRenamer {
 	
 	
 	
+	public static void equalize(ItemStack sample, ItemStack stack) {
+		
+		stack.setType(sample.getType());
+		stack.setAmount(sample.getAmount());
+		stack.setDurability(sample.getDurability());
+		
+		stack.setItemMeta(sample.getItemMeta());
+		
+	}
+	
+	
+	
+	
+	
 	public static void renameWithMap(ItemStack input, Map<String, String> entries) {
 		
 		if (input == null)

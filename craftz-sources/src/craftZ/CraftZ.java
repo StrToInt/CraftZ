@@ -27,6 +27,7 @@ import craftZ.modules.*;
 import craftZ.util.EntityChecker;
 import craftZ.util.ItemRenamer;
 import craftZ.util.Rewarder;
+import craftZ.worldData.Backpack;
 import craftZ.worldData.WorldData;
 
 
@@ -82,6 +83,7 @@ public class CraftZ extends JavaPlugin {
 		cmd.registerCommand(new CMD_RemoveItems(this), "remitems", "removeitems");
 		cmd.registerCommand(new CMD_Purge(this), "purge");
 		cmd.registerCommand(new CMD_Smasher(this), "smasher");
+		cmd.registerCommand(new CMD_MakeBackpack(this), "makebackpack", "makebp");
 		
 		
 		
@@ -131,6 +133,8 @@ public class CraftZ extends JavaPlugin {
 		addModule(new WorldBorderModule(this));
 		
 		addModule(new BloodParticlesModule(this));
+		
+		addModule(new BackpackModule(this));
 		
 		
 		
@@ -580,6 +584,7 @@ public class CraftZ extends JavaPlugin {
 			def_messages.put("Messages.help.commands.remitems", "Remove all items in the world");
 			def_messages.put("Messages.help.commands.purge", "Purge all zombies from the world");
 			def_messages.put("Messages.help.commands.smasher", "Get the zombie smasher (admin tool)");
+			def_messages.put("Messages.help.commands.makebackpack", "Create a backpack for use in kits etc");
 			
 			// COMMAND
 			def_messages.put("Messages.cmd.removed-items", "Removed %i items.");
@@ -614,6 +619,7 @@ public class CraftZ extends JavaPlugin {
 			def_messages.put("Messages.errors.cmd-not-existing", "This command does not exist. Use '/craftz' to display the help.");
 			def_messages.put("Messages.errors.no-player-spawns", "No player spawnpoints are defined!");
 			def_messages.put("Messages.errors.player-spawn-not-found", "The spawnpoint you tried spawning at does not exist.");
+			def_messages.put("Messages.errors.backpack-size-incorrect", "Backpack sizes must be multiples of 9.");
 			
 		ConfigManager.newConfig("messages", instance, def_messages);
 		ConfigManager.getConfig("messages").options().header(
@@ -693,7 +699,7 @@ public class CraftZ extends JavaPlugin {
 				"web", "tnt", "iron_axe", "bow", "4x'arrow'", "iron_sword", "2x'wood_sword'", "stone_sword", "2x'bowl'", "mushroom_soup",
 				"2x'leather_helmet'", "2x'leather_chestplate'", "2x'leather_leggings'", "2x'leather_boots'",
 				"chainmail_helmet", "chainmail_chestplate", "chainmail_leggings", "chainmail_boots",
-				"iron_helmet", "iron_chestplate", "iron_leggings", "iron_boots", "ender_pearl"
+				"iron_helmet", "iron_chestplate", "iron_leggings", "iron_boots", "ender_pearl", "<backpack:27:Czech Backpack>"
 			};
 			loot.addDefault("Loot.lists.military-epic", militaryEpic);
 			
@@ -704,7 +710,8 @@ public class CraftZ extends JavaPlugin {
 			String[] civilian = {
 				"2x'brown_mushroom'", "2x'red_mushroom'", "iron_axe", "flint_and_steel", "2x'apple'", "2x'arrow'", "wood_sword", "2x'bowl'",
 				"mushroom_soup", "wheat", "bread", "leather_helmet", "leather_chestplate",
-				"leather_leggings", "leather_boots", "cookie", "melon", "blaze_rod", "carrot_item", "baked_potato", "pumpkin_pie"
+				"leather_leggings", "leather_boots", "cookie", "melon", "blaze_rod", "carrot_item", "baked_potato", "pumpkin_pie",
+				"<backpack:9:Czech Vest Pouch>"
 			};
 			loot.addDefault("Loot.lists.civilian", civilian);
 			
@@ -727,7 +734,7 @@ public class CraftZ extends JavaPlugin {
 			
 			
 			String[] barracks = {
-				"2x'brown_mushroom'", "2x'red_mushroom'", "apple", "arrow", "wood_sword", "bowl"
+				"2x'brown_mushroom'", "2x'red_mushroom'", "apple", "arrow", "wood_sword", "bowl", "<backpack:18:British Assault Backpack>"
 			};
 			loot.addDefault("Loot.lists.barracks", barracks);
 			
@@ -791,6 +798,7 @@ public class CraftZ extends JavaPlugin {
 				kits_basic_items.put("0", new ItemStack(Material.WOOD_SWORD, 1, (short) 40));
 				kits_basic_items.put("1", new ItemStack(Material.GLASS_BOTTLE, 1));
 				kits_basic_items.put("2", new ItemStack(Material.COOKIE, 3));
+				kits_basic_items.put("8", Backpack.createItem(9, "Coyote Patrol Pack", false));
 				kits_basic_items.put("chestplate", new ItemStack(Material.LEATHER_CHESTPLATE, 1, (short) 60));
 				kits_basic_items.put("leggings", new ItemStack(Material.LEATHER_LEGGINGS, 1, (short) 60));
 				kits_basic_items.put("boots", new ItemStack(Material.LEATHER_BOOTS, 1, (short) 50));

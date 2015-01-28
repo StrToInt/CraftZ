@@ -7,6 +7,7 @@ import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import craftZ.modules.Dynmap;
@@ -126,5 +127,11 @@ public class Module implements Listener {
 	public void onPlayerTick(Player p, long tick) { }
 	
 	public void onDynmapEnabled(Dynmap dynmap) { }
+	
+	
+	
+	public int getNumberAllowed(Inventory inv, ItemStack item) {
+		return -1;
+	}
 	
 }

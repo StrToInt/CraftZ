@@ -8,6 +8,7 @@ import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 
 import craftZ.CraftZ;
+import craftZ.worldData.Backpack;
 
 public class StackParser {
 	
@@ -23,7 +24,8 @@ public class StackParser {
 		Pattern pattern = Pattern.compile("^([0-9])x");
 		Matcher matcher = pattern.matcher(string);
 		if (matcher.find()) {
-			amount = Integer.parseInt(matcher.group(1));
+			if (withAmount)
+				amount = Integer.parseInt(matcher.group(1));
 			itemName = string.substring(matcher.end());
 		}
 		
@@ -34,7 +36,11 @@ public class StackParser {
 		
 		
 		
-		if (itemName.contains(":")) {
+		if (itemName.startsWith("<") && itemName.endsWith(">")) {
+			
+			return getCustomItem(itemName.substring(1, itemName.length() - 1), amount);
+			
+		} else if (itemName.contains(":")) {
 			
 			try {
 				Material mat1 = Material.matchMaterial(itemName.split(":")[0]);
@@ -77,6 +83,37 @@ public class StackParser {
 		boolean a = withAmount && stack.getAmount() > 1;
 		return (a ? stack.getAmount() + "x" : "") + (a ? "'" : "") + stack.getType().name().toLowerCase() + (a ? "'" : "")
 				+ (stack.getDurability() != 0 ? ":" + stack.getDurability() : "");
+		
+	}
+	
+	
+	
+	
+	
+	public static ItemStack getCustomItem(String itemName, int amount) {
+		
+		String[] spl = itemName.split(":");
+		
+		if (spl[0].equalsIgnoreCase("backpack")) {
+			
+			int size = 9;
+			String title = Backpack.DEFAULT_TITLE;
+			
+			if (spl.length > 1) {
+				try {
+					size = Integer.parseInt(spl[1]);
+				} catch (NumberFormatException ex) { }
+			}
+			
+			if (spl.length > 2) {
+				title = spl[2];
+			}
+			
+			return Backpack.createItem(size, title, false);
+			
+		}
+		
+		return null;
 		
 	}
 	

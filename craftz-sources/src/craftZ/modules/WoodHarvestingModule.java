@@ -1,21 +1,15 @@
 package craftZ.modules;
 
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
@@ -79,71 +73,22 @@ public class WoodHarvestingModule extends Module {
 	
 	
 	
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onPlayerPickupItem(PlayerPickupItemEvent event) {
+	@Override
+	public int getNumberAllowed(Inventory inv, ItemStack item) {
 		
-		Player p = event.getPlayer();
-		Item item = event.getItem();
-		ItemStack stack = item.getItemStack();
-		
-		if (isWorld(p.getWorld())) {
+		if ((item.getType() == Material.LOG || item.getType() == Material.LOG_2)
+				&& getConfig("config").getBoolean("Config.players.wood-harvesting.enable")) {
 			
-			FileConfiguration config = getConfig("config");
+			int limit = getConfig("config").getInt("Config.players.wood-harvesting.log-limit");
+			if (limit < 0)
+				return -1;
+			int invAmount = getAmount(Material.LOG, inv) + getAmount(Material.LOG_2, inv);
 			
-			int limit = config.getInt("Config.players.wood-harvesting.log-limit");
-			PlayerInventory inv = p.getInventory();
-			
-			if ((stack.getType() == Material.LOG || stack.getType() == Material.LOG_2)
-					&& config.getBoolean("Config.players.wood-harvesting.enable")
-					&& limit > 0) {
-				
-				event.setCancelled(true);
-				
-				int invAmount = getAmount(Material.LOG, inv) + getAmount(Material.LOG_2, inv),
-					allowed = Math.max(limit - invAmount, 0);
-				
-				if (allowed > 0) {
-					if (stack.getAmount() > allowed) {
-						ItemStack drop = stack.clone();
-						drop.setAmount(stack.getAmount() - allowed);
-						item.getWorld().dropItem(item.getLocation(), drop);
-						stack.setAmount(allowed);
-					}
-					p.getInventory().addItem(stack);
-					item.remove();
-					p.playSound(p.getLocation(), Sound.ITEM_PICKUP, 0.5f, 2f);
-				}
-				
-			}
+			return Math.max(limit - invAmount, 0);
 			
 		}
 		
-	}
-	
-	
-	
-	
-	
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onInventoryClick(InventoryClickEvent event) {
-		
-		if (isWorld(event.getWhoClicked().getWorld())) {
-			
-			HumanEntity p = event.getWhoClicked();
-			ItemStack cursor = event.getCursor();
-			InventoryView view = event.getView();
-			
-			FileConfiguration config = getConfig("config");
-			
-			InventoryHolder bholder = view.getBottomInventory().getHolder();
-			if (bholder instanceof HumanEntity && p.getUniqueId().equals(((HumanEntity) bholder).getUniqueId())
-					&& (cursor.getType() == Material.LOG || cursor.getType() == Material.LOG_2)
-					&& config.getBoolean("Config.players.wood-harvesting.enable")
-					&& config.getInt("Config.players.wood-harvesting.log-limit") > 0) {
-				event.setCancelled(true);
-			}
-			
-		}
+		return -1;
 		
 	}
 	
