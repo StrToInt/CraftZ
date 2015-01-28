@@ -14,8 +14,10 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
@@ -122,6 +124,25 @@ public class ChestRefiller extends Module {
 						lootChest.startRefill(true);
 				}
 				
+			}
+			
+		}
+		
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onPlayerInteract(PlayerInteractEvent event) {
+		
+		if (isWorld(event.getPlayer().getWorld()) && event.getAction() == Action.LEFT_CLICK_BLOCK
+				&& event.getClickedBlock().getType() == Material.CHEST
+				&& getConfig("config").getBoolean("Config.players.drop-lootchests-on-punch")) {
+			
+			Location signLoc = findSign(event.getClickedBlock().getLocation());
+			
+			if (signLoc != null) {
+				LootChest lootChest = getLootChest(signLoc);
+				if (lootChest != null)
+					lootChest.startRefill(true);
 			}
 			
 		}

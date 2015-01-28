@@ -175,7 +175,7 @@ public class LootChest extends WorldDataObject {
 			int min = refiller.getPropertyInt("min-stacks-filled", list);
 			int max = refiller.getPropertyInt("max-stacks-filled", list);
 			
-			for (int i = 0, n = (1 + min + (max > min ? CraftZ.RANDOM.nextInt(max - min) : 0)); i < n; i++) {
+			for (int i = 0, n = (min + (max > min ? CraftZ.RANDOM.nextInt(max - min) : 0)); i < n; i++) {
 				ItemStack stack = StackParser.fromString(defs.get(CraftZ.RANDOM.nextInt(defs.size())), false);
 				if (stack != null) {
 					chest.getInventory().addItem(stack);
