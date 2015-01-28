@@ -74,9 +74,16 @@ public class BleedingModule extends Module {
 					
 					reduceInHand(p);
 					
-					getData(p).bleeding = false;
+					PlayerData data = getData(p);
+					
+					if (data.bleeding) {
+						data.bleeding = false;
+						p.sendMessage(ChatColor.DARK_RED + getMsg("Messages.bandaged"));
+					} else {
+						p.sendMessage(ChatColor.DARK_RED + getMsg("Messages.bandaged-unnecessary"));
+					}
+					
 					p.playSound(p.getLocation(), Sound.ENDERDRAGON_WINGS, 1, 1);
-					p.sendMessage(ChatColor.DARK_RED + getMsg("Messages.bandaged"));
 					
 				}
 				

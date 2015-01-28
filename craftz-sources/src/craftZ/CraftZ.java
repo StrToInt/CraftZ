@@ -551,6 +551,7 @@ public class CraftZ extends JavaPlugin {
 		def_messages.put("Messages.died", "You died! Zombies killed: %z, players killed: %p, minutes survived: %m");
 		def_messages.put("Messages.bleeding", "You are bleeding! You need a bandage to mend the wounds!");
 		def_messages.put("Messages.bandaged", "Your wounds are now bandaged.");
+		def_messages.put("Messages.bandaged-unnecessary", "You wasted a bandage!");
 		def_messages.put("Messages.bloodbag", "Your health is restored.");
 		def_messages.put("Messages.poisoned", "You are poisoned! You should use antibiotics soon.");
 		def_messages.put("Messages.unpoisoned", "Your poisoning is healed!");
