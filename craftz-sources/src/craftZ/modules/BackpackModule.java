@@ -121,7 +121,7 @@ public class BackpackModule extends Module {
 			if (bp == null)
 				return false;
 			backpacks.add(bp);
-			ItemRenamer.equalize(bp.getItem(), item);
+			ItemRenamer.on(item).copyFrom(bp.getItem());
 			
 		}
 		

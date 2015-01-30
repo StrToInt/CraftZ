@@ -1,6 +1,5 @@
 package craftZ.worldData;
 
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.UUID;
@@ -19,6 +18,7 @@ import craftZ.util.ItemRenamer;
 public class Backpack extends WorldDataObject {
 	
 	public static final String DEFAULT_TITLE = "Standard Backpack";
+	public static final String LORE_PREFIX = "" + ChatColor.RESET + ChatColor.GRAY;
 	
 	private final String title;
 	private Inventory inventory;
@@ -162,9 +162,8 @@ public class Backpack extends WorldDataObject {
 	}
 	
 	private static ItemStack createItem(int size, String title, String id) {
-		String lpref = "" + ChatColor.RESET + ChatColor.GRAY;
-		return ItemRenamer.setNameAndLore(new ItemStack(Material.CHEST), ChatColor.RESET + title,
-				Arrays.asList(lpref + "Backpack", lpref + "Size: " + size, id));
+		return ItemRenamer.on(new ItemStack(Material.CHEST)).setName(ChatColor.RESET + title)
+				.setLore(LORE_PREFIX + "Backpack", LORE_PREFIX + "Size: " + size, id).get();
 	}
 	
 	

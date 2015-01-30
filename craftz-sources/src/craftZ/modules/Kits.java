@@ -195,7 +195,7 @@ public class Kits extends Module {
 	public ItemStack setSoulbound(ItemStack stack) {
 		return stack.hasItemMeta() && stack.getItemMeta().hasLore()
 				? stack
-				: ItemRenamer.setLore(stack, Arrays.asList(getSoulboundLabel()));
+				: ItemRenamer.on(stack).setLore(getSoulboundLabel()).get();
 	}
 	
 	

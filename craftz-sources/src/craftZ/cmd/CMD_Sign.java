@@ -1,7 +1,6 @@
 package craftZ.cmd;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.ChatColor;
@@ -48,9 +47,9 @@ public class CMD_Sign extends CraftZCommand {
 					desc = "Zombie Spawn " + line3;
 				}
 				
-				p.getInventory().addItem(ItemRenamer.setNameAndLore(new ItemStack(Material.SIGN),
-						ChatColor.DARK_PURPLE + "Pre-written Sign / " + desc,
-						Arrays.asList("[CraftZ]", line2, line3, line4)));
+				p.getInventory().addItem(ItemRenamer.on(new ItemStack(Material.SIGN))
+						.setName(ChatColor.DARK_PURPLE + "Pre-written Sign / " + desc)
+						.setLore("[CraftZ]", line2, line3, line4).get());
 				
 			} else {
 				return WRONG_USAGE;

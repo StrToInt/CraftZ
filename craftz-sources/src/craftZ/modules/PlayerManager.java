@@ -574,7 +574,7 @@ public class PlayerManager extends Module {
 			
 			
 			if (tick % 10 == 0) {
-				ItemRenamer.convertInventory(p, ItemRenamer.DEFAULT_MAP);
+				ItemRenamer.on(p).setSpecificNames(ItemRenamer.DEFAULT_MAP);
 			}
 			
 		}

@@ -31,7 +31,7 @@ public class CMD_Smasher extends CraftZCommand {
 		}
 		
 		if (hasPerm("craftz.smasher")) {
-			p.getInventory().addItem(ItemRenamer.setName(new ItemStack(Material.STICK), ChatColor.GOLD + "Zombie Smasher"));
+			p.getInventory().addItem(ItemRenamer.on(new ItemStack(Material.STICK)).setName(ChatColor.GOLD + "Zombie Smasher").get());
 		} else {
 			return NO_PERMISSION;
 		}

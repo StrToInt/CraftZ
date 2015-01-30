@@ -79,7 +79,7 @@ public class InventoryModule extends Module {
 				
 			}
 			
-			ItemRenamer.convertInventory(p, ItemRenamer.DEFAULT_MAP);
+			ItemRenamer.on(p).setSpecificNames(ItemRenamer.DEFAULT_MAP);
 			
 		}
 		

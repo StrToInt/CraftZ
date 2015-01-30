@@ -182,7 +182,7 @@ public class LootChest extends WorldDataObject {
 				}
 			}
 			
-			ItemRenamer.convertInventory(chest, ItemRenamer.DEFAULT_MAP);
+			ItemRenamer.on(chest).setSpecificNames(ItemRenamer.DEFAULT_MAP);
 			
 		}
 		

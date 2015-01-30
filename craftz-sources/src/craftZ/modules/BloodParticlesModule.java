@@ -53,7 +53,7 @@ public class BloodParticlesModule extends Module {
 				int bloodCount = (int) (Math.min(event.getDamage() * (type == EntityType.ZOMBIE ? 1 : 2), 100));
 				for (int i=0; i<bloodCount; i++) {
 					
-					ItemStack stack = ItemRenamer.setName(new ItemStack(Material.REDSTONE), "blood" + CraftZ.RANDOM.nextInt());
+					ItemStack stack = ItemRenamer.on(new ItemStack(Material.REDSTONE)).setName("blood" + CraftZ.RANDOM.nextInt()).get();
 					final Item blood = w.dropItemNaturally(loc, stack);
 					
 					blood.setPickupDelay(Integer.MAX_VALUE);

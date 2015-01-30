@@ -1,13 +1,8 @@
 package craftZ.util;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
-import org.bukkit.ChatColor;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -20,50 +15,63 @@ public class ItemRenamer {
 	
 	public static Map<String, String> DEFAULT_MAP;
 	
+	private List<ItemStack> stacks;
 	
 	
-	public static ItemStack setName(ItemStack input, String name) {
+	
+	private ItemRenamer(ItemStack stack, ItemStack... stacks) {
 		
-		ItemMeta meta = input.getItemMeta();
-		meta.setDisplayName(name);
-		input.setItemMeta(meta);
-		
-		return input;
+		this.stacks = new ArrayList<ItemStack>();
+		this.stacks.add(stack);
+		if (stacks != null) {
+			this.stacks.addAll(Arrays.asList(stacks));
+		}
 		
 	}
 	
-	public static ItemStack setLore(ItemStack input, List<String> lore) {
-		
-		ItemMeta meta = input.getItemMeta();
-		meta.setLore(lore);
-		input.setItemMeta(meta);
-		
-		return input;
-		
+	private ItemRenamer(List<ItemStack> stacks) {
+		this.stacks = new ArrayList<ItemStack>(stacks);
 	}
 	
-	public static ItemStack setNameAndLore(ItemStack input, String name, List<String> lore) {
-		
-		ItemMeta meta = input.getItemMeta();
-		meta.setDisplayName(name);
-		meta.setLore(lore);
-		input.setItemMeta(meta);
-		
-		return input;
-		
+	private ItemRenamer(Inventory inv) {
+		this.stacks = new ArrayList<ItemStack>(Arrays.asList(inv.getContents()));
 	}
 	
 	
 	
 	
 	
-	public static void equalize(ItemStack sample, ItemStack stack) {
+	public static ItemRenamer on(ItemStack stack) {
+		return new ItemRenamer(stack);
+	}
+	
+	public static ItemRenamer on(ItemStack stack, ItemStack... stacks) {
+		return new ItemRenamer(stack, stacks);
+	}
+	
+	
+	
+	public static ItemRenamer on(Inventory inv) {
+		return new ItemRenamer(inv);
+	}
+	
+	public static ItemRenamer on(InventoryHolder invHolder) {
+		return on(invHolder.getInventory());
+	}
+	
+	
+	
+	
+	
+	public ItemRenamer setName(String name) {
 		
-		stack.setType(sample.getType());
-		stack.setAmount(sample.getAmount());
-		stack.setDurability(sample.getDurability());
+		for (ItemStack stack : stacks) {
+			ItemMeta meta = stack.getItemMeta();
+			meta.setDisplayName(name);
+			stack.setItemMeta(meta);
+		}
 		
-		stack.setItemMeta(sample.getItemMeta());
+		return this;
 		
 	}
 	
@@ -71,15 +79,73 @@ public class ItemRenamer {
 	
 	
 	
-	public static void renameWithMap(ItemStack input, Map<String, String> entries) {
+	public ItemRenamer setLore(List<String> lore) {
 		
-		if (input == null)
-			return;
+		for (ItemStack stack : stacks) {
+			ItemMeta meta = stack.getItemMeta();
+			meta.setLore(lore);
+			stack.setItemMeta(meta);
+		}
 		
-		String n = getName(input, entries);
-		if (!n.equals(""))
-			setName(input, ChatColor.RESET + n);
+		return this;
 		
+	}
+	
+	public ItemRenamer setLore(String... lore) {
+		return setLore(Arrays.asList(lore));
+	}
+	
+	
+	
+	
+	
+	public ItemRenamer copyFrom(ItemStack sample) {
+		
+		for (ItemStack stack : stacks) {
+			
+			stack.setType(sample.getType());
+			stack.setAmount(sample.getAmount());
+			stack.setDurability(sample.getDurability());
+			
+			stack.setItemMeta(sample.getItemMeta());
+			
+		}
+		
+		return this;
+		
+	}
+	
+	
+	
+	
+	
+	public ItemRenamer setSpecificNames(Map<String, String> map) {
+		
+		for (ItemStack stack : stacks) {
+			
+			String name = getName(stack, map);
+			if (name != null && !name.equals("")) {
+				ItemMeta meta = stack.getItemMeta();
+				meta.setDisplayName(name);
+				stack.setItemMeta(meta);
+			}
+			
+		}
+		
+		return this;
+		
+	}
+	
+	
+	
+	
+	
+	public ItemStack get() {
+		return stacks.isEmpty() ? null : stacks.get(0);
+	}
+	
+	public List<ItemStack> getAll() {
+		return Collections.unmodifiableList(stacks);
 	}
 	
 	
@@ -103,22 +169,6 @@ public class ItemRenamer {
 		}
 		
 		return "";
-		
-	}
-	
-	
-	
-	
-	
-	public static void convertInventory(InventoryHolder invHolder, Map<String, String> entries) {
-		convertInventory(invHolder.getInventory(), entries);
-	}
-	
-	public static void convertInventory(Inventory inv, Map<String, String> entries) {
-		
-		for (ListIterator<ItemStack> it=inv.iterator(); it.hasNext(); ) {
-			renameWithMap(it.next(), entries);
-		}
 		
 	}
 	
