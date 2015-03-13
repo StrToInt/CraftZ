@@ -5,7 +5,6 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
@@ -39,7 +38,7 @@ public class PoisoningModule extends Module {
 		
 		if (isWorld(entity.getWorld())) {
 			
-			if (damager instanceof Zombie && entity instanceof Player
+			if (getCraftZ().isEnemy(damager) && entity instanceof Player
 					&& !event.isCancelled() && event.getDamage() > 0) {
 				
 				if (getConfig("config").getBoolean("Config.players.medical.poisoning.enable")) {

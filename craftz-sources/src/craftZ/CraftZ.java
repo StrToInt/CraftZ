@@ -2,10 +2,12 @@ package craftZ;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
@@ -16,13 +18,31 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Zombie;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
-import craftZ.cmd.*;
+import craftZ.cmd.CMD_Help;
+import craftZ.cmd.CMD_Kit;
+import craftZ.cmd.CMD_Kitsadmin;
+import craftZ.cmd.CMD_MakeBackpack;
+import craftZ.cmd.CMD_Purge;
+import craftZ.cmd.CMD_Reload;
+import craftZ.cmd.CMD_RemoveItems;
+import craftZ.cmd.CMD_SetBorder;
+import craftZ.cmd.CMD_SetLobby;
+import craftZ.cmd.CMD_Sign;
+import craftZ.cmd.CMD_Smasher;
+import craftZ.cmd.CMD_Spawn;
+import craftZ.cmd.CMD_Top;
+import craftZ.cmd.CraftZCommandManager;
 import craftZ.modules.*;
 import craftZ.util.EntityChecker;
 import craftZ.util.ItemRenamer;
@@ -432,29 +452,12 @@ public class CraftZ extends JavaPlugin {
 			def_config.put("Config.mobs.completely-disable-spawn-control", false);
 			
 				// ZOMBIES
-					
-					// DROPS
-					def_config.put("Config.mobs.zombies.enable-drops", true);
-					def_config.put("Config.mobs.zombies.pull-players-down", true);
-					def_config.put("Config.mobs.zombies.drops.chance", 0.3);
-					def_config.put("Config.mobs.zombies.drops.items", new String[] { "arrow", "2x'rotten_flesh'" }); // new String[] { "262", "2x367" }
-					
+				def_config.put("Config.mobs.zombies.pull-players-down", true);
 					// SPAWNING
 					def_config.put("Config.mobs.zombies.spawning.interval", 40);
 					def_config.put("Config.mobs.zombies.spawning.maxzombies", 200);
 					def_config.put("Config.mobs.zombies.spawning.enable-auto-spawn", false);
-					def_config.put("Config.mobs.zombies.spawning.enable-mini-zombies", true);
 					def_config.put("Config.mobs.zombies.spawning.auto-spawning-interval", 40);
-					
-					// PROPERTIES
-					def_config.put("Config.mobs.zombies.properties.speed-boost", 1);
-					def_config.put("Config.mobs.zombies.properties.damage-boost", 0);
-					def_config.put("Config.mobs.zombies.properties.health", 16);
-					
-					// BABY PROPERTIES
-					def_config.put("Config.mobs.zombies.baby-properties.speed-boost", -1);
-					def_config.put("Config.mobs.zombies.baby-properties.damage-boost", "same");
-					def_config.put("Config.mobs.zombies.baby-properties.health", "same");
 					
 //						// ANIMALS
 //						
@@ -483,11 +486,11 @@ public class CraftZ extends JavaPlugin {
 				def_config.put("Config.chat.ranged.radio-channels", 10);
 			
 			// VEHICLES
-			def_config.put("Config.vehicles.enable", false);
-			def_config.put("Config.vehicles.speed", 5.0);
-			def_config.put("Config.vehicles.speed-street-multiplier", 1.6);
-			def_config.put("Config.vehicles.speed-street-blocks", new String[] { "wool:7", "wool", "wool:15" });
-			def_config.put("Config.vehicles.street-border-blocks", new String[] { "double_step", "step" });
+//			def_config.put("Config.vehicles.enable", false);
+//			def_config.put("Config.vehicles.speed", 5.0);
+//			def_config.put("Config.vehicles.speed-street-multiplier", 1.6);
+//			def_config.put("Config.vehicles.speed-street-blocks", new String[] { "wool:7", "wool", "wool:15" });
+//			def_config.put("Config.vehicles.street-border-blocks", new String[] { "double_step", "step" });
 			
 			// ITEMNAMES
 			def_config.put("Config.change-item-names.enable", true);
@@ -531,8 +534,13 @@ public class CraftZ extends JavaPlugin {
 			}
 		}
 		
-		if (config.contains("Config.players.interact.allow-spiderweb-placing"))
-			config.set("Config.players.interact.allow-spiderweb-placing", null);
+		config.set("Config.players.interact.allow-spiderweb-placing", null);
+		
+		config.set("Config.mobs.zombies.spawning.enable-mini-zombies", null);
+		config.set("Config.mobs.zombies.properties", null);
+		config.set("Config.mobs.zombies.baby-properties", null);
+		config.set("Config.mobs.zombies.enable-drops", null);
+		config.set("Config.mobs.zombies.drops", null);
 		
 		ConfigManager.saveConfig("config");
 		
@@ -660,16 +668,12 @@ public class CraftZ extends JavaPlugin {
 			def_loot.put("Loot.settings.max-player-vicinity", -1);
 			def_loot.put("Loot.settings.despawn-on-startup", true);
 			
-			
-		
 		ConfigManager.newConfig("loot", instance, def_loot);
 		ConfigManager.getConfig("loot").options().header(
 				  "++================================================++\n"
 		 		+ "|| Loot setup for the CraftZ plugin by JangoBrick ||\n"
 		 		+ "++================================================++"
 		);
-		
-		
 		
 		FileConfiguration loot = ConfigManager.getConfig("loot");
 		if (!loot.contains("Loot.lists") || loot.getConfigurationSection("Loot.lists").getKeys(false).isEmpty()) {
@@ -786,8 +790,6 @@ public class CraftZ extends JavaPlugin {
 		 		+ "++================================================++"
 		);
 		
-		
-		
 		FileConfiguration kits = ConfigManager.getConfig("kits");
 		if (!kits.contains("Kits.kits")) {
 			
@@ -808,6 +810,64 @@ public class CraftZ extends JavaPlugin {
 			kits.addDefault("Kits.kits.basic.items", kits_basic_items);
 			
 			ConfigManager.saveConfig("kits");
+			
+		}
+		
+		
+		
+		
+		
+		// ENEMIES
+		Map<String, Object> def_enemies = new LinkedHashMap<String, Object>();
+		
+		ConfigManager.newConfig("enemies", this, def_enemies);
+		ConfigManager.getConfig("kits").options().header(
+				  "++=================================================++\n"
+		 		+ "|| Enemy setup for the CraftZ plugin by JangoBrick ||\n"
+		 		+ "++=================================================++"
+		);
+		
+		FileConfiguration enemies = ConfigManager.getConfig("enemies");
+		ConfigurationSection sec = enemies.getConfigurationSection("Enemies");
+		if (sec == null || sec.getKeys(false).isEmpty()) {
+			
+			// ZOMBIE
+			{
+				enemies.addDefault("Enemies.zombie.default", true);
+				enemies.addDefault("Enemies.zombie.type", "zombie");
+					// properties
+					enemies.addDefault("Enemies.zombie.properties.health", 16);
+					enemies.addDefault("Enemies.zombie.properties.speed-boost", 1);
+					enemies.addDefault("Enemies.zombie.properties.damage-boost", 0);
+				enemies.addDefault("Enemies.zombie.use-for-auto-spawning", true);
+				enemies.addDefault("Enemies.zombie.baby-chance", 0.15);
+					// baby properties
+					enemies.addDefault("Enemies.zombie.baby-properties.speed-boost", -1);
+					enemies.addDefault("Enemies.zombie.baby-properties.damage-boost", "same");
+					enemies.addDefault("Enemies.zombie.baby-properties.health", "same");
+				enemies.addDefault("Enemies.zombie.drops", makeConfigMap(new String[] {
+						"arrow", "2x'rotten_flesh'"
+				}, new Double[] {
+						0.1, 0.25
+				}));
+			}
+			
+			// PIG ZOMBIE
+			{
+				enemies.addDefault("Enemies.pigzombie.type", "pig_zombie");
+					// properties
+					enemies.addDefault("Enemies.pigzombie.properties.health", 30);
+					enemies.addDefault("Enemies.pigzombie.properties.speed-boost", 0);
+					enemies.addDefault("Enemies.pigzombie.properties.damage-boost", 2);
+				enemies.addDefault("Enemies.pigzombie.use-for-auto-spawning", false);
+				enemies.addDefault("Enemies.pigzombie.drops", makeConfigMap(new String[] {
+						"arrow", "pork", "iron_helmet", "gold_sword"
+				}, new Double[] {
+						0.25,    0.25,   0.05,          0.1
+				}));
+			}
+			
+			ConfigManager.saveConfig("enemies");
 			
 		}
 		
@@ -869,6 +929,138 @@ public class CraftZ extends JavaPlugin {
 	
 	public boolean isWorld(World world) {
 		return world.getName().equals(worldName());
+	}
+	
+	
+	
+	
+	
+	public Set<String> getEnemyDefinitions() {
+		
+		ConfigurationSection all = ConfigManager.getConfig("enemies").getConfigurationSection("Enemies");
+		if (all == null)
+			return new HashSet<String>();
+		
+		return all.getKeys(false);
+		
+	}
+	
+	public ConfigurationSection getEnemyDefinition(String type) {
+		
+		ConfigurationSection all = ConfigManager.getConfig("enemies").getConfigurationSection("Enemies");
+		if (all == null)
+			return null;
+		
+		ConfigurationSection result = type != null && !(type = type.trim()).equals("")
+				? all.getConfigurationSection(type)
+				: null;
+		if (result != null)
+			return result;
+		
+		for (String key : all.getKeys(false)) {
+			ConfigurationSection sec = all.getConfigurationSection(key);
+			if (sec != null && (result == null || sec.getBoolean("default")))
+				result = sec;
+		}
+		
+		return result;
+		
+	}
+	
+	public List<ConfigurationSection> getAutoSpawnEnemyDefinitions() {
+		
+		List<ConfigurationSection> list = new ArrayList<ConfigurationSection>();
+		
+		ConfigurationSection all = ConfigManager.getConfig("enemies").getConfigurationSection("Enemies");
+		if (all == null)
+			return list;
+		
+		for (String key : all.getKeys(false)) {
+			ConfigurationSection sec = all.getConfigurationSection(key);
+			if (sec != null && sec.getBoolean("use-for-auto-spawning"))
+				list.add(sec);
+		}
+		
+		return list;
+		
+	}
+	
+	
+	
+	
+	
+	public LivingEntity spawnEnemy(ConfigurationSection sec, Location loc) {
+		
+		if (sec == null || loc == null)
+			return null;
+		
+		EntityType type = EntityType.valueOf(sec.getString("type").toUpperCase());
+		if (!type.isAlive())
+			return null;
+		
+		LivingEntity ent = (LivingEntity) loc.getWorld().spawnEntity(loc, type);
+		ent.setMetadata("enemyType", new FixedMetadataValue(this, sec.getName()));
+		
+		ent.setCanPickupItems(false);
+		
+		String propPre = "";
+		
+		if (ent instanceof Zombie) {
+			
+			Zombie z = (Zombie) ent;
+			
+			z.setVillager(false);
+			
+			if (CraftZ.RANDOM.nextDouble() < sec.getDouble("baby-chance", 0.15)) {
+				propPre = "baby-";
+				z.setBaby(true);
+			} else {
+				z.setBaby(false);
+			}
+			
+		}
+		
+		int health = Math.max(getEnemyProperty(sec, "health", propPre), 1);
+		ent.setMaxHealth(health);
+		ent.setHealth(health);
+		
+		int speedBoost = getEnemyProperty(sec, "speed-boost", propPre);
+		if (speedBoost > 0) {
+			ent.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, speedBoost - 1));
+		} else if (speedBoost < 0) {
+			ent.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, Integer.MAX_VALUE, -speedBoost - 1));
+		}
+		
+		int damageBoost = getEnemyProperty(sec, "damage-boost", propPre);
+		if (damageBoost > 0) {
+			ent.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, damageBoost - 1));
+		} else if (damageBoost < 0) {
+			ent.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, Integer.MAX_VALUE, -damageBoost - 1));
+		}
+		
+		return ent;
+		
+	}
+	
+	private static int getEnemyProperty(ConfigurationSection sec, String property, String prefix) {
+		
+		if (prefix == null) {
+			return sec.getInt("properties." + property);
+		}
+		
+		if (sec.getString(prefix + "properties." + property, "same").equalsIgnoreCase("same"))
+			return sec.getInt("properties." + property);
+		
+		return sec.getInt(prefix + "properties." + property);
+		
+	}
+	
+	
+	
+	
+	
+	public boolean isEnemy(Entity ent) {//TODO implement checking for manually spawned entities of other types
+		return ent != null && (ent.getType() == EntityType.ZOMBIE || EntityChecker.getMeta(ent, "enemyType") != null);
 	}
 	
 	

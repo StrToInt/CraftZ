@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.bukkit.Material;
-import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -22,6 +22,7 @@ import org.bukkit.metadata.MetadataValue;
 
 import craftZ.CraftZ;
 import craftZ.Module;
+import craftZ.util.EntityChecker;
 import craftZ.util.StackParser;
 
 
@@ -67,8 +68,6 @@ public class DeadPlayers extends Module {
 		zombie.getEquipment().setItemInHandDropChance(0);
 		
 		zombie.setMetadata("inventory", new FixedMetadataValue(getCraftZ(), inventory));
-		
-		getCraftZ().getZombieSpawner().equipZombie(zombie);
 		
 		return zombie;
 		
@@ -133,30 +132,34 @@ public class DeadPlayers extends Module {
 		if (isWorld(event.getEntity().getWorld())) {
 			
 			LivingEntity entity = event.getEntity();
-			EntityType type = event.getEntityType();
 			List<ItemStack> drops = event.getDrops();
 			
-			FileConfiguration config = getConfig("config");
-			
-			if (type == EntityType.ZOMBIE) {
+			if (getCraftZ().isEnemy(entity)) {
 				
 				drops.clear();
 				
-				Zombie zombie = (Zombie) entity;
-				List<ItemStack> inventory = getInventory(zombie);
-				
-				if (!inventory.isEmpty()) {
+				List<ItemStack> inventory = entity instanceof Zombie ? getInventory((Zombie) entity) : null;
+				if (inventory != null && !inventory.isEmpty()) {
 					
 					drops.addAll(inventory);
 					
-				} else if (config.getBoolean("Config.mobs.zombies.enable-drops")) {
+				} else {
 					
-					List<String> items = config.getStringList("Config.mobs.zombies.drops.items");
-					
-					for (String itemString : items) {
-						ItemStack item = StackParser.fromString(itemString, true);
-						if (item != null && CraftZ.RANDOM.nextDouble() < config.getDouble("Config.mobs.zombies.drops.chance"))
-							drops.add(item);
+					MetadataValue meta = EntityChecker.getMeta(entity, "enemyType");
+					if (meta != null) {
+						
+						ConfigurationSection sec = getCraftZ().getEnemyDefinition(meta.asString());
+						if (sec != null && sec.contains("drops")) {
+							
+							ConfigurationSection dropsSec = sec.getConfigurationSection("drops");
+							for (String itemString : dropsSec.getKeys(false)) {
+								ItemStack item = StackParser.fromString(itemString, true);
+								if (item != null && CraftZ.RANDOM.nextDouble() <= dropsSec.getDouble(itemString))
+									drops.add(item);
+							}
+							
+						}
+						
 					}
 					
 				}

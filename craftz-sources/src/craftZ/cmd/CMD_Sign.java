@@ -44,7 +44,7 @@ public class CMD_Sign extends CraftZCommand {
 				} else if (line2.equalsIgnoreCase("playerspawn")) {
 					desc = "Player Spawn '" + line3 + "'";
 				} else if (line2.equalsIgnoreCase("zombiespawn")) {
-					desc = "Zombie Spawn " + line3;
+					desc = "Zombie Spawn" + (line4.equals("") ? "" : " '" + line4 + "'");
 				}
 				
 				p.getInventory().addItem(ItemRenamer.on(new ItemStack(Material.SIGN))
@@ -85,6 +85,8 @@ public class CMD_Sign extends CraftZCommand {
 			addCompletions(options, args.length == 0 ? "" : args[0], true, "lootchest", "playerspawn", "zombiespawn");
 		} else if (args.length == 3 && args[0].equalsIgnoreCase("lootchest")) {
 			addCompletions(options, args[2], true, getCraftZ().getChestRefiller().getLists());
+		} else if (args.length == 3 && args[0].equalsIgnoreCase("zombiespawn")) {
+			addCompletions(options, args[2], true, getCraftZ().getEnemyDefinitions());
 		}
 		
 		return options;

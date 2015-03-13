@@ -5,13 +5,10 @@ import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -35,43 +32,23 @@ public class ZombieBehaviorModule extends Module {
 	
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onCreatureSpawn(CreatureSpawnEvent event) {
-		
-		Location loc = event.getLocation();
-		LivingEntity entity = event.getEntity();
-		EntityType type = event.getEntityType();
-		
-		if (isWorld(loc.getWorld())) {
-			
-			if (!event.isCancelled() && type == EntityType.ZOMBIE) {
-				getCraftZ().getZombieSpawner().equipZombie((Zombie) entity);
-			}
-			
-		}
-		
-	}
-	
-	
-	
-	
-	
-	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onEntityTargetLivingEntity(EntityTargetLivingEntityEvent event) {
 		
 		if (isWorld(event.getEntity().getWorld())) {
 			
-			if (!(event.getEntity() instanceof Zombie) || !(event.getTarget() instanceof Player))
+			Entity ent = event.getEntity();
+			
+			if (!getCraftZ().isEnemy(ent) || !(event.getTarget() instanceof Player))
 				return;
 			
-			Zombie z = (Zombie) event.getEntity();
 			Player p = (Player) event.getTarget();
-			if (!getCraftZ().getPlayerManager().isPlaying(p) || !z.getWorld().getName().equals(p.getWorld().getName()))
+			if (!getCraftZ().getPlayerManager().isPlaying(p) || !ent.getWorld().getName().equals(p.getWorld().getName()))
 				return;
 			
 			float vis = getCraftZ().getVisibilityBar().getVisibility(p);
 			
 			double blocks = 50 * vis;
-			double dist = z.getLocation().distance(p.getLocation());
+			double dist = ent.getLocation().distance(p.getLocation());
 			
 			if (dist > blocks) {
 				event.setCancelled(true);
@@ -89,11 +66,10 @@ public class ZombieBehaviorModule extends Module {
 	public void onEntityDamage(EntityDamageEvent event) {
 		
 		Entity entity = event.getEntity();
-		EntityType type = event.getEntityType();
 		
 		if (isWorld(entity.getWorld())) {
 			
-			if (type == EntityType.ZOMBIE && event.getCause() == DamageCause.FIRE_TICK) {
+			if (getCraftZ().isEnemy(entity) && event.getCause() == DamageCause.FIRE_TICK) {
 				event.setCancelled(true);
 				entity.setFireTicks(0);
 			}
@@ -111,10 +87,10 @@ public class ZombieBehaviorModule extends Module {
 		
 		if (isWorld(event.getEntity().getWorld())) {
 			
-			if (event.getEntityType() == EntityType.ZOMBIE) {
+			LivingEntity entity = event.getEntity();
+			if (getCraftZ().isEnemy(entity)) {
 				
-				Player killer =  event.getEntity().getKiller();
-				
+				Player killer =  entity.getKiller();
 				if (killer != null && !getCraftZ().getPlayerManager().isInsideOfLobby(killer)) {
 					
 					getData(killer).zombiesKilled++;
@@ -148,11 +124,13 @@ public class ZombieBehaviorModule extends Module {
 			List<Entity> entities = EntityChecker.getNearbyEntities(p, 2.5);
 			for (Entity ent : entities) {
 				
-				if (ent.getType() == EntityType.ZOMBIE) {
+				if (getCraftZ().isEnemy(ent)) {
+					
 					Location zloc = ent.getLocation();
 					if (zloc.getY() + 1 < plocv.getY()) {
 						p.setVelocity(zloc.toVector().subtract(plocv).normalize().multiply(0.5 + Math.random()*0.4));
 					}
+					
 				}
 				
 			}

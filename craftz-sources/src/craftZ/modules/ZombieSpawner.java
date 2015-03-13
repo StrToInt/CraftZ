@@ -6,14 +6,13 @@ import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Zombie;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import craftZ.CraftZ;
 import craftZ.Module;
+import craftZ.util.Condition;
 import craftZ.util.EntityChecker;
 import craftZ.worldData.Spawnpoint;
 import craftZ.worldData.WorldData;
@@ -86,11 +85,12 @@ public class ZombieSpawner extends Module {
 	
 	
 	
-	public void addSpawn(Location signLoc, int maxInRadius, int maxRadius) {
+	public void addSpawn(Location signLoc, int maxInRadius, int maxRadius, String type) {
 		
 		String id = makeID(signLoc);
 		
-		ZombieSpawnpoint spawn = new ZombieSpawnpoint(this, id, signLoc, maxRadius, maxInRadius);
+		ZombieSpawnpoint spawn = new ZombieSpawnpoint(this, id, signLoc, maxRadius, maxInRadius,
+				type == null || type.trim().isEmpty() ? null : type);
 		spawns.add(spawn);
 		
 		spawn.save();
@@ -112,81 +112,28 @@ public class ZombieSpawner extends Module {
 	
 	
 	
-	public Zombie spawnAt(Location loc) {
+	public LivingEntity spawnAt(Location loc, String type) {
+		return spawnAt(loc, getCraftZ().getEnemyDefinition(type));
+	}
+	
+	public LivingEntity spawnAt(Location loc, ConfigurationSection sec) {
 		
-		if (loc == null)
+		if (loc == null || sec == null)
 			return null;
 		
-		int zombies = EntityChecker.getEntityCountInWorld(world(), EntityType.ZOMBIE);;
+		int zombies = EntityChecker.getEntityCountInWorld(world(), new Condition<Entity>() {
+			@Override
+			public boolean check(Entity t) {
+				return t.hasMetadata("enemyType");
+			}
+		});
 		int maxZombies = getConfig("config").getInt("Config.mobs.zombies.spawning.maxzombies");
 		
 		if (zombies < maxZombies || maxZombies < 0) {
-			
-			Zombie z = (Zombie) world().spawnEntity(loc, EntityType.ZOMBIE);
-			
-			z.setVillager(false);
-			z.setBaby(false);
-			equipZombie(z);
-			
-			return z;
-			
+			return getCraftZ().spawnEnemy(sec, loc);
 		} else {
 			return null;
 		}
-		
-	}
-	
-	
-	
-	
-	
-	public void equipZombie(Zombie zombie) {
-		
-		if (zombie == null || zombie.isBaby() || !zombie.getActivePotionEffects().isEmpty()
-				|| zombie.getHealth() != zombie.getMaxHealth()) {
-			return;
-		}
-		
-		FileConfiguration config = getConfig("config");
-		
-		int speed = config.getInt("Config.mobs.zombies.properties.speed-boost");
-		int damage = config.getInt("Config.mobs.zombies.properties.damage-boost");
-		double health = config.getDouble("Config.mobs.zombies.properties.health");
-		
-		if (config.getBoolean("Config.mobs.zombies.spawning.enable-mini-zombies") && CraftZ.RANDOM.nextInt(7) < 1) {
-			
-			zombie.setBaby(true);
-			
-			if (!config.getString("Config.mobs.zombies.baby-properties.speed-boost").equalsIgnoreCase("same"))
-				speed = config.getInt("Config.mobs.zombies.baby-properties.speed-boost");
-			
-			if (!config.getString("Config.mobs.zombies.baby-properties.damage-boost").equalsIgnoreCase("same"))
-				damage = config.getInt("Config.mobs.zombies.baby-properties.damage-boost");
-			
-			if (!config.getString("Config.mobs.zombies.baby-properties.health").equalsIgnoreCase("same"))
-				health = config.getDouble("Config.mobs.zombies.baby-properties.health");
-			
-		}
-		
-		equipZombie(zombie, speed, damage, health);
-		
-	}
-	
-	private static void equipZombie(Zombie zombie, int speed, int damage, double health) {
-		
-		if (speed > 0)
-			zombie.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, speed - 1));
-		else if (speed < 0)
-			zombie.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, Integer.MAX_VALUE, -speed - 1));
-		
-		if (damage > 0)
-			zombie.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, damage - 1));
-		else if (damage < 0)
-			zombie.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, Integer.MAX_VALUE, -damage - 1));
-		
-		health = Math.max(health, 1);
-		zombie.setMaxHealth(health);
-		zombie.setHealth(health);
 		
 	}
 	
@@ -221,8 +168,11 @@ public class ZombieSpawner extends Module {
 				if (p == null)
 					break;
 				
-				Location loc = p.getLocation().add(CraftZ.RANDOM.nextInt(128) - 64, 0, CraftZ.RANDOM.nextInt(128) - 64);
-				spawnAt(Spawnpoint.findSafeLocation(loc));
+				List<ConfigurationSection> types = getCraftZ().getAutoSpawnEnemyDefinitions();
+				if (!types.isEmpty()) {
+					Location loc = p.getLocation().add(CraftZ.RANDOM.nextInt(128) - 64, 0, CraftZ.RANDOM.nextInt(128) - 64);
+					spawnAt(Spawnpoint.findSafeLocation(loc), types.get(CraftZ.RANDOM.nextInt(types.size())));
+				}
 				
 			}
 			

@@ -53,6 +53,27 @@ public class EntityChecker {
 		
 	}
 	
+	public static boolean areEntitiesNearby(Location loc, double radius, Condition<? super Entity> condition, int amount) {
+		
+		List<Entity> nearby = getNearbyEntities(loc, radius);
+		
+		if (nearby == null)
+			return false;
+		
+		int found = 0;
+		
+		for (Entity ent : nearby) {
+			if (condition.check(ent)) {
+				found++;
+				if (found >= amount)
+					return true;
+			}
+		}
+		
+		return false;
+		
+	}
+	
 	
 	
 	
@@ -64,6 +85,20 @@ public class EntityChecker {
 		
 		for (Entity ent : entities) {
 			if (ent.getType() == type)
+				count++;
+		}
+		
+		return count;
+		
+	}
+	
+	public static int getEntityCountInWorld(World world, Condition<? super Entity> condition) {
+		
+		List<Entity> entities = world.getEntities();
+		int count = 0;
+		
+		for (Entity ent : entities) {
+			if (condition.check(ent))
 				count++;
 		}
 		

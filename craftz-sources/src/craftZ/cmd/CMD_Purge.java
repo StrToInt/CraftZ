@@ -5,11 +5,11 @@ import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Zombie;
 
 import craftZ.CraftZ;
 
@@ -34,14 +34,19 @@ public class CMD_Purge extends CraftZCommand {
 			int n = 0;						
 			for (Entity ent : ents) {
 				
-				if (ent instanceof Zombie) {
-					Zombie z = (Zombie) ent;
-					for (double ya=0; ya<2; ya+=0.2) {
+				if (getCraftZ().isEnemy(ent)) {
+					
+					Location loc = ent.getLocation();
+					
+					for (double ya=0; ya<10; ya++) {
 						for (int i=0; i<9; i++)
-							w.playEffect(z.getLocation().add(0, ya, 0), Effect.SMOKE, i);
+							w.playEffect(loc, Effect.SMOKE, i);
+						loc.add(0, 0.2, 0);
 					}
+					
 					ent.remove();
 					n++;
+					
 				}
 				
 			}

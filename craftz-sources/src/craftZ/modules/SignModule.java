@@ -78,8 +78,14 @@ public class SignModule extends Module {
 								int maxzIn = Integer.parseInt(spl[0]);
 								int maxzRadius = Integer.parseInt(spl[1]);
 								
-								getCraftZ().getZombieSpawner().addSpawn(loc, maxzIn, maxzRadius);
-								p.sendMessage(success);
+								String type = lines[3].trim();
+								
+								if (!type.isEmpty() && !getCraftZ().getEnemyDefinitions().contains(type)) {
+									signNotComplete(p, block, "The enemy type (line 4) does not exist. You can leave it empty to use the default type.");
+								} else {
+									getCraftZ().getZombieSpawner().addSpawn(loc, maxzIn, maxzRadius, type);
+									p.sendMessage(success);
+								}
 								
 							} catch(NumberFormatException ex) {
 								signNotComplete(p, block, "One or both of the two values in line 3 are no valid integers.");
