@@ -9,8 +9,9 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityCombustByBlockEvent;
+import org.bukkit.event.entity.EntityCombustByEntityEvent;
+import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.util.Vector;
@@ -63,15 +64,15 @@ public class ZombieBehaviorModule extends Module {
 	
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onEntityDamage(EntityDamageEvent event) {
+	public void onEntityCombust(EntityCombustEvent event) {
 		
 		Entity entity = event.getEntity();
 		
 		if (isWorld(entity.getWorld())) {
 			
-			if (getCraftZ().isEnemy(entity) && event.getCause() == DamageCause.FIRE_TICK) {
+			if (!(event instanceof EntityCombustByBlockEvent) && !(event instanceof EntityCombustByEntityEvent)
+					&& getCraftZ().isEnemy(entity)) {
 				event.setCancelled(true);
-				entity.setFireTicks(0);
 			}
 		
 		}
