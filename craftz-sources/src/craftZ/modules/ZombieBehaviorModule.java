@@ -71,7 +71,8 @@ public class ZombieBehaviorModule extends Module {
 		if (isWorld(entity.getWorld())) {
 			
 			if (!(event instanceof EntityCombustByBlockEvent) && !(event instanceof EntityCombustByEntityEvent)
-					&& getCraftZ().isEnemy(entity)) {
+					&& getCraftZ().isEnemy(entity)
+					&& !getConfig("config").getBoolean("Config.mobs.zombies.burn-in-sunlight")) {
 				event.setCancelled(true);
 			}
 		

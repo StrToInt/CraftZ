@@ -130,11 +130,15 @@ public class PoisoningModule extends Module {
 		
 		PlayerData data = getData(p);
 		
-		if (isSurvival(p) && tick % 200 == 0 && data.poisoned) {
+		int ticks = getConfig("config").getInt("Config.players.medical.poisoning.damage-interval");
+		if (isSurvival(p) && tick % ticks == 0 && data.poisoned) {
+			
 			p.damage(1);
+			
 			p.addPotionEffect(new PotionEffect(PotionEffectType.HUNGER, 20, 1));
 			p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 10, 1));
 			p.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 30, 1));
+			
 		}
 		
 	}

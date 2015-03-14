@@ -421,6 +421,7 @@ public class CraftZ extends JavaPlugin {
 					def_config.put("Config.players.medical.bleeding.enable", true);
 					def_config.put("Config.players.medical.bleeding.chance", 0.04);
 					def_config.put("Config.players.medical.bleeding.heal-with-paper", true);
+					def_config.put("Config.players.medical.bleeding.damage-interval", 200);
 					// HEALING
 					def_config.put("Config.players.medical.healing.heal-with-rosered", true);
 					def_config.put("Config.players.medical.healing.only-healing-others", true);
@@ -428,6 +429,7 @@ public class CraftZ extends JavaPlugin {
 					def_config.put("Config.players.medical.poisoning.enable", true);
 					def_config.put("Config.players.medical.poisoning.chance", 0.04);
 					def_config.put("Config.players.medical.poisoning.cure-with-limegreen", true);
+					def_config.put("Config.players.medical.poisoning.damage-interval", 200);
 					// BONEBREAK
 					def_config.put("Config.players.medical.bonebreak.enable", true);
 					def_config.put("Config.players.medical.bonebreak.height", 6);
@@ -453,6 +455,7 @@ public class CraftZ extends JavaPlugin {
 			
 				// ZOMBIES
 				def_config.put("Config.mobs.zombies.pull-players-down", true);
+				def_config.put("Config.mobs.zombies.burn-in-sunlight", false);
 					// SPAWNING
 					def_config.put("Config.mobs.zombies.spawning.interval", 40);
 					def_config.put("Config.mobs.zombies.spawning.maxzombies", 200);

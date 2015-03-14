@@ -102,8 +102,8 @@ public class BleedingModule extends Module {
 		
 		PlayerData data = getData(p);
 		
-		if (isSurvival(p) && tick % 200 == 0
-				&& data.bleeding) {
+		int ticks = getConfig("config").getInt("Config.players.medical.bleeding.damage-interval");
+		if (isSurvival(p) && tick % ticks == 0 && data.bleeding) {
 			p.damage(1);
 		}
 		
