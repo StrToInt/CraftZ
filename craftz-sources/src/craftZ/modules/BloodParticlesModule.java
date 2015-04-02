@@ -1,7 +1,6 @@
 package craftZ.modules;
 
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -41,11 +40,9 @@ public class BloodParticlesModule extends Module {
 		
 		if (isWorld(entity.getWorld())) {
 			
-			if (!event.isCancelled() && getConfig("config").getBoolean("Config.mobs.blood-particles-when-damaged")) {
-				
-				if (!type.isAlive() || (type == EntityType.PLAYER && ((Player) entity).getGameMode() == GameMode.CREATIVE)) {
-					return;
-				}
+			if (!event.isCancelled() && getConfig("config").getBoolean("Config.mobs.blood-particles-when-damaged")
+					&& type.isAlive() && (type != EntityType.PLAYER || isSurvival((Player) entity))
+					&& type != EntityType.ARMOR_STAND) {
 				
 				Location loc = entity.getLocation();
 				World w = entity.getWorld();
