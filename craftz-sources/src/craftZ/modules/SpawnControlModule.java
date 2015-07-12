@@ -1,5 +1,8 @@
 package craftZ.modules;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
@@ -13,16 +16,16 @@ import craftZ.Module;
 
 public class SpawnControlModule extends Module {
 	
-	public static final EntityType[] blocked = {
+	public static final List<EntityType> BLOCKED = Arrays.asList(new EntityType[] {
 		EntityType.SKELETON, EntityType.CREEPER, EntityType.SPIDER, EntityType.ENDERMAN, EntityType.GHAST,
 		EntityType.SILVERFISH, EntityType.SLIME, EntityType.SQUID, EntityType.PIG_ZOMBIE, EntityType.MAGMA_CUBE,
 		EntityType.CAVE_SPIDER, EntityType.BLAZE, EntityType.OCELOT, EntityType.BAT, EntityType.WITCH,
 		EntityType.WOLF, EntityType.MUSHROOM_COW, EntityType.HORSE, EntityType.ENDERMITE, EntityType.RABBIT
-	};
+	});
 	
-	public static final EntityType[] animals = {
+	public static final List<EntityType> ANIMALS = Arrays.asList(new EntityType[] {
 		EntityType.SHEEP, EntityType.PIG, EntityType.COW, EntityType.CHICKEN
-	};
+	});
 	
 	
 	
@@ -49,14 +52,14 @@ public class SpawnControlModule extends Module {
 						&& getConfig("config").getBoolean("Config.mobs.allow-all-plugin-spawning");
 				
 				// disallow blocked (if not by plugin)
-				for (EntityType bt : blocked) {
+				for (EntityType bt : BLOCKED) {
 					if (type == bt && !plg)
 						event.setCancelled(true);
 				}
 				
 				// disallow animal spawns (if not by plugin or explicitly allowed)
 				boolean allowAnimalSpawns = getConfig("config").getBoolean("Config.mobs.animals.spawning.enable");
-				for (EntityType at : animals) {
+				for (EntityType at : ANIMALS) {
 					if (type == at && !allowAnimalSpawns && !plg)
 						event.setCancelled(true);
 				}

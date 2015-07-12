@@ -11,6 +11,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 import craftZ.CraftZ;
 
+
 public class CMD_SetBorder extends CraftZCommand {
 	
 	public CMD_SetBorder(CraftZ craftZ) {

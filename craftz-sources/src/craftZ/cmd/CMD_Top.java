@@ -13,7 +13,6 @@ import craftZ.CraftZ;
 import craftZ.modules.PlayerManager;
 
 
-
 public class CMD_Top extends CraftZCommand {
 	
 	public CMD_Top(CraftZ craftZ) {

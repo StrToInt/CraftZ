@@ -28,7 +28,7 @@ import craftZ.util.StackParser;
 
 public class DeadPlayers extends Module {
 	
-	public static List<Material> weapons = Arrays.asList(new Material[] { // higher index = preferred when choosing hand item
+	public static List<Material> WEAPONS = Arrays.asList(new Material[] { // higher index = preferred when choosing hand item
 		Material.WOOD_SWORD, Material.WOOD_AXE, Material.STONE_SWORD, Material.STONE_AXE, Material.BOW,
 		Material.IRON_SWORD, Material.IRON_AXE, Material.GOLD_SWORD, Material.GOLD_AXE, Material.DIAMOND_SWORD, Material.DIAMOND_AXE,
 	});
@@ -184,7 +184,7 @@ public class DeadPlayers extends Module {
 			if (item == null)
 				continue;
 			
-			int index = weapons.indexOf(item.getType());
+			int index = WEAPONS.indexOf(item.getType());
 			if (hand == null || index > handIndex) {
 				hand = item;
 				handIndex = index;

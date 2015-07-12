@@ -10,6 +10,7 @@ import org.bukkit.inventory.PlayerInventory;
 
 import craftZ.modules.Kit;
 
+
 public class KitEditingSession {
 	
 	public final UUID playerID;

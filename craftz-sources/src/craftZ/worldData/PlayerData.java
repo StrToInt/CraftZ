@@ -1,5 +1,6 @@
 package craftZ.worldData;
 
+
 public class PlayerData {
 	
 	public int thirst = 20, zombiesKilled, playersKilled, minutesSurvived;

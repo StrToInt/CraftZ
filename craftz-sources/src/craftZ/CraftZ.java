@@ -55,7 +55,7 @@ public class CraftZ extends JavaPlugin {
 	
 	public static final Random RANDOM = new Random();
 	private static CraftZ instance;
-	public boolean firstRun, failedWorldLoad;
+	private boolean firstRun, failedWorldLoad;
 	private CraftZCommandManager cmd;
 	
 	private List<Module> modules = new ArrayList<Module>();
@@ -68,7 +68,7 @@ public class CraftZ extends JavaPlugin {
 	private DeadPlayers deadPlayers;
 	private VisibilityBar visibilityBar;
 	
-	public long tick = 0;
+	private long tick = 0;
 	
 	
 	
@@ -1119,7 +1119,7 @@ public class CraftZ extends JavaPlugin {
 	
 	
 	
-	public static <K, V> LinkedHashMap<K, V> makeConfigMap(K[] keys, V[] values) {
+	private static <K, V> LinkedHashMap<K, V> makeConfigMap(K[] keys, V[] values) {
 		
 		LinkedHashMap<K, V> map = new LinkedHashMap<K, V>();
 		
