@@ -84,6 +84,7 @@ public class CraftZ extends JavaPlugin {
 	private Kits kits;
 	private DeadPlayers deadPlayers;
 	private VisibilityBar visibilityBar;
+	private WorldBorderModule worldBorder;
 	
 	private long tick = 0;
 	
@@ -167,7 +168,7 @@ public class CraftZ extends JavaPlugin {
 		
 		addModule(new PlayerWorldProtectionModule(this));
 		addModule(new NaturalWorldProtectionModule(this));
-		addModule(new WorldBorderModule(this));
+		addModule(worldBorder = new WorldBorderModule(this));
 		
 		addModule(new BloodParticlesModule(this));
 		
@@ -338,6 +339,10 @@ public class CraftZ extends JavaPlugin {
 	
 	public VisibilityBar getVisibilityBar() {
 		return visibilityBar;
+	}
+	
+	public WorldBorderModule getWorldBorder() {
+		return worldBorder;
 	}
 	
 	

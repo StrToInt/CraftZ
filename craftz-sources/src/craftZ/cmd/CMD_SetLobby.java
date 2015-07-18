@@ -24,7 +24,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 
 import craftZ.CraftZ;
 
@@ -61,16 +60,7 @@ public class CMD_SetLobby extends CraftZCommand {
 				return WRONG_USAGE;
 			}
 			
-			FileConfiguration config = getConfig("config");
-			
-			config.set("Config.world.lobby.world", p.getWorld().getName());
-			config.set("Config.world.lobby.x", Math.round(loc.getX() * 100) / 100.0);
-			config.set("Config.world.lobby.y", Math.round(loc.getY() * 100) / 100.0);
-			config.set("Config.world.lobby.z", Math.round(loc.getZ() * 100) / 100.0);
-			config.set("Config.world.lobby.yaw", Math.round(loc.getYaw() * 100) / 100f);
-			config.set("Config.world.lobby.pitch", Math.round(loc.getPitch() * 100) / 100f);
-			config.set("Config.world.lobby.radius", radius);
-			saveConfig("config");
+			getCraftZ().getPlayerManager().setLobby(loc, radius);
 			
 			send(ChatColor.AQUA + getMsg("Messages.cmd.setlobby"));
 			

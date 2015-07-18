@@ -18,7 +18,6 @@
 package craftZ.modules;
 
 import org.bukkit.Location;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -37,13 +36,92 @@ public class WorldBorderModule extends Module {
 	
 	
 	
+	public boolean isEnabled() {
+		return getConfig("config").getBoolean("Config.world.world-border.enable");
+	}
+	
+	public void setEnabled(boolean enable) {
+		getConfig("config").set("Config.world.world-border.enable", enable);
+		saveConfig("config");
+	}
+	
+	
+	
+	
+	
+	public String getShape() {
+		return getConfig("config").getString("Config.world.world-border.shape");
+	}
+	
+	public void setShape(String shape) {
+		getConfig("config").set("Config.world.world-border.shape", shape);
+		saveConfig("config");
+	}
+	
+	
+	
+	public double getRadius() {
+		return getConfig("config").getDouble("Config.world.world-border.radius");
+	}
+	
+	public void setRadius(double radius) {
+		getConfig("config").set("Config.world.world-border.radius", radius);
+		saveConfig("config");
+	}
+	
+	
+	
+	
+	
+	public double getX() {
+		return getConfig("config").getDouble("Config.world.world-border.x");
+	}
+	
+	public void setX(double x) {
+		getConfig("config").set("Config.world.world-border.x", x);
+		saveConfig("config");
+	}
+	
+	
+	
+	public double getZ() {
+		return getConfig("config").getDouble("Config.world.world-border.z");
+	}
+	
+	public void setZ(double z) {
+		getConfig("config").set("Config.world.world-border.z", z);
+		saveConfig("config");
+	}
+	
+	
+	
+	public void setLocation(double x, double z) {
+		getConfig("config").set("Config.world.world-border.x", x);
+		getConfig("config").set("Config.world.world-border.z", z);
+		saveConfig("config");
+	}
+	
+	
+	
+	public double getRate() {
+		return getConfig("config").getDouble("Config.world.world-border.rate");
+	}
+	
+	public void setRate(double rate) {
+		getConfig("config").set("Config.world.world-border.rate", rate);
+		saveConfig("config");
+	}
+	
+	
+	
+	
+	
 	public double getWorldBorderDistance(Location ploc) {
 		
-		ConfigurationSection sec = getConfig("config").getConfigurationSection("Config.world.world-border");
-		int r = sec.getInt("radius");
-		String shape = sec.getString("shape");
+		double radius = getRadius();
+		String shape = getShape();
 		
-		Location loc = new Location(world(), sec.getDouble("x"), ploc.getY(), sec.getDouble("z"));
+		Location loc = new Location(world(), getX(), ploc.getY(), getZ());
 		if (!ploc.getWorld().getName().equals(loc.getWorld().getName()))
 			return 0;
 		
@@ -51,16 +129,16 @@ public class WorldBorderModule extends Module {
 		
 		if (shape.equalsIgnoreCase("square") || shape.equalsIgnoreCase("rect")) {
 			
-			int x = loc.getBlockX(), z = loc.getBlockZ();
-			int px = ploc.getBlockX(), pz = ploc.getBlockZ();
+			double x = loc.getX(), z = loc.getZ();
+			double px = ploc.getX(), pz = ploc.getZ();
 			
-			int dx = Math.max(Math.max((x-r) - px, 0), px - (x+r));
-			int dy = Math.max(Math.max((z-r) - pz, 0), pz - (z+r));
+			double dx = Math.max(Math.max((x-radius) - px, 0), px - (x+radius));
+			double dy = Math.max(Math.max((z-radius) - pz, 0), pz - (z+radius));
 			
 			dist = Math.sqrt(dx*dx + dy*dy);
 			
 		} else {
-			dist = ploc.distance(loc) - r;
+			dist = ploc.distance(loc) - radius;
 		}
 		
 		return dist < 0 ? 0 : dist;
@@ -68,7 +146,7 @@ public class WorldBorderModule extends Module {
 	}
 	
 	public double getWorldBorderDamage(Location ploc) {
-		return getWorldBorderDistance(ploc) * getConfig("config").getDouble("Config.world.world-border.rate");
+		return getWorldBorderDistance(ploc) * getRate();
 	}
 	
 	
@@ -80,7 +158,7 @@ public class WorldBorderModule extends Module {
 		
 		if (tick % 30 == 0) {
 			
-			if (isSurvival(p) && getConfig("config").getBoolean("Config.world.world-border.enable")) {
+			if (isSurvival(p) && isEnabled()) {
 				
 				double dmg = getWorldBorderDamage(p.getLocation());
 				

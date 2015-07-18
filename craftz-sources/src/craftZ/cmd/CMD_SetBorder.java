@@ -24,9 +24,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 
 import craftZ.CraftZ;
+import craftZ.modules.WorldBorderModule;
 
 
 public class CMD_SetBorder extends CraftZCommand {
@@ -50,13 +50,9 @@ public class CMD_SetBorder extends CraftZCommand {
 		
 		if (hasPerm("craftz.setborder")) {
 			
-			FileConfiguration config = getConfig("config");
-			
 			if (args.length > 0 && args[0].equalsIgnoreCase("disable")) {
 				
-				config.set("Config.world.world-border.enable", false);
-				saveConfig("config");
-				
+				getCraftZ().getWorldBorder().setEnabled(false);
 				send(ChatColor.AQUA + getMsg("Messages.cmd.setborder-disable"));
 				
 				return SUCCESS;
@@ -81,12 +77,11 @@ public class CMD_SetBorder extends CraftZCommand {
 				return WRONG_USAGE;
 			}
 			
-			config.set("Config.world.world-border.enable", true);
-			config.set("Config.world.world-border.shape", shape);
-			config.set("Config.world.world-border.radius", radius);
-			config.set("Config.world.world-border.x", Math.round(loc.getX() * 100) / 100.0);
-			config.set("Config.world.world-border.z", Math.round(loc.getZ() * 100) / 100.0);
-			saveConfig("config");
+			WorldBorderModule worldBorder = getCraftZ().getWorldBorder();
+			worldBorder.setEnabled(true);
+			worldBorder.setShape(shape);
+			worldBorder.setRadius(radius);
+			worldBorder.setLocation(Math.round(loc.getX() * 100) / 100.0, Math.round(loc.getZ() * 100) / 100.0);
 			
 			send(ChatColor.AQUA + getMsg("Messages.cmd.setborder"));
 			

@@ -678,6 +678,23 @@ public class PlayerManager extends Module {
 		
 	}
 	
+	public void setLobby(Location loc, double radius) {
+		
+		ConfigurationSection sec = getConfig("config").getConfigurationSection("Config.world.lobby");
+		
+		sec.set("world", loc.getWorld().getName());
+		sec.set("x", Math.round(loc.getX() * 100) / 100.0);
+		sec.set("y", Math.round(loc.getY() * 100) / 100.0);
+		sec.set("z", Math.round(loc.getZ() * 100) / 100.0);
+		sec.set("yaw", Math.round(loc.getYaw() * 100) / 100f);
+		sec.set("pitch", Math.round(loc.getPitch() * 100) / 100f);
+		
+		sec.set("radius", radius);
+		
+		saveConfig("config");
+		
+	}
+	
 	
 	
 	
