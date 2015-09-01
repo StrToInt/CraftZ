@@ -136,7 +136,7 @@ public class LootChest extends WorldDataObject {
 			int count = 1;
 			String itm = str;
 			
-			Pattern pattern = Pattern.compile("^([0-9])x");
+			Pattern pattern = Pattern.compile("^([0-9]+)x");
 			Matcher matcher = pattern.matcher(str);
 			if (matcher.find()) {
 				count = Integer.parseInt(matcher.group(1));
