@@ -161,7 +161,6 @@ public class CraftZ extends JavaPlugin {
 		addModule(visibilityBar = new VisibilityBar(this));
 		
 		addModule(new GrenadeModule(this));
-		addModule(new RocketLauncherModule(this));
 		addModule(new ZombieSmasherModule(this));
 		
 		addModule(new SignModule(this));
