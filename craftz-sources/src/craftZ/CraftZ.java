@@ -250,10 +250,7 @@ public class CraftZ extends JavaPlugin {
 		
 	
 		
-		info("++=============================================++");
-		info("||  Visit dev.bukkit.org/bukkit-plugins/craftz ||");
-		info("||  Plugin successfully enabled.               ||");
-		info("++=============================================++");
+		info("Plugin successfully enabled.");
 		
 	}
 	
@@ -266,9 +263,7 @@ public class CraftZ extends JavaPlugin {
 		for (Module m : modules)
 			m.onDisable();
 		
-		info("++=================================++");
-		info("||  Plugin successfully disabled.  ||");
-		info("++=================================++");
+		info("Plugin successfully disabled.");
 		
 	}
 	
@@ -534,9 +529,10 @@ public class CraftZ extends JavaPlugin {
 			
 		ConfigManager.newConfig("config", instance, def_config);
 		ConfigManager.getConfig("config").options().header(
-				  "++===================================================++\n"
-		 		+ "|| Configuration for the CraftZ plugin by JangoBrick ||\n"
-		 		+ "++===================================================++"
+				  "CraftZ: Main Configuration (config.yml)" + "\n\n"
+		 		+ "If you need help, feel free to ask at the plugin's page:" + "\n"
+		 		+ "http://dev.bukkit.org/bukkit-plugins/craftz/" + "\n\n"
+		 		+ "Defaults + explanation: http://pastebin.com/m1E7bKHG"
 		);
 		
 		FileConfiguration config = ConfigManager.getConfig("config");
@@ -657,9 +653,10 @@ public class CraftZ extends JavaPlugin {
 			
 		ConfigManager.newConfig("messages", instance, def_messages);
 		ConfigManager.getConfig("messages").options().header(
-				  "++==============================================++\n"
-		 		+ "|| Messages for the CraftZ plugin by JangoBrick ||\n"
-		 		+ "++==============================================++"
+				"CraftZ: Message Localization (messages.yml)" + "\n\n"
+		 	  + "If you need help, feel free to ask at the plugin's page:" + "\n"
+		 	  + "http://dev.bukkit.org/bukkit-plugins/craftz/" + "\n\n"
+		 	  + "Defaults + explanation: http://pastebin.com/i5nYYdT5"
 		);
 		
 		FileConfiguration messages = ConfigManager.getConfig("messages");
@@ -694,9 +691,10 @@ public class CraftZ extends JavaPlugin {
 			
 		ConfigManager.newConfig("loot", instance, def_loot);
 		ConfigManager.getConfig("loot").options().header(
-				  "++================================================++\n"
-		 		+ "|| Loot setup for the CraftZ plugin by JangoBrick ||\n"
-		 		+ "++================================================++"
+				"CraftZ: Loot Setup (loot.yml)" + "\n\n"
+			  + "If you need help, feel free to ask at the plugin's page:" + "\n"
+			  + "http://dev.bukkit.org/bukkit-plugins/craftz/" + "\n\n"
+			  + "Defaults + explanation: http://pastebin.com/K5YHS4MQ"
 		);
 		
 		FileConfiguration loot = ConfigManager.getConfig("loot");
@@ -793,9 +791,10 @@ public class CraftZ extends JavaPlugin {
 		
 		ConfigManager.newConfig("highscores", instance, def_highscores);
 		ConfigManager.getConfig("highscores").options().header(
-				  "++========================================================++\n"
-		 		+ "|| Highscore database for the CraftZ plugin by JangoBrick ||\n"
-		 		+ "++========================================================++"
+				"CraftZ: Highscore Database (highscores.yml)" + "\n\n"
+			  + "This file is used for internal storage and should not be edited." + "\n\n"
+		 	  + "If you need help, feel free to ask at the plugin's page:" + "\n"
+		 	  + "http://dev.bukkit.org/bukkit-plugins/craftz/"
 		);
 		
 		
@@ -809,9 +808,11 @@ public class CraftZ extends JavaPlugin {
 		
 		ConfigManager.newConfig("kits", instance, def_kits);
 		ConfigManager.getConfig("kits").options().header(
-				  "++================================================++\n"
-		 		+ "|| Kits setup for the CraftZ plugin by JangoBrick ||\n"
-		 		+ "++================================================++"
+				"CraftZ: Kits Setup (kits.yml)" + "\n\n"
+			  + "The kits should be edited through the ingame commands." + "\n"
+			  + "Try '/craftz kitsadmin' in the chat." + "\n\n"
+			  + "If you need help, feel free to ask at the plugin's page:" + "\n"
+			  + "http://dev.bukkit.org/bukkit-plugins/craftz/"
 		);
 		
 		FileConfiguration kits = ConfigManager.getConfig("kits");
@@ -846,9 +847,10 @@ public class CraftZ extends JavaPlugin {
 		
 		ConfigManager.newConfig("enemies", this, def_enemies);
 		ConfigManager.getConfig("kits").options().header(
-				  "++=================================================++\n"
-		 		+ "|| Enemy setup for the CraftZ plugin by JangoBrick ||\n"
-		 		+ "++=================================================++"
+				"CraftZ: Enemy Setup (enemies.yml)" + "\n\n"
+			  + "If you need help, feel free to ask at the plugin's page:" + "\n"
+			  + "http://dev.bukkit.org/bukkit-plugins/craftz/" + "\n\n"
+			  + "Defaults + explanation: http://pastebin.com/Y24Ept1q"
 		);
 		
 		FileConfiguration enemies = ConfigManager.getConfig("enemies");
